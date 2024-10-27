@@ -1,0 +1,2989 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$ref": "#/definitions/Welcome8",
+  "definitions": {
+    "Welcome8": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "format": "uri",
+          "qt-uri-protocols": [
+            "http"
+          ]
+        },
+        "definitions": {
+          "$ref": "#/definitions/Definitions"
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "oneOf": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Welcome8OneOf"
+          }
+        },
+        "properties": {
+          "$ref": "#/definitions/Welcome8Properties"
+        }
+      },
+      "required": [
+        "$schema",
+        "definitions",
+        "oneOf",
+        "properties",
+        "required",
+        "type"
+      ],
+      "title": "Welcome8"
+    },
+    "Definitions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "arrayOfStrings": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "arrayOfStringsOrOtherArrays": {
+          "$ref": "#/definitions/ArrayOfStringsOrOtherArrays"
+        },
+        "stringOrArrayOfStringsOrObjects": {
+          "$ref": "#/definitions/ArrayOfStringsOrOtherArrays"
+        },
+        "timedelta": {
+          "$ref": "#/definitions/TimeFrame"
+        },
+        "timeFrame": {
+          "$ref": "#/definitions/TimeFrame"
+        },
+        "slackField": {
+          "$ref": "#/definitions/MattermostField"
+        },
+        "arrayOfSlackFields": {
+          "$ref": "#/definitions/Fields"
+        },
+        "msTeamsFact": {
+          "$ref": "#/definitions/MSPowerAutomateFact"
+        },
+        "msPowerAutomateFact": {
+          "$ref": "#/definitions/MSPowerAutomateFact"
+        },
+        "arrayOfMsTeamsFacts": {
+          "$ref": "#/definitions/Facts"
+        },
+        "arrayOfMsPowerAutomateFacts": {
+          "$ref": "#/definitions/Facts"
+        },
+        "mattermostField": {
+          "$ref": "#/definitions/MattermostField"
+        },
+        "arrayOfMattermostFields": {
+          "$ref": "#/definitions/Fields"
+        },
+        "filter": {
+          "$ref": "#/definitions/FieldClass"
+        },
+        "irisIocField": {
+          "$ref": "#/definitions/IrisIocField"
+        },
+        "arrayOfIrisIocFields": {
+          "$ref": "#/definitions/ArrayOfIrisIocFields"
+        },
+        "opsGenieArgs": {
+          "$ref": "#/definitions/OpsArgs"
+        }
+      },
+      "required": [
+        "arrayOfIrisIocFields",
+        "arrayOfMattermostFields",
+        "arrayOfMsPowerAutomateFacts",
+        "arrayOfMsTeamsFacts",
+        "arrayOfSlackFields",
+        "arrayOfStrings",
+        "arrayOfStringsOrOtherArrays",
+        "filter",
+        "irisIocField",
+        "mattermostField",
+        "msPowerAutomateFact",
+        "msTeamsFact",
+        "opsGenieArgs",
+        "slackField",
+        "stringOrArrayOfStringsOrObjects",
+        "timeFrame",
+        "timedelta"
+      ],
+      "title": "Definitions"
+    },
+    "ArrayOfIrisIocFields": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "items": {
+          "$ref": "#/definitions/IrisIocField"
+        }
+      },
+      "required": [
+        "items",
+        "type"
+      ],
+      "title": "ArrayOfIrisIocFields"
+    },
+    "IrisIocField": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "additionalProperties": {
+          "type": "boolean"
+        },
+        "properties": {
+          "$ref": "#/definitions/IrisIocFieldProperties"
+        }
+      },
+      "required": [
+        "additionalProperties",
+        "properties",
+        "type"
+      ],
+      "title": "IrisIocField"
+    },
+    "IrisIocFieldProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ioc_value": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ioc_description": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ioc_tlp_id": {
+          "$ref": "#/definitions/ID"
+        },
+        "ioc_type_id": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ioc_tags": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        }
+      },
+      "required": [
+        "ioc_description",
+        "ioc_tags",
+        "ioc_tlp_id",
+        "ioc_type_id",
+        "ioc_value"
+      ],
+      "title": "IrisIocFieldProperties"
+    },
+    "AggregationAlertTimeComparedWithTimestampField": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "AggregationAlertTimeComparedWithTimestampField"
+    },
+    "ID": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "enum": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      },
+      "required": [
+        "enum",
+        "type"
+      ],
+      "title": "ID"
+    },
+    "Fields": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "items": {
+          "$ref": "#/definitions/MattermostField"
+        }
+      },
+      "required": [
+        "items",
+        "type"
+      ],
+      "title": "Fields"
+    },
+    "MattermostField": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "additionalProperties": {
+          "type": "boolean"
+        },
+        "properties": {
+          "$ref": "#/definitions/MattermostFieldProperties"
+        }
+      },
+      "required": [
+        "additionalProperties",
+        "properties",
+        "type"
+      ],
+      "title": "MattermostField"
+    },
+    "MattermostFieldProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "value": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "args": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "short": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        }
+      },
+      "required": [
+        "short",
+        "title",
+        "value"
+      ],
+      "title": "MattermostFieldProperties"
+    },
+    "ArrayOfStrings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TypeElement"
+          }
+        },
+        "items": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        }
+      },
+      "required": [
+        "items",
+        "type"
+      ],
+      "title": "ArrayOfStrings"
+    },
+    "Facts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "items": {
+          "$ref": "#/definitions/MSPowerAutomateFact"
+        }
+      },
+      "required": [
+        "items",
+        "type"
+      ],
+      "title": "Facts"
+    },
+    "MSPowerAutomateFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "additionalProperties": {
+          "type": "boolean"
+        },
+        "properties": {
+          "$ref": "#/definitions/MSPowerAutomateFactProperties"
+        }
+      },
+      "required": [
+        "additionalProperties",
+        "properties",
+        "type"
+      ],
+      "title": "MSPowerAutomateFact"
+    },
+    "MSPowerAutomateFactProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "value": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "title": "MSPowerAutomateFactProperties"
+    },
+    "ArrayOfStringsOrOtherArrays": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TypeElement"
+          }
+        },
+        "items": {
+          "$ref": "#/definitions/AlertmanagerCACerts"
+        }
+      },
+      "required": [
+        "items",
+        "type"
+      ],
+      "title": "ArrayOfStringsOrOtherArrays"
+    },
+    "AlertmanagerCACerts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TypeElement"
+          }
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "AlertmanagerCACerts"
+    },
+    "FieldClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "title": "FieldClass"
+    },
+    "OpsArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "additionalProperties": {
+          "type": "boolean"
+        },
+        "minProperties": {
+          "type": "integer"
+        },
+        "patternProperties": {
+          "$ref": "#/definitions/OpsGenieArgsPatternProperties"
+        }
+      },
+      "required": [
+        "additionalProperties",
+        "minProperties",
+        "patternProperties",
+        "type"
+      ],
+      "title": "OpsArgs"
+    },
+    "OpsGenieArgsPatternProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "^.+$": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        }
+      },
+      "required": [
+        "^.+$"
+      ],
+      "title": "OpsGenieArgsPatternProperties"
+    },
+    "TimeFrame": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "additionalProperties": {
+          "type": "boolean"
+        },
+        "properties": {
+          "$ref": "#/definitions/TimeFrameProperties"
+        }
+      },
+      "required": [
+        "additionalProperties",
+        "properties",
+        "type"
+      ],
+      "title": "TimeFrame"
+    },
+    "TimeFrameProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "days": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "weeks": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "hours": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "minutes": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "seconds": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "milliseconds": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "schedule": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        }
+      },
+      "required": [
+        "days",
+        "hours",
+        "milliseconds",
+        "minutes",
+        "seconds",
+        "weeks"
+      ],
+      "title": "TimeFrameProperties"
+    },
+    "Welcome8OneOf": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "properties": {
+          "$ref": "#/definitions/PurpleProperties"
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "properties",
+        "title"
+      ],
+      "title": "Welcome8OneOf"
+    },
+    "PurpleProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeClass"
+        },
+        "compare_key": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "blacklist": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "whitelist": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "ignore_null": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "timeframe": {
+          "$ref": "#/definitions/TimeFrame"
+        },
+        "num_events": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "use_count_query": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "use_terms_query": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "terms_size": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "attach_related": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "spike_height": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "spike_type": {
+          "$ref": "#/definitions/AlertTextType"
+        },
+        "alert_on_new_data": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "threshold_ref": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "threshold_cur": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "field_value": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "metric_agg_type": {
+          "$ref": "#/definitions/AlertTextType"
+        },
+        "min_doc_count": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "percentile_range": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "threshold": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "forget_keys": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "fields": {
+          "$ref": "#/definitions/ArrayOfStringsOrOtherArrays"
+        },
+        "terms_window_size": {
+          "$ref": "#/definitions/TimeFrame"
+        },
+        "alert_on_missing_field": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "window_step_size": {
+          "$ref": "#/definitions/TimeFrame"
+        },
+        "use_keyword_postfix": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "max_cardinality": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "min_cardinality": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "cardinality_field": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "max_threshold": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "min_threshold": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "use_run_every_query_size": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "allow_buffer_time_overlap": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "bucket_interval": {
+          "$ref": "#/definitions/TimeFrame"
+        },
+        "sync_bucket_interval": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "metric_format_string": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "min_percentage": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "max_percentage": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "percentage_format_string": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "min_denominator": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "PurpleProperties"
+    },
+    "AlertTextType": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enum": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "enum"
+      ],
+      "title": "AlertTextType"
+    },
+    "TypeClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enum": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pattern": {
+          "type": "string"
+        }
+      },
+      "required": [],
+      "title": "TypeClass"
+    },
+    "Welcome8Properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "es_host": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "es_port": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "index": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "name": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "use_ssl": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "verify_certs": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "es_username": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "es_password": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "es_bearer": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "use_strftime_index": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "es_hosts": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "import": {
+          "$ref": "#/definitions/Import"
+        },
+        "aggregation": {
+          "$ref": "#/definitions/TimeFrame"
+        },
+        "aggregation_alert_time_compared_with_timestamp_field": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "realert": {
+          "$ref": "#/definitions/TimeFrame"
+        },
+        "realert_key": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "exponential_realert": {
+          "$ref": "#/definitions/TimeFrame"
+        },
+        "buffer_time": {
+          "$ref": "#/definitions/TimeFrame"
+        },
+        "query_delay": {
+          "$ref": "#/definitions/TimeFrame"
+        },
+        "max_query_size": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "max_scrolling": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "max_threads": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "misfire_grace_time": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "owner": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "priority": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "filter": {
+          "$ref": "#/definitions/PurpleFilter"
+        },
+        "include": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "include_fields": {
+          "$ref": "#/definitions/IncludeFields"
+        },
+        "top_count_keys": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "top_count_number": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "raw_count_keys": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "kibana_url": {
+          "$ref": "#/definitions/URL"
+        },
+        "kibana_username": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "kibana_password": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "kibana_verify_certs": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "use_local_time": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "custom_pretty_ts_format": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "match_enhancements": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "query_key": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "replace_dots_in_field_names": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "scan_entire_timeframe": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "notify_alert": {
+          "$ref": "#/definitions/ArrayOfStringsOrOtherArrays"
+        },
+        "notify_all_errors": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "summary_table_fields": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "summary_table_type": {
+          "$ref": "#/definitions/AlertmanagerAPIVersion"
+        },
+        "summary_table_max_rows": {
+          "$ref": "#/definitions/SummaryTableMaxRows"
+        },
+        "summary_prefix": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "summary_suffix": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "generate_kibana_discover_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "shorten_kibana_discover_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "kibana_discover_app_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "kibana_discover_version": {
+          "$ref": "#/definitions/AlertmanagerAPIVersion"
+        },
+        "kibana_discover_index_pattern_id": {
+          "$ref": "#/definitions/KibanaDiscoverIndexPatternID"
+        },
+        "kibana_discover_columns": {
+          "$ref": "#/definitions/DiscoverColumns"
+        },
+        "kibana_discover_from_timedelta": {
+          "$ref": "#/definitions/TimeFrame"
+        },
+        "kibana_discover_to_timedelta": {
+          "$ref": "#/definitions/TimeFrame"
+        },
+        "kibana_discover_security_tenant": {
+          "$ref": "#/definitions/KibanaDiscoverSecurityTenant"
+        },
+        "generate_opensearch_discover_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "opensearch_url": {
+          "$ref": "#/definitions/URL"
+        },
+        "opensearch_discover_app_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "opensearch_discover_version": {
+          "$ref": "#/definitions/AlertmanagerAPIVersion"
+        },
+        "opensearch_discover_index_pattern_id": {
+          "$ref": "#/definitions/KibanaDiscoverIndexPatternID"
+        },
+        "opensearch_discover_columns": {
+          "$ref": "#/definitions/DiscoverColumns"
+        },
+        "opensearch_discover_from_timedelta": {
+          "$ref": "#/definitions/TimeFrame"
+        },
+        "opensearch_discover_to_timedelta": {
+          "$ref": "#/definitions/TimeFrame"
+        },
+        "alert_text": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alert_text_args": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "alert_text_kw": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alert_text_type": {
+          "$ref": "#/definitions/AlertTextType"
+        },
+        "alert_missing_value": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "timestamp_field": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "field": {
+          "$ref": "#/definitions/FieldClass"
+        },
+        "alerta_api_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alerta_api_key": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alerta_use_qk_as_resource": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alerta_use_match_timestamp": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alerta_api_skip_ssl": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alerta_severity": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alerta_timeout": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alerta_type": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alerta_resource": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alerta_service": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "alerta_origin": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alerta_environment": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alerta_group": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alerta_correlate": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "alerta_tags": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "alerta_event": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alerta_text": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alerta_value": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alerta_attributes_keys": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "alerta_attributes_values": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "alertmanager_alertname": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alertmanager_hosts": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "alertmanager_api_version": {
+          "$ref": "#/definitions/AlertmanagerAPIVersion"
+        },
+        "alertmanager_alert_subject_labelname": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alertmanager_alert_text_labelname": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alertmanager_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alertmanager_ca_certs": {
+          "$ref": "#/definitions/AlertmanagerCACerts"
+        },
+        "alertmanager_ignore_ssl_errors": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alertmanager_timeout": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alertmanager_resolve_time": {
+          "$ref": "#/definitions/TimeFrame"
+        },
+        "alertmanager_basic_auth_login": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alertmanager_basic_auth_password": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "alertmanager_labels": {
+          "$ref": "#/definitions/AlertmanagerAnnotations"
+        },
+        "alertmanager_annotations": {
+          "$ref": "#/definitions/AlertmanagerAnnotations"
+        },
+        "alertmanager_fields": {
+          "$ref": "#/definitions/AlertmanagerAnnotations"
+        },
+        "ses_email": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "ses_from_addr": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ses_aws_access_key": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ses_aws_secret_key": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ses_aws_region": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ses_aws_profile": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ses_email_reply_to": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ses_cc": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "ses_bcc": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "sns_topic_arn": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "sns_aws_access_key_id": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "sns_aws_secret_access_key": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "sns_aws_region": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "sns_aws_profile": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "chatwork_apikey": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "chatwork_room_id": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "chatwork_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "chatwork_proxy_login": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "chatwork_proxy_pass": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "command": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "pipe_match_json": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "pipe_alert_text": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "fail_on_non_zero_exit": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "datadog_api_key": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "datadog_app_key": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "dingtalk_access_token": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "dingtalk_msgtype": {
+          "$ref": "#/definitions/AlertmanagerAPIVersion"
+        },
+        "dingtalk_single_title": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "dingtalk_single_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "dingtalk_btn_orientation": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "dingtalk_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "dingtalk_proxy_login": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "dingtalk_proxy_pass": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "dingtalk_sign": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "discord_webhook_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "discord_emoji_title": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "discord_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "discord_proxy_login": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "discord_proxy_password": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "discord_embed_color": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "discord_embed_footer": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "discord_embed_icon_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "email": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "email_from_field": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "email_add_domain": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "smtp_host": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "smtp_port": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "smtp_ssl": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "smtp_auth_file": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "smtp_cert_file": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "smtp_key_file": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "email_reply_to": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "from_addr": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "cc": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "bcc": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "email_format": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "assets_dir": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "email_image_keys": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "email_image_values": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "notify_email": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "exotel_account_sid": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "exotel_auth_token": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "exotel_to_number": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "exotel_from_number": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "exotel_message_body": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "gitter_webhook_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "gitter_msg_level": {
+          "$ref": "#/definitions/AlertTextType"
+        },
+        "gitter_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "gelf_type": {
+          "$ref": "#/definitions/AlertmanagerAPIVersion"
+        },
+        "gelf_endpoint": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "gelf_host": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "gelf_port": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "gelf_payload": {
+          "$ref": "#/definitions/AlertmanagerAnnotations"
+        },
+        "gelf_log_level": {
+          "$ref": "#/definitions/AlertmanagerAPIVersion"
+        },
+        "gelf_http_headers": {
+          "$ref": "#/definitions/AlertmanagerAnnotations"
+        },
+        "gelf_ca_cert": {
+          "$ref": "#/definitions/AlertmanagerCACerts"
+        },
+        "gelf_http_ignore_ssl_errors": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "gelf_timeout": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "googlechat_webhook_url": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "googlechat_format": {
+          "$ref": "#/definitions/AlertmanagerAPIVersion"
+        },
+        "googlechat_header_title": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "googlechat_header_subtitle": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "googlechat_header_image": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "googlechat_footer_kibanalink": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "googlechat_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "http_post_url": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "http_post_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "http_post_ca_certs": {
+          "$ref": "#/definitions/AlertmanagerCACerts"
+        },
+        "http_post_ignore_ssl_errors": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "http_post_timeout": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "http_post2_url": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "http_post2_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "http_post2_ca_certs": {
+          "$ref": "#/definitions/AlertmanagerCACerts"
+        },
+        "http_post2_ignore_ssl_errors": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "http_post2_timeout": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "indexer_alerts_name": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "indexer_config": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "indexer_connection": {
+          "$ref": "#/definitions/IndexerConnection"
+        },
+        "indexer_alert_config": {
+          "$ref": "#/definitions/IndexerAlertConfig"
+        },
+        "iris_host": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "iris_api_token": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "iris_type": {
+          "$ref": "#/definitions/AlertmanagerAPIVersion"
+        },
+        "iris_customer_id": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "iris_ignore_ssl_errors": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "iris_ca_cert": {
+          "$ref": "#/definitions/AlertmanagerCACerts"
+        },
+        "iris_overwrite_timestamp": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "iris_case_template_id": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "iris_description": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "iris_alert_note": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "iris_alert_tags": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "iris_alert_status_id": {
+          "$ref": "#/definitions/ID"
+        },
+        "iris_alert_source": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "iris_alert_source_link": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "iris_alert_severity_id": {
+          "$ref": "#/definitions/ID"
+        },
+        "iris_iocs": {
+          "$ref": "#/definitions/ArrayOfIrisIocFields"
+        },
+        "iris_alert_context": {
+          "$ref": "#/definitions/AlertmanagerAnnotations"
+        },
+        "jira_server": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "jira_project": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "jira_issuetype": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "jira_account_file": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "jira_assignee": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "jira_component": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "jira_components": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "jira_description": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "jira_label": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "jira_labels": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "jira_priority": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "jira_watchers": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "jira_bump_tickets": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "jira_ignore_in_title": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "jira_max_age": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "jira_bump_not_in_statuses": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "jira_bump_in_statuses": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "jira_bump_only": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "jira_transition_to": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "jira_bump_after_inactivity": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "lark_bot_id": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "lark_msgtype": {
+          "$ref": "#/definitions/AlertmanagerAPIVersion"
+        },
+        "linenotify_access_token": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "matrixhookshot_ca_certs": {
+          "$ref": "#/definitions/AlertmanagerCACerts"
+        },
+        "matrixhookshot_webhook_url": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "matrixhookshot_username": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "matrixhookshot_html": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "matrixhookshot_text": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "matrixhookshot_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "matrixhookshot_ignore_ssl_errors": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "matrixhookshot_timeout": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_webhook_url": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "mattermost_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_ignore_ssl_errors": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_username_override": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_channel_override": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "mattermost_emoji_override": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_icon_url_override": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_msg_pretext": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_msg_color": {
+          "$ref": "#/definitions/AlertTextType"
+        },
+        "mattermost_msg_fields": {
+          "$ref": "#/definitions/Fields"
+        },
+        "mattermost_title": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_title_link": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_footer": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_footer_icon": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_image_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_thumb_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_author_name": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_author_link": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_author_icon": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_attach_kibana_discover_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_kibana_discover_color": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_kibana_discover_title": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_attach_opensearch_discover_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_opensearch_discover_color": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "mattermost_opensearch_discover_title": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ms_teams_webhook_url": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "ms_teams_alert_summary": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ms_teams_theme_color": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ms_teams_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ms_teams_alert_fixed_width": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ms_teams_alert_facts": {
+          "$ref": "#/definitions/Facts"
+        },
+        "ms_teams_attach_kibana_discover_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ms_teams_kibana_discover_title": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ms_teams_ca_certs": {
+          "$ref": "#/definitions/AlertmanagerCACerts"
+        },
+        "ms_teams_ignore_ssl_errors": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ms_teams_attach_opensearch_discover_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ms_teams_opensearch_discover_title": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ms_power_automate_webhook_url": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "ms_power_automate_alert_summary": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ms_power_automate_summary_text_size": {
+          "$ref": "#/definitions/AlertmanagerAPIVersion"
+        },
+        "ms_power_automate_body_text_size": {
+          "$ref": "#/definitions/AlertmanagerAPIVersion"
+        },
+        "ms_power_automate_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ms_power_automate_alert_facts": {
+          "$ref": "#/definitions/Facts"
+        },
+        "ms_power_automate_kibana_discover_attach_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ms_power_automate_kibana_discover_title": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ms_power_automate_kibana_discover_color": {
+          "$ref": "#/definitions/AlertmanagerAPIVersion"
+        },
+        "ms_power_automate_ca_certs": {
+          "$ref": "#/definitions/AlertmanagerCACerts"
+        },
+        "ms_power_automate_ignore_ssl_errors": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ms_power_automate_opensearch_discover_attach_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ms_power_automate_opensearch_discover_title": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ms_power_automate_opensearch_discover_color": {
+          "$ref": "#/definitions/AlertmanagerAPIVersion"
+        },
+        "ms_power_automate_teams_card_width_full": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "opsgenie_account": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "opsgenie_addr": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "opsgenie_alias": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "opsgenie_default_recipients": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "opsgenie_default_teams": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "opsgenie_description": {
+          "$ref": "#/definitions/KibanaDiscoverSecurityTenant"
+        },
+        "opsgenie_details": {
+          "$ref": "#/definitions/AlertmanagerAnnotations"
+        },
+        "opsgenie_entity": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "opsgenie_key": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "opsgenie_message": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "opsgenie_priority": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "opsgenie_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "opsgenie_recipients_args": {
+          "$ref": "#/definitions/OpsArgs"
+        },
+        "opsgenie_recipients": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "opsgenie_source": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "opsgenie_subject": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "opsgenie_subject_args": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "opsgenie_tags": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "opsgenie_teams_args": {
+          "$ref": "#/definitions/OpsArgs"
+        },
+        "opsgenie_teams": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "pagerduty_service_key": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "pagerduty_client_name": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "pagerduty_event_type": {
+          "$ref": "#/definitions/AlertTextType"
+        },
+        "pagerduty_incident_key": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "pagerduty_incident_key_args": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "pagerduty_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "pagerduty_ca_certs": {
+          "$ref": "#/definitions/AlertmanagerCACerts"
+        },
+        "pagerduty_ignore_ssl_errors": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "pagerduty_api_version": {
+          "$ref": "#/definitions/AlertmanagerAPIVersion"
+        },
+        "pagerduty_v2_payload_class": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "pagerduty_v2_payload_class_args": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "pagerduty_v2_payload_component": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "pagerduty_v2_payload_component_args": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "pagerduty_v2_payload_group": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "pagerduty_v2_payload_group_args": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "pagerduty_v2_payload_severity": {
+          "$ref": "#/definitions/AlertmanagerAPIVersion"
+        },
+        "pagerduty_v2_payload_source": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "pagerduty_v2_payload_source_args": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "pagerduty_v2_payload_include_all_info": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "pagertree_integration_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "pagertree_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "rocket_chat_webhook_url": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "rocket_chat_username_override": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "rocket_chat_channel_override": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "rocket_chat_emoji_override": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "rocket_chat_msg_color": {
+          "$ref": "#/definitions/AlertTextType"
+        },
+        "rocket_chat_text_string": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "rocket_chat_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "rocket_chat_attach_kibana_discover_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "rocket_chat_kibana_discover_color": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "rocket_chat_kibana_discover_title": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "rocket_chat_ca_certs": {
+          "$ref": "#/definitions/AlertmanagerCACerts"
+        },
+        "rocket_chat_ignore_ssl_errors": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "rocket_chat_timeout": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "servicenow_rest_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "username": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "password": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "short_description": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "comments": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "assignment_group": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "category": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "subcategory": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "cmdb_ci": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "caller_id": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "servicenow_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "servicenow_impact": {
+          "$ref": "#/definitions/Servicenow"
+        },
+        "servicenow_urgency": {
+          "$ref": "#/definitions/Servicenow"
+        },
+        "slack_webhook_url": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "slack_username_override": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_channel_override": {
+          "$ref": "#/definitions/ArrayOfStrings"
+        },
+        "slack_emoji_override": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_icon_url_override": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_msg_color": {
+          "$ref": "#/definitions/AlertTextType"
+        },
+        "slack_parse_override": {
+          "$ref": "#/definitions/AlertTextType"
+        },
+        "slack_text_string": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_alert_fields": {
+          "$ref": "#/definitions/Fields"
+        },
+        "slack_ignore_ssl_errors": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_title": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_title_link": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_timeout": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_attach_kibana_discover_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_kibana_discover_color": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_kibana_discover_title": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_attach_opensearch_discover_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_opensearch_discover_color": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_opensearch_discover_title": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_attach_jira_ticket_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_jira_ticket_color": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_jira_ticket_title": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_ca_certs": {
+          "$ref": "#/definitions/AlertmanagerCACerts"
+        },
+        "slack_footer": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_footer_icon": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_image_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_thumb_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_author_name": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_author_link": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_author_icon": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "slack_msg_pretext": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "victorops_api_key": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "victorops_routing_key": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "victorops_message_type": {
+          "$ref": "#/definitions/AlertTextType"
+        },
+        "victorops_entity_id": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "victorops_entity_display_name": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "victorops_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "stomp_hostname": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "stomp_hostport": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "stomp_login": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "stomp_password": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "stomp_destination": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "telegram_bot_token": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "telegram_room_id": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "telegram_api_url": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "telegram_proxy": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "telegram_proxy_login": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "telegram_proxy_pass": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "telegram_parse_mode": {
+          "$ref": "#/definitions/AlertmanagerAPIVersion"
+        },
+        "telegram_thread_id": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "tencent_sms_secret_id": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "tencent_sms_secret_key": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "tencent_sms_sdk_appid": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "tencent_sms_to_number": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "tencent_sms_region": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "tencent_sms_sign_name": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "tencent_sms_template_id": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "tencent_sms_template_parm": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "twilio_account_sid": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "twilio_auth_token": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "twilio_to_number": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "twilio_from_number": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "twilio_message_service_sid": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "twilio_use_copilot": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "work_wechat_bot_id": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "work_wechat_msgtype": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "zbx_sender_host": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "zbx_sender_port": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "zbx_host_from_field": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "zbx_host": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "zbx_key": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        }
+      },
+      "required": [
+        "aggregation",
+        "aggregation_alert_time_compared_with_timestamp_field",
+        "alert_missing_value",
+        "alert_text",
+        "alert_text_args",
+        "alert_text_kw",
+        "alert_text_type",
+        "alerta_api_key",
+        "alerta_api_skip_ssl",
+        "alerta_api_url",
+        "alerta_attributes_keys",
+        "alerta_attributes_values",
+        "alerta_correlate",
+        "alerta_environment",
+        "alerta_event",
+        "alerta_group",
+        "alerta_origin",
+        "alerta_resource",
+        "alerta_service",
+        "alerta_severity",
+        "alerta_tags",
+        "alerta_text",
+        "alerta_timeout",
+        "alerta_type",
+        "alerta_use_match_timestamp",
+        "alerta_use_qk_as_resource",
+        "alerta_value",
+        "alertmanager_alert_subject_labelname",
+        "alertmanager_alert_text_labelname",
+        "alertmanager_alertname",
+        "alertmanager_annotations",
+        "alertmanager_api_version",
+        "alertmanager_basic_auth_login",
+        "alertmanager_basic_auth_password",
+        "alertmanager_ca_certs",
+        "alertmanager_fields",
+        "alertmanager_hosts",
+        "alertmanager_ignore_ssl_errors",
+        "alertmanager_labels",
+        "alertmanager_proxy",
+        "alertmanager_resolve_time",
+        "alertmanager_timeout",
+        "assets_dir",
+        "assignment_group",
+        "bcc",
+        "buffer_time",
+        "caller_id",
+        "category",
+        "cc",
+        "chatwork_apikey",
+        "chatwork_proxy",
+        "chatwork_proxy_login",
+        "chatwork_proxy_pass",
+        "chatwork_room_id",
+        "cmdb_ci",
+        "command",
+        "comments",
+        "custom_pretty_ts_format",
+        "datadog_api_key",
+        "datadog_app_key",
+        "dingtalk_access_token",
+        "dingtalk_btn_orientation",
+        "dingtalk_msgtype",
+        "dingtalk_proxy",
+        "dingtalk_proxy_login",
+        "dingtalk_proxy_pass",
+        "dingtalk_sign",
+        "dingtalk_single_title",
+        "dingtalk_single_url",
+        "discord_embed_color",
+        "discord_embed_footer",
+        "discord_embed_icon_url",
+        "discord_emoji_title",
+        "discord_proxy",
+        "discord_proxy_login",
+        "discord_proxy_password",
+        "discord_webhook_url",
+        "email",
+        "email_add_domain",
+        "email_format",
+        "email_from_field",
+        "email_image_keys",
+        "email_image_values",
+        "email_reply_to",
+        "es_bearer",
+        "es_host",
+        "es_hosts",
+        "es_password",
+        "es_port",
+        "es_username",
+        "exotel_account_sid",
+        "exotel_auth_token",
+        "exotel_from_number",
+        "exotel_message_body",
+        "exotel_to_number",
+        "exponential_realert",
+        "fail_on_non_zero_exit",
+        "field",
+        "filter",
+        "from_addr",
+        "gelf_ca_cert",
+        "gelf_endpoint",
+        "gelf_host",
+        "gelf_http_headers",
+        "gelf_http_ignore_ssl_errors",
+        "gelf_log_level",
+        "gelf_payload",
+        "gelf_port",
+        "gelf_timeout",
+        "gelf_type",
+        "generate_kibana_discover_url",
+        "generate_opensearch_discover_url",
+        "gitter_msg_level",
+        "gitter_proxy",
+        "gitter_webhook_url",
+        "googlechat_footer_kibanalink",
+        "googlechat_format",
+        "googlechat_header_image",
+        "googlechat_header_subtitle",
+        "googlechat_header_title",
+        "googlechat_proxy",
+        "googlechat_webhook_url",
+        "http_post2_ca_certs",
+        "http_post2_ignore_ssl_errors",
+        "http_post2_proxy",
+        "http_post2_timeout",
+        "http_post2_url",
+        "http_post_ca_certs",
+        "http_post_ignore_ssl_errors",
+        "http_post_proxy",
+        "http_post_timeout",
+        "http_post_url",
+        "import",
+        "include",
+        "include_fields",
+        "index",
+        "indexer_alert_config",
+        "indexer_alerts_name",
+        "indexer_config",
+        "indexer_connection",
+        "iris_alert_context",
+        "iris_alert_note",
+        "iris_alert_severity_id",
+        "iris_alert_source",
+        "iris_alert_source_link",
+        "iris_alert_status_id",
+        "iris_alert_tags",
+        "iris_api_token",
+        "iris_ca_cert",
+        "iris_case_template_id",
+        "iris_customer_id",
+        "iris_description",
+        "iris_host",
+        "iris_ignore_ssl_errors",
+        "iris_iocs",
+        "iris_overwrite_timestamp",
+        "iris_type",
+        "jira_account_file",
+        "jira_assignee",
+        "jira_bump_after_inactivity",
+        "jira_bump_in_statuses",
+        "jira_bump_not_in_statuses",
+        "jira_bump_only",
+        "jira_bump_tickets",
+        "jira_component",
+        "jira_components",
+        "jira_description",
+        "jira_ignore_in_title",
+        "jira_issuetype",
+        "jira_label",
+        "jira_labels",
+        "jira_max_age",
+        "jira_priority",
+        "jira_project",
+        "jira_server",
+        "jira_transition_to",
+        "jira_watchers",
+        "kibana_discover_app_url",
+        "kibana_discover_columns",
+        "kibana_discover_from_timedelta",
+        "kibana_discover_index_pattern_id",
+        "kibana_discover_security_tenant",
+        "kibana_discover_to_timedelta",
+        "kibana_discover_version",
+        "kibana_password",
+        "kibana_url",
+        "kibana_username",
+        "kibana_verify_certs",
+        "lark_bot_id",
+        "lark_msgtype",
+        "linenotify_access_token",
+        "match_enhancements",
+        "matrixhookshot_ca_certs",
+        "matrixhookshot_html",
+        "matrixhookshot_ignore_ssl_errors",
+        "matrixhookshot_proxy",
+        "matrixhookshot_text",
+        "matrixhookshot_timeout",
+        "matrixhookshot_username",
+        "matrixhookshot_webhook_url",
+        "mattermost_attach_kibana_discover_url",
+        "mattermost_attach_opensearch_discover_url",
+        "mattermost_author_icon",
+        "mattermost_author_link",
+        "mattermost_author_name",
+        "mattermost_channel_override",
+        "mattermost_emoji_override",
+        "mattermost_footer",
+        "mattermost_footer_icon",
+        "mattermost_icon_url_override",
+        "mattermost_ignore_ssl_errors",
+        "mattermost_image_url",
+        "mattermost_kibana_discover_color",
+        "mattermost_kibana_discover_title",
+        "mattermost_msg_color",
+        "mattermost_msg_fields",
+        "mattermost_msg_pretext",
+        "mattermost_opensearch_discover_color",
+        "mattermost_opensearch_discover_title",
+        "mattermost_proxy",
+        "mattermost_thumb_url",
+        "mattermost_title",
+        "mattermost_title_link",
+        "mattermost_username_override",
+        "mattermost_webhook_url",
+        "max_query_size",
+        "max_scrolling",
+        "max_threads",
+        "misfire_grace_time",
+        "ms_power_automate_alert_facts",
+        "ms_power_automate_alert_summary",
+        "ms_power_automate_body_text_size",
+        "ms_power_automate_ca_certs",
+        "ms_power_automate_ignore_ssl_errors",
+        "ms_power_automate_kibana_discover_attach_url",
+        "ms_power_automate_kibana_discover_color",
+        "ms_power_automate_kibana_discover_title",
+        "ms_power_automate_opensearch_discover_attach_url",
+        "ms_power_automate_opensearch_discover_color",
+        "ms_power_automate_opensearch_discover_title",
+        "ms_power_automate_proxy",
+        "ms_power_automate_summary_text_size",
+        "ms_power_automate_teams_card_width_full",
+        "ms_power_automate_webhook_url",
+        "ms_teams_alert_facts",
+        "ms_teams_alert_fixed_width",
+        "ms_teams_alert_summary",
+        "ms_teams_attach_kibana_discover_url",
+        "ms_teams_attach_opensearch_discover_url",
+        "ms_teams_ca_certs",
+        "ms_teams_ignore_ssl_errors",
+        "ms_teams_kibana_discover_title",
+        "ms_teams_opensearch_discover_title",
+        "ms_teams_proxy",
+        "ms_teams_theme_color",
+        "ms_teams_webhook_url",
+        "name",
+        "notify_alert",
+        "notify_all_errors",
+        "notify_email",
+        "opensearch_discover_app_url",
+        "opensearch_discover_columns",
+        "opensearch_discover_from_timedelta",
+        "opensearch_discover_index_pattern_id",
+        "opensearch_discover_to_timedelta",
+        "opensearch_discover_version",
+        "opensearch_url",
+        "opsgenie_account",
+        "opsgenie_addr",
+        "opsgenie_alias",
+        "opsgenie_default_recipients",
+        "opsgenie_default_teams",
+        "opsgenie_description",
+        "opsgenie_details",
+        "opsgenie_entity",
+        "opsgenie_key",
+        "opsgenie_message",
+        "opsgenie_priority",
+        "opsgenie_proxy",
+        "opsgenie_recipients",
+        "opsgenie_recipients_args",
+        "opsgenie_source",
+        "opsgenie_subject",
+        "opsgenie_subject_args",
+        "opsgenie_tags",
+        "opsgenie_teams",
+        "opsgenie_teams_args",
+        "owner",
+        "pagerduty_api_version",
+        "pagerduty_ca_certs",
+        "pagerduty_client_name",
+        "pagerduty_event_type",
+        "pagerduty_ignore_ssl_errors",
+        "pagerduty_incident_key",
+        "pagerduty_incident_key_args",
+        "pagerduty_proxy",
+        "pagerduty_service_key",
+        "pagerduty_v2_payload_class",
+        "pagerduty_v2_payload_class_args",
+        "pagerduty_v2_payload_component",
+        "pagerduty_v2_payload_component_args",
+        "pagerduty_v2_payload_group",
+        "pagerduty_v2_payload_group_args",
+        "pagerduty_v2_payload_include_all_info",
+        "pagerduty_v2_payload_severity",
+        "pagerduty_v2_payload_source",
+        "pagerduty_v2_payload_source_args",
+        "pagertree_integration_url",
+        "pagertree_proxy",
+        "password",
+        "pipe_alert_text",
+        "pipe_match_json",
+        "priority",
+        "query_delay",
+        "query_key",
+        "raw_count_keys",
+        "realert",
+        "realert_key",
+        "replace_dots_in_field_names",
+        "rocket_chat_attach_kibana_discover_url",
+        "rocket_chat_ca_certs",
+        "rocket_chat_channel_override",
+        "rocket_chat_emoji_override",
+        "rocket_chat_ignore_ssl_errors",
+        "rocket_chat_kibana_discover_color",
+        "rocket_chat_kibana_discover_title",
+        "rocket_chat_msg_color",
+        "rocket_chat_proxy",
+        "rocket_chat_text_string",
+        "rocket_chat_timeout",
+        "rocket_chat_username_override",
+        "rocket_chat_webhook_url",
+        "scan_entire_timeframe",
+        "servicenow_impact",
+        "servicenow_proxy",
+        "servicenow_rest_url",
+        "servicenow_urgency",
+        "ses_aws_access_key",
+        "ses_aws_profile",
+        "ses_aws_region",
+        "ses_aws_secret_key",
+        "ses_bcc",
+        "ses_cc",
+        "ses_email",
+        "ses_email_reply_to",
+        "ses_from_addr",
+        "short_description",
+        "shorten_kibana_discover_url",
+        "slack_alert_fields",
+        "slack_attach_jira_ticket_url",
+        "slack_attach_kibana_discover_url",
+        "slack_attach_opensearch_discover_url",
+        "slack_author_icon",
+        "slack_author_link",
+        "slack_author_name",
+        "slack_ca_certs",
+        "slack_channel_override",
+        "slack_emoji_override",
+        "slack_footer",
+        "slack_footer_icon",
+        "slack_icon_url_override",
+        "slack_ignore_ssl_errors",
+        "slack_image_url",
+        "slack_jira_ticket_color",
+        "slack_jira_ticket_title",
+        "slack_kibana_discover_color",
+        "slack_kibana_discover_title",
+        "slack_msg_color",
+        "slack_msg_pretext",
+        "slack_opensearch_discover_color",
+        "slack_opensearch_discover_title",
+        "slack_parse_override",
+        "slack_proxy",
+        "slack_text_string",
+        "slack_thumb_url",
+        "slack_timeout",
+        "slack_title",
+        "slack_title_link",
+        "slack_username_override",
+        "slack_webhook_url",
+        "smtp_auth_file",
+        "smtp_cert_file",
+        "smtp_host",
+        "smtp_key_file",
+        "smtp_port",
+        "smtp_ssl",
+        "sns_aws_access_key_id",
+        "sns_aws_profile",
+        "sns_aws_region",
+        "sns_aws_secret_access_key",
+        "sns_topic_arn",
+        "stomp_destination",
+        "stomp_hostname",
+        "stomp_hostport",
+        "stomp_login",
+        "stomp_password",
+        "subcategory",
+        "summary_prefix",
+        "summary_suffix",
+        "summary_table_fields",
+        "summary_table_max_rows",
+        "summary_table_type",
+        "telegram_api_url",
+        "telegram_bot_token",
+        "telegram_parse_mode",
+        "telegram_proxy",
+        "telegram_proxy_login",
+        "telegram_proxy_pass",
+        "telegram_room_id",
+        "telegram_thread_id",
+        "tencent_sms_region",
+        "tencent_sms_sdk_appid",
+        "tencent_sms_secret_id",
+        "tencent_sms_secret_key",
+        "tencent_sms_sign_name",
+        "tencent_sms_template_id",
+        "tencent_sms_template_parm",
+        "tencent_sms_to_number",
+        "timestamp_field",
+        "top_count_keys",
+        "top_count_number",
+        "twilio_account_sid",
+        "twilio_auth_token",
+        "twilio_from_number",
+        "twilio_message_service_sid",
+        "twilio_to_number",
+        "twilio_use_copilot",
+        "use_local_time",
+        "use_ssl",
+        "use_strftime_index",
+        "username",
+        "verify_certs",
+        "victorops_api_key",
+        "victorops_entity_display_name",
+        "victorops_entity_id",
+        "victorops_message_type",
+        "victorops_proxy",
+        "victorops_routing_key",
+        "work_wechat_bot_id",
+        "work_wechat_msgtype",
+        "zbx_host",
+        "zbx_host_from_field",
+        "zbx_key",
+        "zbx_sender_host",
+        "zbx_sender_port"
+      ],
+      "title": "Welcome8Properties"
+    },
+    "AlertmanagerAnnotations": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "minProperties": {
+          "type": "integer"
+        },
+        "patternProperties": {
+          "$ref": "#/definitions/AlertmanagerAnnotationsPatternProperties"
+        }
+      },
+      "required": [
+        "minProperties",
+        "patternProperties",
+        "type"
+      ],
+      "title": "AlertmanagerAnnotations"
+    },
+    "AlertmanagerAnnotationsPatternProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "^.+$": {
+          "$ref": "#/definitions/Purple"
+        }
+      },
+      "required": [
+        "^.+$"
+      ],
+      "title": "AlertmanagerAnnotationsPatternProperties"
+    },
+    "Purple": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "oneOf": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PurpleOneOf"
+          }
+        }
+      },
+      "required": [
+        "oneOf"
+      ],
+      "title": "Purple"
+    },
+    "PurpleOneOf": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "additionalProperties": {
+          "type": "boolean"
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "properties": {
+          "$ref": "#/definitions/FluffyProperties"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "PurpleOneOf"
+    },
+    "FluffyProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "$ref": "#/definitions/KibanaDiscoverIndexPatternID"
+        }
+      },
+      "required": [
+        "field"
+      ],
+      "title": "FluffyProperties"
+    },
+    "KibanaDiscoverIndexPatternID": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "minLength": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "minLength",
+        "type"
+      ],
+      "title": "KibanaDiscoverIndexPatternID"
+    },
+    "AlertmanagerAPIVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "enum": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "enum",
+        "type"
+      ],
+      "title": "AlertmanagerAPIVersion"
+    },
+    "PurpleFilter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "items": {
+          "$ref": "#/definitions/FieldClass"
+        }
+      },
+      "required": [
+        "items",
+        "type"
+      ],
+      "title": "PurpleFilter"
+    },
+    "Import": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "anyOf": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AlertTextArgs"
+          }
+        }
+      },
+      "required": [
+        "anyOf"
+      ],
+      "title": "Import"
+    },
+    "AlertTextArgs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "items": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "AlertTextArgs"
+    },
+    "IncludeFields": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "item": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        }
+      },
+      "required": [
+        "item",
+        "type"
+      ],
+      "title": "IncludeFields"
+    },
+    "IndexerAlertConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "minProperties": {
+          "type": "integer"
+        },
+        "patternProperties": {
+          "$ref": "#/definitions/IndexerAlertConfigPatternProperties"
+        }
+      },
+      "required": [
+        "minProperties",
+        "patternProperties",
+        "type"
+      ],
+      "title": "IndexerAlertConfig"
+    },
+    "IndexerAlertConfigPatternProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "^.+$": {
+          "$ref": "#/definitions/Fluffy"
+        }
+      },
+      "required": [
+        "^.+$"
+      ],
+      "title": "IndexerAlertConfigPatternProperties"
+    },
+    "Fluffy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "oneOf": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FluffyOneOf"
+          }
+        }
+      },
+      "required": [
+        "oneOf"
+      ],
+      "title": "Fluffy"
+    },
+    "FluffyOneOf": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeUnion"
+        },
+        "items": {
+          "$ref": "#/definitions/Items"
+        },
+        "properties": {
+          "$ref": "#/definitions/StickyProperties"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "FluffyOneOf"
+    },
+    "Items": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "properties": {
+          "$ref": "#/definitions/TentacledProperties"
+        }
+      },
+      "required": [
+        "properties",
+        "type"
+      ],
+      "title": "Items"
+    },
+    "TentacledProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/KibanaDiscoverIndexPatternID"
+        },
+        "value": {
+          "$ref": "#/definitions/Empty"
+        },
+        "^.+$": {
+          "$ref": "#/definitions/Empty"
+        }
+      },
+      "required": [
+        "^.+$",
+        "name",
+        "value"
+      ],
+      "title": "TentacledProperties"
+    },
+    "Empty": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TypeElement"
+          }
+        },
+        "minLength": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "minLength",
+        "type"
+      ],
+      "title": "Empty"
+    },
+    "StickyProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "^.+$": {
+          "$ref": "#/definitions/Empty"
+        }
+      },
+      "required": [
+        "^.+$"
+      ],
+      "title": "StickyProperties"
+    },
+    "IndexerConnection": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "properties": {
+          "$ref": "#/definitions/IndexerConnectionProperties"
+        }
+      },
+      "required": [
+        "properties",
+        "type"
+      ],
+      "title": "IndexerConnection"
+    },
+    "IndexerConnectionProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "es_host": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "es_hosts": {
+          "$ref": "#/definitions/AlertTextArgs"
+        },
+        "es_port": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ssl_show_warn": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "use_ssl": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "verify_certs": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "ca_cert": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "es_username": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "es_password": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        },
+        "index_alerts_name": {
+          "$ref": "#/definitions/AggregationAlertTimeComparedWithTimestampField"
+        }
+      },
+      "required": [
+        "ca_cert",
+        "es_host",
+        "es_hosts",
+        "es_password",
+        "es_port",
+        "es_username",
+        "index_alerts_name",
+        "ssl_show_warn",
+        "use_ssl",
+        "verify_certs"
+      ],
+      "title": "IndexerConnectionProperties"
+    },
+    "DiscoverColumns": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "items": {
+          "$ref": "#/definitions/KibanaDiscoverIndexPatternID"
+        },
+        "minItems": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "items",
+        "minItems",
+        "type"
+      ],
+      "title": "DiscoverColumns"
+    },
+    "KibanaDiscoverSecurityTenant": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type:string": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "type:string"
+      ],
+      "title": "KibanaDiscoverSecurityTenant"
+    },
+    "URL": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "format": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "format",
+        "type"
+      ],
+      "title": "URL"
+    },
+    "Servicenow": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "minimum": {
+          "type": "integer"
+        },
+        "maximum": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "maximum",
+        "minimum",
+        "type"
+      ],
+      "title": "Servicenow"
+    },
+    "SummaryTableMaxRows": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeElement"
+        },
+        "minimum": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "minimum",
+        "type"
+      ],
+      "title": "SummaryTableMaxRows"
+    },
+    "TypeUnion": {
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TypeElement"
+          }
+        },
+        {
+          "$ref": "#/definitions/TypeElement"
+        }
+      ],
+      "title": "TypeUnion"
+    },
+    "TypeElement": {
+      "type": "string",
+      "enum": [
+        "string",
+        "integer",
+        "boolean",
+        "number",
+        "object",
+        "array"
+      ],
+      "title": "TypeElement"
+    }
+  }
+}
