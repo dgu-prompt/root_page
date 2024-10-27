@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { Container, Stack } from "@chakra-ui/react";
 import { Heading } from "@chakra-ui/react";
-import { Input } from "@chakra-ui/react"
+import { Input } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
-
 
 function AlertContent() {
   const [isSlackEnabled, setIsSlackEnabled] = useState(false);

@@ -1,9 +1,9 @@
 function AccountSettings() {
-    return (
-      <>
-        <div>AccountSettings</div>
-      </>
-    );
-  }
-  
-  export default AccountSettings
+  return (
+    <>
+      <div>AccountSettings</div>
+    </>
+  );
+}
+
+export default AccountSettings;

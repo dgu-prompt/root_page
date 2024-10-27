@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
-import { Link as RouterLink } from 'react-router-dom';
-import { Container, Text, Link, Flex, Stack, List, Box } from "@chakra-ui/react"
-import { Button } from "@/components/ui/button"
+import { Link as RouterLink } from "react-router-dom";
+import {
+  Container,
+  Text,
+  Link,
+  Flex,
+  Stack,
+  List,
+  Box,
+} from "@chakra-ui/react";
+import { Button } from "@/components/ui/button";
 
 function RuleManagement() {
   // 상태로 rule 데이터를 관리합니다.
@@ -23,7 +31,11 @@ function RuleManagement() {
 
   // 새 규칙 추가 함수 (예시)
   const addNewRule = () => {
-    const newRule = { id: rules.length + 1, name: `Rule ${rules.length + 1}`, description: "Newly added rule." };
+    const newRule = {
+      id: rules.length + 1,
+      name: `Rule ${rules.length + 1}`,
+      description: "Newly added rule.",
+    };
     setRules([...rules, newRule]);
   };
 
@@ -41,28 +53,41 @@ function RuleManagement() {
     <>
       <Container mt={4}>
         <Flex justify="space-between" mb={4}>
-          <Text fontSize="2xl" fontWeight="bold">Rule Management</Text>
-          <Button colorPalette="teal" onClick={addNewRule}>새 규칙 추가</Button>
+          <Text fontSize="2xl" fontWeight="bold">
+            Rule Management
+          </Text>
+          <Button colorPalette="teal" onClick={addNewRule}>
+            새 규칙 추가
+          </Button>
           <Link as={RouterLink} to={`new`}>
-            <Text fontSize="lg" fontWeight="bold">새규칙페이지</Text>
+            <Text fontSize="lg" fontWeight="bold">
+              새규칙페이지
+            </Text>
           </Link>
         </Flex>
         <List.Root spacing={3}>
           {rules.map((rule) => (
-            <List.Item
-              key={rule.id}
-              p={4}
-              borderBottomWidth="1px"
-            >
+            <List.Item key={rule.id} p={4} borderBottomWidth="1px">
               <Flex align="center" justify="space-between">
                 <Box>
                   <Link as={RouterLink} to={`${rule.id}`}>
-                    <Text fontSize="lg" fontWeight="bold">{rule.name}</Text>
+                    <Text fontSize="lg" fontWeight="bold">
+                      {rule.name}
+                    </Text>
                   </Link>
-                  <Text fontSize="sm" color="gray.500">{rule.description}</Text>
+                  <Text fontSize="sm" color="gray.500">
+                    {rule.description}
+                  </Text>
                 </Box>
                 <Stack direction="row" spacing={2}>
-                  <Button size="sm" colorPalette="red" as={RouterLink} to={`${rule.id}/delete`}>삭제</Button>
+                  <Button
+                    size="sm"
+                    colorPalette="red"
+                    as={RouterLink}
+                    to={`${rule.id}/delete`}
+                  >
+                    삭제
+                  </Button>
                 </Stack>
               </Flex>
             </List.Item>
@@ -73,4 +98,4 @@ function RuleManagement() {
   );
 }
 
-export default RuleManagement
+export default RuleManagement;

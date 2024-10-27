@@ -181,4 +181,4 @@ if __name__ == '__main__':
             insert_securityhub_findings_data()
 
     print("Starting Flask server...")
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5001)

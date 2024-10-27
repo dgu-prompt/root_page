@@ -1,25 +1,23 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { Provider } from "@/components/ui/provider"
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { Provider } from "@/components/ui/provider";
+
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 // import './index.css'
-import Navbar from './components/Navbar.jsx'
-import ErrorPage from './components/ErrorPage.jsx'
+import Navbar from "./components/Navbar.jsx";
+import ErrorPage from "./components/ErrorPage.jsx";
 
-import App from './App.jsx'
-import Dashboard from './pages/Dashboard.jsx';
-import ControlManagement from './pages/ControlManagement.jsx';
-import RuleManagement from './pages/RuleManagement.jsx';
-import AccountSettings from './pages/AccountSettings.jsx';
-import Login from './pages/Login.jsx';
-import NewRule from './pages/NewRule.jsx';
-import EditRule from './pages/EditRule.jsx';
-import DeleteRuleConfirm from './pages/DeleteRuleConfirm.jsx';
-import BackendCommunicationTest from './pages/BackendCommunicationTest.jsx';
-
+import App from "./App.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
+import ControlManagement from "./pages/ControlManagement.jsx";
+import RuleManagement from "./pages/RuleManagement.jsx";
+import AccountSettings from "./pages/AccountSettings.jsx";
+import Login from "./pages/Login.jsx";
+import NewRule from "./pages/NewRule.jsx";
+import EditRule from "./pages/EditRule.jsx";
+import DeleteRuleConfirm from "./pages/DeleteRuleConfirm.jsx";
+import BackendCommunicationTest from "./pages/BackendCommunicationTest.jsx";
+import { AuthProvider } from "./components/AuthContext.jsx";
 
 const router = createBrowserRouter([
   {
@@ -53,7 +51,7 @@ const router = createBrowserRouter([
       },
       {
         path: "rule-management/new",
-        element: <NewRule />
+        element: <NewRule />,
       },
       {
         path: "rule-management/:ruleId",
@@ -67,14 +65,16 @@ const router = createBrowserRouter([
         path: "account-settings",
         element: <AccountSettings />,
       },
-    ]
+    ],
   },
 ]);
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <Provider>
-      <RouterProvider router={router} />
-    </Provider>
-  </StrictMode>,
-)
+    <AuthProvider>
+      <Provider>
+        <RouterProvider router={router} />
+      </Provider>
+    </AuthProvider>
+  </StrictMode>
+);

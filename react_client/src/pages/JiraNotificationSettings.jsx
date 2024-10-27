@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { Container, Stack } from "@chakra-ui/react";
-import { Input } from "@chakra-ui/react"
+import { Input } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
 import { Switch } from "@/components/ui/switch";
 
@@ -19,7 +19,9 @@ function JiraNotificationSettings() {
   return (
     <>
       <Container>
-        <Switch checked={isSlackEnabled} onCheckedChange={handleSlackToggle}>Jira 알림 활성화</Switch>
+        <Switch checked={isSlackEnabled} onCheckedChange={handleSlackToggle}>
+          Jira 알림 활성화
+        </Switch>
 
         {isSlackEnabled && (
           <Stack spacing={4} mt={4}>

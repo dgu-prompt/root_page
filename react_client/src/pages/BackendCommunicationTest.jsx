@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Container, Input, Button, Box, Text, Textarea } from "@chakra-ui/react";
+import { Container, Textarea, Button, Box, Text } from "@chakra-ui/react";
 import axios from "axios";
 
 function BackendCommunicationTest() {
@@ -11,7 +11,9 @@ function BackendCommunicationTest() {
   const sendRequest = async () => {
     try {
       // Flask 백엔드로 POST 요청
-      await axios.post("http://localhost:5000/test", { input_value: inputValue });
+      await axios.post("http://localhost:5001/test", {
+        input_value: inputValue,
+      });
       setStatusMessage("요청을 보냈습니다.");
     } catch (error) {
       setStatusMessage("요청에 실패했습니다.");

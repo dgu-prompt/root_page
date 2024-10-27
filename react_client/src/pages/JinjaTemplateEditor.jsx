@@ -1,13 +1,7 @@
 import { useState } from "react";
-import {
-  Container,
-  Textarea,
-  Stack,
-  Box,
-  Text,
-} from "@chakra-ui/react";
-import { Button } from "@/components/ui/button"
-import { Field } from "@/components/ui/field"
+import { Container, Textarea, Stack, Box, Text } from "@chakra-ui/react";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
 
 // 미리 정의된 필드 리스트
 const predefinedFields = [
@@ -80,7 +74,13 @@ function JinjaTemplateEditor() {
         <Text fontSize="md" fontWeight="bold" mb={2}>
           미리보기
         </Text>
-        <Box border="1px solid" borderColor="gray.300" p={4} borderRadius="md" bg="gray.50">
+        <Box
+          border="1px solid"
+          borderColor="gray.300"
+          p={4}
+          borderRadius="md"
+          bg="gray.50"
+        >
           {generatePreview()
             .split("\n")
             .map((line, index) => (
@@ -88,10 +88,6 @@ function JinjaTemplateEditor() {
             ))}
         </Box>
       </Box>
-
-      <Button colorScheme="teal" mt={4} onClick={() => alert("템플릿이 저장되었습니다.")}>
-        템플릿 저장
-      </Button>
     </Container>
   );
 }
