@@ -3,6 +3,10 @@ import yaml
 from collections import OrderedDict
 from flask_cors import CORS
 from flask import redirect, Flask, send_from_directory, request, jsonify
+from aws_service import set_securityhub_control_activation, get_nist_controls_list
+from dotenv import load_dotenv
+
+load_dotenv()  # .env 파일에서 환경 변수 로드
 
 app = Flask(__name__, static_folder='../react_client')
 CORS(app)
@@ -62,6 +66,25 @@ def save_yaml():
     print("YAML file moved to:", target_path)
     # 저장 완료 후 메인 페이지로 리디렉션
     return redirect('/')
+
+
+# NIST 보안 표준 개별 제어 항목 상태 설정하기
+@app.route('/control/<control_id>', methods=['POST'])
+def set_control_item(control_id):
+    data = request.json
+    standards_arn = data.get('standards_arn')  # 보안 표준 ARN
+    status = data.get('status')  # 'ENABLED' 또는 'DISABLED'
+
+    response = set_securityhub_control_activation(standards_arn, control_id, status)
+    return jsonify(response)
+
+
+# NIST 보안 표준 리스트 가져오기
+@app.route('/control', methods=['GET'])
+def get_control_item_list():
+    controls = get_nist_controls_list()
+    return jsonify(controls)
+
 
 if __name__ == '__main__':
     # 정적 폴더가 없을 시 생성
