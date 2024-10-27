@@ -3,6 +3,8 @@ import yaml
 from collections import OrderedDict
 from flask_cors import CORS
 from flask import redirect, Flask, send_from_directory, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 from aws_service import set_securityhub_control_activation, get_nist_controls_list
 from dotenv import load_dotenv
 
@@ -15,6 +17,30 @@ CORS(app)
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static')
 target_dir = os.path.join(os.path.dirname(__file__), 'static_yaml')
 
+# MySQL 연결 설정
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:12345678@mysqldb.clkffsdcmvga.ap-northeast-2.rds.amazonaws.com:3306/mysqldb'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# 데이터베이스 초기화
+db = SQLAlchemy(app)
+
+# User 모델 정의
+class User(db.Model):
+    __tablename__ = 'user'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.String(50), nullable=False, unique=True)
+    password = db.Column(db.String(100), nullable=False)
+
+    def __repr__(self):
+        return f'<User {self.user_id}>'
+    
+# SecurityHubFinding 모델 정의
+class SecurityHubFinding(db.Model):
+    __tablename__ = 'securityhub_findings'
+    findings_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    findings_name = db.Column(db.String(100), nullable=False)
+    option = db.Column(db.String(50), nullable=True)
+
 # 정적 폴더 초기화 함수
 def clear_static_folder():
     print("Clearing static folder...")
@@ -24,10 +50,12 @@ def clear_static_folder():
             os.remove(file_path)
     print("Static folder cleared.")
 
+
 @app.route('/')
 def serve_react():
     print("Serving React index.html")
     return send_from_directory('../react_client', 'index.html')
+
 
 @app.route('/test', methods=['POST'])
 def save_yaml():
@@ -68,6 +96,52 @@ def save_yaml():
     return redirect('/')
 
 
+@app.route('/db_test')
+def db_test():
+    try:
+        # 텍스트로 SQL 구문을 명시적으로 선언
+        db.session.execute(text("SELECT 1"))
+        return "MySQL Database Connected Successfully!"
+    except Exception as e:
+        return f"Error connecting to MySQL Database: {e}"
+    
+# SecurityHubFinding 테이블에 초기 데이터 삽입
+def insert_securityhub_findings_data():
+    findings_data = [
+        {"findings_name": "aws.securityhub_findings.aws_account_id", "option": None},
+        {"findings_name": "aws.securityhub_findings.workflow.state", "option": "NEW"},
+        {"findings_name": "aws.securityhub_findings.workflow.state", "option": "ASSIGNED"},
+        {"findings_name": "aws.securityhub_findings.workflow.state", "option": "IN_PROGRESS"},
+        {"findings_name": "aws.securityhub_findings.workflow.state", "option": "DEFERRED"},
+        {"findings_name": "aws.securityhub_findings.workflow.state", "option": "RESOLVED"},
+        {"findings_name": "aws.securityhub_findings.resources.Type", "option": None},
+        {"findings_name": "aws.securityhub_findings.region", "option": "ap-northeast-1"},
+        {"findings_name": "aws.securityhub_findings.region", "option": "ap-northeast-2"},
+        {"findings_name": "aws.securityhub_findings.region", "option": "us-east-1"},
+        {"findings_name": "aws.securityhub_findings.region", "option": "us-west-2"},
+        {"findings_name": "aws.securityhub_findings.description", "option": None},
+        {"findings_name": "aws.securityhub_findings.severity.label", "option": "INFORMATIONAL"},
+        {"findings_name": "aws.securityhub_findings.severity.label", "option": "LOW"},
+        {"findings_name": "aws.securityhub_findings.severity.label", "option": "MEDIUM"},
+        {"findings_name": "aws.securityhub_findings.severity.label", "option": "HIGH"},
+        {"findings_name": "aws.securityhub_findings.severity.label", "option": "CRITICAL"},
+        {"findings_name": "aws.securityhub_findings.workflow.status", "option": "NEW"},
+        {"findings_name": "aws.securityhub_findings.workflow.status", "option": "NOTIFIED"},
+        {"findings_name": "aws.securityhub_findings.workflow.status", "option": "RESOLVED"},
+        {"findings_name": "aws.securityhub_findings.workflow.status", "option": "SUPPRESSED"},
+        {"findings_name": "aws.securityhub_findings.title", "option": None},
+    ]
+    
+    for data in findings_data:
+        finding = SecurityHubFinding(findings_name=data["findings_name"], option=data["option"])
+        db.session.add(finding)
+    
+    db.session.commit()
+    print("SecurityHub findings data inserted successfully!")
+
+
+
+
 # NIST 보안 표준 개별 제어 항목 상태 설정하기
 @app.route('/control/<control_id>', methods=['POST'])
 def set_control_item(control_id):
@@ -89,5 +163,22 @@ def get_control_item_list():
 if __name__ == '__main__':
     # 정적 폴더가 없을 시 생성
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    
+    # 데이터베이스 및 테이블 생성
+    with app.app_context():
+        db.create_all()  # User 및 SecurityHubFinding 테이블을 생성합니다.
+        print("User and SecurityHubFinding tables created.")
+
+        # User 테이블에 더미 데이터 삽입
+        if not User.query.filter_by(user_id='testuser').first():
+            dummy_user = User(user_id='testuser', password='password123')
+            db.session.add(dummy_user)
+            db.session.commit()
+            print("Dummy user added to the database.")
+        
+        # SecurityHubFinding 테이블에 초기 데이터 삽입
+        if not SecurityHubFinding.query.first():
+            insert_securityhub_findings_data()
+
     print("Starting Flask server...")
     app.run(debug=True, port=5000)
