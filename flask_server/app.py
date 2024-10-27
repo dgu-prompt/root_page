@@ -3,7 +3,7 @@ import yaml
 from flask import Flask, send_from_directory
 from flask import Flask, request, jsonify
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../react_client')
 app.config['UPLOAD_F OLDER'] = os.path.join(os.path.dirname(__file__), 'static')
 
 
@@ -13,11 +13,11 @@ def clear_static_folder():
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         if os.path.isfile(file_path):
             os.remove(file_path)
-            
+
 
 @app.route('/')
 def serve_react():
-    return send_from_directory(app.static_folder, 'index.html')
+    return send_from_directory('../react_client', 'index.html')
 
 
 @app.route('/api/yaml', methods=['POST'])
