@@ -1,0 +1,14 @@
+rules_folder: /etc/elastalert/rules_jira
+run_every:
+  minutes: 1
+buffer_time:
+  hours: 24
+es_host: 127.0.0.1
+es_port: 9200
+writeback_index: elastalert_status
+alert_time_limit:
+  days: 2
+use_ssl: true
+ca_certs: /etc/elastalert/http_ca.crt
+es_username: elastic
+es_password: PLFY70YFqKBcjMigzTny

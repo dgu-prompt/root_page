@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Container, Input, Button, Box, Text } from "@chakra-ui/react";
+import { Container, Input, Button, Box, Text, Textarea } from "@chakra-ui/react";
 import axios from "axios";
 
 function BackendCommunicationTest() {
@@ -26,7 +26,7 @@ function BackendCommunicationTest() {
       </Text>
 
       <Box display="flex" alignItems="center">
-        <Input
+        <Textarea
           placeholder="값을 입력하세요"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
