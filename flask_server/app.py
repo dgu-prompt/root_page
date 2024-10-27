@@ -1,10 +1,12 @@
 import os
 import yaml
+from flask import redirect
 from flask import Flask, send_from_directory
 from flask import Flask, request, jsonify
 
 app = Flask(__name__, static_folder='../react_client')
 app.config['UPLOAD_F OLDER'] = os.path.join(os.path.dirname(__file__), 'static')
+
 
 
 # 정적 폴더 초기화 함수
@@ -43,7 +45,8 @@ def save_yaml():
     target_path = '/static_yaml/config.yaml'
     os.replace(temp_yaml_path, target_path)
 
-    return jsonify({"message": "YAML file saved successfully", "path": target_path}), 200
+    # 저장 완료 후 메인 페이지로 리디렉션
+    return redirect('/')
 
 
 if __name__ == '__main__':
