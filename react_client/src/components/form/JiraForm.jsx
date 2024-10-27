@@ -1,4 +1,3 @@
-import React from "react";
 import { Input, Stack, Box, Text } from "@chakra-ui/react";
 
 function JiraForm({ jiraData, setJiraData }) {

@@ -2,14 +2,10 @@ import { useState } from "react";
 import axios from "axios";
 
 import { Container, Text, Button, VStack, Box } from "@chakra-ui/react";
-import SlackNotificationSettings from "./SlackNotificationSettings";
-import JiraNotificationSettings from "./JiraNotificationSettings";
-import AlertContent from "./AlertContent";
-import JinjaTemplateEditor from "./JinjaTemplateEditor";
-import RuleForm from "../components/RuleForm";
-import AlertForm from "../components/AlertForm";
-import JiraForm from "../components/JiraForm";
-import SlackForm from "../components/SlackForm";
+import RuleForm from "../components/form/RuleForm";
+import AlertForm from "../components/form/AlertForm";
+import JiraForm from "../components/form/JiraForm";
+import SlackForm from "../components/form/SlackForm";
 
 function NewRule() {
   const [ruleData, setRuleData] = useState({
@@ -52,11 +48,6 @@ function NewRule() {
       <Button colorPalette="teal" onClick={handleSave} mt={4}>
         설정 저장
       </Button>
-
-      <SlackNotificationSettings />
-      <JiraNotificationSettings />
-      <AlertContent />
-      <JinjaTemplateEditor />
     </Container>
   );
 }

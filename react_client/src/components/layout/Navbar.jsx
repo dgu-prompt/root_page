@@ -1,6 +1,6 @@
 import { Outlet, Link as RouterLink } from "react-router-dom";
 import { Box, Flex, Link, HStack } from "@chakra-ui/react";
-import { useAuth } from "./AuthContext"; // useAuth 훅을 사용
+import { useAuth } from "@/contexts/AuthContext"; // useAuth 훅을 사용
 
 function Navbar() {
   const { isAuthenticated, logout } = useAuth();

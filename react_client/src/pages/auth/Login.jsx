@@ -1,15 +1,8 @@
-import {
-  Box,
-  Center,
-  Stack,
-  Heading,
-  Input,
-  Text
-} from "@chakra-ui/react";
+import { Box, Center, Stack, Heading, Input, Text } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/components/AuthContext"; // useAuth 훅을 가져옵니다
+import { useAuth } from "@/contexts/AuthContext"; // useAuth 훅을 가져옵니다
 import { useState } from "react";
 
 function Login() {
