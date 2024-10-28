@@ -1,6 +1,6 @@
-import { NavLink, useResolvedPath } from "react-router-dom";
+import { Link, NavLink, useResolvedPath } from "react-router-dom";
 import { Box, Container, Tabs, Text } from "@chakra-ui/react";
-import { useAuth } from "@/contexts/AuthContext"; // useAuth 훅을 사용
+import { useAuth } from "@/pages/auth/authContext";
 
 function NavItem({ children, to }) {
   return (
@@ -9,14 +9,13 @@ function NavItem({ children, to }) {
     </Tabs.Trigger>
   );
 }
+function Logout() {
+  const { logout } = useAuth();
 
-function Login() {
-  const { isAuthenticated, logout } = useAuth();
-  if (isAuthenticated) return <NavItem to="/login">Login</NavItem>;
   return (
-    <NavItem to="/logout" onClick={logout}>
-      Logout
-    </NavItem>
+    <Tabs.Trigger asChild>
+      <Link onClick={() => logout()}>Logout</Link>
+    </Tabs.Trigger>
   );
 }
 
@@ -40,9 +39,8 @@ function Navbar() {
             <NavItem to="/controls">Controls</NavItem>
             <NavItem to="/settings">Settings</NavItem>
             <NavItem to="/backend-test">Backend Test</NavItem>
-            <Login />
+            <Logout />
           </Tabs.List>
-          <Tabs.Content />
         </Tabs.Root>
       </Container>
     </Box>
