@@ -1,51 +1,57 @@
-import { Outlet, Link as RouterLink } from "react-router-dom";
-import { Box, Flex, Link, HStack } from "@chakra-ui/react";
+import { NavLink, useResolvedPath } from "react-router-dom";
+import { Box, Container, Tabs, Text } from "@chakra-ui/react";
 import { useAuth } from "@/contexts/AuthContext"; // useAuth 훅을 사용
 
-function Navbar() {
-  const { isAuthenticated, logout } = useAuth();
-
+function NavItem({ children, to }) {
   return (
-    <>
-      <Box bg="teal.500" px={4} py={2} color="white">
-        <Flex h={16} alignItems="center" justifyContent="space-between">
-          <Box fontSize="lg" fontWeight="bold">
-            dgu-prompt-rulemanager
-          </Box>
-          <HStack>
-            <Link as={RouterLink} to="/communication-test">
-              통신 테스트
-            </Link>
-            <Link as={RouterLink} to="/">
-              홈
-            </Link>
-            <Link as={RouterLink} to="/dashboard">
-              대시보드
-            </Link>
-            <Link as={RouterLink} to="/control-management">
-              제어 항목 관리
-            </Link>
-            <Link as={RouterLink} to="/rule-management">
-              알림 규칙 관리
-            </Link>
-            <Link as={RouterLink} to="/account-settings">
-              계정 연결 설정
-            </Link>
-            {isAuthenticated ? (
-              <Link as={RouterLink} to="/" onClick={logout}>
-                로그아웃
-              </Link>
-            ) : (
-              <Link as={RouterLink} to="/login">
-                로그인
-              </Link>
-            )}
-          </HStack>
-        </Flex>
-      </Box>
-      <Outlet />
-    </>
+    <Tabs.Trigger value={to} asChild>
+      <NavLink to={to}>{children}</NavLink>
+    </Tabs.Trigger>
   );
 }
+
+function Login() {
+  const { isAuthenticated, logout } = useAuth();
+  if (isAuthenticated) return <NavItem to="/login">Login</NavItem>;
+  return (
+    <NavItem to="/logout" onClick={logout}>
+      Logout
+    </NavItem>
+  );
+}
+
+function Navbar() {
+  const { pathname } = useResolvedPath();
+
+  return (
+    <Box w="full">
+      <Container alignContent="center" h="64px">
+        <Tabs.Root value={pathname} activationMode="manual" variant="subtle">
+          <Tabs.List>
+            <Tabs.Trigger asChild>
+              <NavLink to="/">
+                <Text color="fg" fontWeight="semibold" textStyle="sm">
+                  SecurityCircle
+                </Text>
+              </NavLink>
+            </Tabs.Trigger>
+            <NavItem to="/">Dashboard</NavItem>
+            <NavItem to="/rules">Rules</NavItem>
+            <NavItem to="/controls">Controls</NavItem>
+            <NavItem to="/settings">Settings</NavItem>
+            <NavItem to="/backend-test">Backend Test</NavItem>
+            <Login />
+          </Tabs.List>
+          <Tabs.Content />
+        </Tabs.Root>
+      </Container>
+    </Box>
+  );
+}
+
+NavItem.propTypes = {
+  children: PropTypes.node.isRequired, // children은 필수 요소
+  to: PropTypes.string.isRequired, // to는 문자열이며 필수
+};
 
 export default Navbar;
