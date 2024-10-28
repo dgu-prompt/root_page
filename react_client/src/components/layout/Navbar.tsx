@@ -24,7 +24,7 @@ function Navbar() {
 
   return (
     <Box w="full">
-      <Container alignContent="center" h="64px">
+      <Container alignContent="center" py="3">
         <Tabs.Root value={pathname} activationMode="manual" variant="subtle">
           <Tabs.List>
             <Tabs.Trigger asChild>
