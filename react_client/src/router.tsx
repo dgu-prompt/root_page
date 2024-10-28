@@ -6,12 +6,12 @@ import {
 import App from "./App";
 import RootLayout from "./components/layout/RootLayout";
 import AuthLayout from "./components/layout/AuthLayout";
-import Dashboard from "./pages/Dashboard";
-import Rules from "./pages/RuleManagement";
-import Controls from "./pages/ControlManagement";
-import Settings from "./pages/AccountSettings";
-import BackendCommunicationTest from "./pages/BackendCommunicationTest";
-import Login from "./pages/auth/Login";
+import Dashboard from "./features/dashboard/Dashboard";
+import Rules from "./features/rules/RuleManagement";
+import Controls from "./features/controls/ControlManagement";
+import Settings from "./features/settings/AccountSettings";
+import BackendCommunicationTest from "./features/settings/BackendCommunicationTest";
+import Login from "./features/auth/Login";
 import ErrorPage from "./components/layout/Error";
 
 const router = createBrowserRouter(

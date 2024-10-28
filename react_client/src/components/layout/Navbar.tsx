@@ -1,6 +1,6 @@
 import { Link, NavLink, useResolvedPath } from "react-router-dom";
 import { Box, Container, Tabs, Text } from "@chakra-ui/react";
-import { useAuth } from "@/pages/auth/authContext";
+import { useAuth } from "@/hooks/useAuth";
 
 function NavItem({ children, to }) {
   return (

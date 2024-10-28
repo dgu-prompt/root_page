@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, Center, Input, Stack, Text } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
-import { useAuth } from "./authContext";
+import { useAuth } from "@/hooks/useAuth";
 
 function Login() {
   const [username, setUsername] = useState("");

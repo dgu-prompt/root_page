@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "@/pages/auth/authContext";
+import { useAuth } from "@/hooks/useAuth";
 import Navbar from "./Navbar";
 
 function Root() {
