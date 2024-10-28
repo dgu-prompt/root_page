@@ -1,36 +1,79 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Provider as ChakraProvider } from "@/components/ui/provider";
 import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0);
+import Navbar from "./components/layout/Navbar.jsx";
+import ErrorPage from "./components/layout/ErrorPage.jsx";
 
+import Dashboard from "./pages/Dashboard.jsx";
+import ControlManagement from "./pages/ControlManagement.jsx";
+import RuleManagement from "./pages/RuleManagement.jsx";
+import AccountSettings from "./pages/AccountSettings.jsx";
+import Login from "./pages/auth/Login.jsx";
+import NewRule from "./pages/NewRule.jsx";
+import EditRule from "./pages/EditRule.jsx";
+import DeleteRuleConfirm from "./pages/DeleteRuleConfirm.jsx";
+import BackendCommunicationTest from "./pages/BackendCommunicationTest.jsx";
+
+import { AuthProvider } from "./contexts/AuthContext.jsx";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Navbar />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "/",
+        element: <div>App</div>,
+      },
+      {
+        path: "/communication-test",
+        element: <BackendCommunicationTest />,
+      },
+      {
+        path: "login",
+        element: <Login />,
+      },
+      {
+        path: "dashboard",
+        element: <Dashboard />,
+      },
+      {
+        path: "control-management",
+        element: <ControlManagement />,
+      },
+      {
+        path: "rule-management",
+        element: <RuleManagement />,
+      },
+      {
+        path: "rule-management/new",
+        element: <NewRule />,
+      },
+      {
+        path: "rule-management/:ruleId",
+        element: <EditRule />,
+      },
+      {
+        path: "rule-management/:ruleId/delete",
+        element: <DeleteRuleConfirm />,
+      },
+      {
+        path: "account-settings",
+        element: <AccountSettings />,
+      },
+    ],
+  },
+]);
+
+function App() {
   return (
-    <>
-      <div id="app">
-        <div>
-          <a href="https://vite.dev" target="_blank">
-            <img src={viteLogo} className="logo" alt="Vite logo" />
-          </a>
-          <a href="https://react.dev" target="_blank">
-            <img src={reactLogo} className="logo react" alt="React logo" />
-          </a>
-        </div>
-        <h1>Vite + React</h1>
-        <div className="card">
-          <button onClick={() => setCount((count) => count + 1)}>
-            count is {count}
-          </button>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test HMR
-          </p>
-        </div>
-        <p className="read-the-docs">
-          Click on the Vite and React logos to learn more
-        </p>
-      </div>
-    </>
+    <AuthProvider>
+      <ChakraProvider>
+        <RouterProvider router={router} />
+      </ChakraProvider>
+    </AuthProvider>
   );
 }
 
