@@ -72,7 +72,7 @@ function BackendTest() {
 
           <Field
             label="요청 데이터"
-            helperText={!isError && responseMessage && "요청에 성공했습니다"}
+            helperText={!isError && responseMessage && "요청에 성공했습니다."}
             invalid={!!isError}
             errorText={responseMessage}
           >
