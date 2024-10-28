@@ -12,7 +12,7 @@ function Root() {
   return (
     <>
       <Navbar />
-      <Box as="main" flex="1" py="4">
+      <Box as="main" flex="1" pt="8" pb="16">
         <Outlet />
       </Box>
       <Footer />

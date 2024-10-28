@@ -8,9 +8,9 @@ import RootLayout from "./components/layout/RootLayout";
 import AuthLayout from "./components/layout/AuthLayout";
 import Dashboard from "./features/dashboard/Dashboard";
 import Rules from "./features/rules/RuleManagement";
-import Controls from "./features/controls/ControlManagement";
+import Controls from "./features/controls/pages/Controls";
 import Settings from "./features/settings/AccountSettings";
-import BackendCommunicationTest from "./features/settings/BackendCommunicationTest";
+import BackendTest from "./features/settings/BackendTest";
 import Login from "./features/auth/Login";
 import ErrorPage from "./components/layout/Error";
 
@@ -23,7 +23,7 @@ const router = createBrowserRouter(
         <Route path="rules" element={<Rules />} />
         <Route path="controls" element={<Controls />} />
         <Route path="settings" element={<Settings />} />
-        <Route path="backend-test" element={<BackendCommunicationTest />} />
+        <Route path="backend-test" element={<BackendTest />} />
       </Route>
 
       {/* 인증이 필요 없는 페이지 */}
