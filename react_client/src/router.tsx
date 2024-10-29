@@ -7,12 +7,13 @@ import App from "./App";
 import RootLayout from "./components/layout/RootLayout";
 import AuthLayout from "./components/layout/AuthLayout";
 import Dashboard from "./features/dashboard/Dashboard";
-import Rules from "./features/rules/RuleManagement";
+import Rules from "./features/rules/pages/Rules";
 import Controls from "./features/controls/pages/Controls";
 import Settings from "./features/settings/AccountSettings";
 import BackendTest from "./features/settings/BackendTest";
 import Login from "./features/auth/Login";
 import ErrorPage from "./components/layout/Error";
+import RuleEditPage from "./features/rules/pages/RuleEditPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -21,6 +22,7 @@ const router = createBrowserRouter(
       <Route element={<RootLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="rules" element={<Rules />} />
+        <Route path="rules/:ruleId" element={<RuleEditPage />} />
         <Route path="controls" element={<Controls />} />
         <Route path="settings" element={<Settings />} />
         <Route path="backend-test" element={<BackendTest />} />

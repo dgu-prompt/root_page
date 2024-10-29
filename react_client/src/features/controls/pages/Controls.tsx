@@ -10,6 +10,7 @@ import {
   Container,
 } from "@chakra-ui/react";
 import { Switch } from "@/components/ui/switch";
+import StandardsPage from "./Standards";
 
 // 샘플 데이터
 const sampleControls = [
@@ -31,7 +32,8 @@ const sampleControls = [
     enabled: false,
     status: "Failed",
     severity: "Critical",
-  },{
+  },
+  {
     id: "EC2.20",
     title:
       "Ensure IAM policies do not grant full access to sensitive resources",
@@ -40,7 +42,8 @@ const sampleControls = [
     enabled: false,
     status: "Failed",
     severity: "Critical",
-  },{
+  },
+  {
     id: "EC2.20",
     title:
       "Ensure IAM policies do not grant full access to sensitive resources",
@@ -49,7 +52,8 @@ const sampleControls = [
     enabled: false,
     status: "Failed",
     severity: "Critical",
-  },{
+  },
+  {
     id: "EC2.20",
     title:
       "Ensure IAM policies do not grant full access to sensitive resources",
@@ -58,7 +62,8 @@ const sampleControls = [
     enabled: false,
     status: "Failed",
     severity: "Critical",
-  },{
+  },
+  {
     id: "EC2.20",
     title:
       "Ensure IAM policies do not grant full access to sensitive resources",
@@ -67,7 +72,8 @@ const sampleControls = [
     enabled: false,
     status: "Failed",
     severity: "Critical",
-  },{
+  },
+  {
     id: "EC2.20",
     title:
       "Ensure IAM policies do not grant full access to sensitive resources",
@@ -76,7 +82,8 @@ const sampleControls = [
     enabled: false,
     status: "Failed",
     severity: "Critical",
-  },{
+  },
+  {
     id: "EC2.20",
     title:
       "Ensure IAM policies do not grant full access to sensitive resources",

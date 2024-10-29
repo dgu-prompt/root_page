@@ -15,9 +15,7 @@ function Footer() {
           direction={{ base: "column", lg: "row" }}
           justify="space-between"
         >
-          <Stack
-            direction={{ base: "column", md: "row" }}
-          >
+          <Stack direction={{ base: "column", md: "row" }}>
             <Flex align="center" px="4" py="3">
               <LuInfo size="18" style={{ marginRight: "4px" }} />
               <Text fontSize="sm">Version 0.1.0</Text>

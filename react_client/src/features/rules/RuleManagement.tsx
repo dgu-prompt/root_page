@@ -10,6 +10,7 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
+import AssigneeSelector from "./Assignee";
 
 function RuleManagement() {
   // 상태로 rule 데이터를 관리합니다.
@@ -52,6 +53,7 @@ function RuleManagement() {
   return (
     <>
       <Container mt={4}>
+        <AssigneeSelector />
         <Flex justify="space-between" mb={4}>
           <Text fontSize="2xl" fontWeight="bold">
             Rule Management
