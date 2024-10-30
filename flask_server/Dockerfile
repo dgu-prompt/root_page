@@ -1,5 +1,5 @@
-dockerfile
-코드 복사
+# dockerfile
+# 코드 복사
 # Python 베이스 이미지
 FROM python:3.8.3
 
