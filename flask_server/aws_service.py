@@ -26,7 +26,7 @@ def set_securityhub_control_activation(control_arn, status):
     response = client.batch_update_standards_control_associations(
         StandardsControlAssociationsUpdateRequest=[
             {
-                'StandardsArn': standards_arn,
+                'StandardsSubscriptionArn': standards_arn,
                 'SecurityControlId': control_arn,
                 'AssociationStatus': status  # 'ENABLED' 또는 'DISABLED'
             }
@@ -38,6 +38,6 @@ def set_securityhub_control_activation(control_arn, status):
 def get_nist_controls_list():
     client = get_securityhub_client()
     response = client.describe_standards_controls(
-        StandardsArn='arn:aws:securityhub:ap-northeast-2:060673280142:standards/NIST'  # NIST 표준의 ARN
+        StandardsSubscriptionArn='arn:aws:securityhub:ap-northeast-2:060673280142:standards/NIST'  # NIST 표준의 ARN
     )
     return response.get('Controls', [])
