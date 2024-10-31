@@ -226,15 +226,14 @@ def insert_securityhub_findings_data():
     db.session.commit()
     print("SecurityHub findings data inserted successfully!")
 
-# NIST 보안 표준 개별 제어 항목 상태 설정하기
+# NIST 보안 표준 개별 제어 항목 활성화 상태 설정하기
 @app.route('/control/<control_id>', methods=['POST'])
 def set_control_item(control_id):
     data = request.json
-    standards_arn = data.get('standards_arn')  # 보안 표준 ARN
     status = data.get('status')  # 'ENABLED' 또는 'DISABLED'
-    response = set_securityhub_control_activation(standards_arn, control_id, status)
+    response = set_securityhub_control_activation(control_id, status)
     return jsonify(response)
-
+        
 # NIST 보안 표준 리스트 가져오기
 @app.route('/control', methods=['GET'])
 def get_control_item_list():
@@ -243,6 +242,7 @@ def get_control_item_list():
         return jsonify(controls)
     except ValueError as e:
         return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
+
 
 if __name__ == '__main__':
     
