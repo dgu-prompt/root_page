@@ -19,9 +19,23 @@ def get_config_client():
     session = create_session()
     return session.client('config')
 
+# 활성화된 보안 표준 ARN을 동적으로 가져오는 함수
+def get_standards_subscription_arn(standards_name='nist-800-53'):
+    client = get_securityhub_client()
+    response = client.get_enabled_standards()
+    print("Enabled standards:", response.get('StandardsSubscriptions', []))  # ARN 목록 출력
+   
+    for standard in response.get('StandardsSubscriptions', []):
+        if standards_name in standard.get('StandardsArn', ''):
+            return standard.get('StandardsSubscriptionArn')
+    return None
+
 # 보안 표준 제어 항목 활성화 설정 함수
 def set_securityhub_control_activation(control_arn, status):
-    standards_arn = 'arn:aws:securityhub:ap-northeast-2:060673280142:standards/NIST'  # NIST 표준의 ARN
+    standards_arn = get_standards_subscription_arn()
+    if not standards_arn:
+        raise ValueError("NIST 표준이 활성화되어 있지 않거나 ARN을 찾을 수 없습니다.")
+    
     client = get_securityhub_client()
     response = client.batch_update_standards_control_associations(
         StandardsControlAssociationsUpdateRequest=[
@@ -36,8 +50,12 @@ def set_securityhub_control_activation(control_arn, status):
 
 # NIST 보안 표준 리스트 가져오는 함수
 def get_nist_controls_list():
+    standards_arn = get_standards_subscription_arn()
+    if not standards_arn:
+        raise ValueError("NIST 표준이 활성화되어 있지 않거나 ARN을 찾을 수 없습니다.")
+    
     client = get_securityhub_client()
     response = client.describe_standards_controls(
-        StandardsSubscriptionArn='arn:aws:securityhub:ap-northeast-2:060673280142:standards/NIST'  # NIST 표준의 ARN
+        StandardsSubscriptionArn=standards_arn
     )
     return response.get('Controls', [])
