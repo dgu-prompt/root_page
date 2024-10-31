@@ -13,7 +13,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 load_dotenv()  # .env 파일에서 환경 변수 로드
 
 app = Flask(__name__, static_folder='../react_client')
-app.secret_key = os.getenv("SECRET_KEY", "supersecretkey")  # 세션 관리를 위한 시크릿 키 설정
+app.secret_key = os.getenv("SECRET_KEY")  # .env 파일의 SECRET_KEY 값으로 시크릿 키 설정
 CORS(app)
 
 # flask-login 초기화
@@ -26,8 +26,15 @@ login_manager.login_view = 'login'
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static')
 target_dir = os.path.join(os.path.dirname(__file__), 'static_yaml')
 
-# MySQL 연결 설정 (새로운 엔드포인트 사용)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:vmfhavmxm@mysqldb2.clkffsdcmvga.ap-northeast-2.rds.amazonaws.com:3306/mysqldb2'
+
+# MySQL 연결 설정 (환경 변수를 사용하여 설정)
+db_user = os.getenv("DB_USERNAME")
+db_password = os.getenv("DB_PASSWORD")
+db_host = os.getenv("DB_HOST")
+db_port = os.getenv("DB_PORT")
+db_name = os.getenv("DB_NAME")
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # 데이터베이스 초기화
@@ -46,6 +53,15 @@ class User(UserMixin, db.Model):
     def get_id(self):
         return str(self.id)
 
+    # # 비밀번호 해싱을 통한 설정
+    # def set_password(self, password):
+    #     self.password = generate_password_hash(password)
+
+    # # 비밀번호 확인 메서드 추가
+    # def check_password(self, password):
+    #     return check_password_hash(self.password, password)
+
+
 # flask-login 사용자 로드 함수
 @login_manager.user_loader
 def load_user(user_id):
@@ -60,7 +76,7 @@ def login():
 
     user_id = json_data['user_id']
     password = json_data['password']
-
+    
     # 사용자 확인
     user = User.query.filter_by(user_id=user_id, password=password).first()
     if user:
@@ -68,6 +84,14 @@ def login():
         return jsonify({"message": "Login successful!"}), 200
     else:
         return jsonify({"error": "Invalid credentials"}), 401
+
+    # # 사용자 확인 - seceretkey 사용
+    # user = User.query.filter_by(user_id=user_id).first()
+    # if user and user.check_password(password):  # 해싱된 비밀번호 비교
+    #     login_user(user)  # flask-login을 사용하여 로그인
+    #     return jsonify({"message": "Login successful!"}), 200
+    # else:
+    #     return jsonify({"error": "Invalid credentials"}), 401
 
 # 로그아웃 엔드포인트
 @app.route('/logout', methods=['POST'])
@@ -250,11 +274,15 @@ if __name__ == '__main__':
         db.create_all()
         print("User and SecurityHubFinding tables created.")
         
-        if not User.query.filter_by(user_id='testuser').first():
-            dummy_user = User(user_id='testuser', password='1234')  # 해싱 없이 저장
+        # Dummy user 생성 시 비밀번호 해싱
+        if not User.query.filter_by(user_id='testuser6').first():
+            
+            dummy_user = User(user_id='testuser6', password='1234')  # 해싱 없이 저장
+            # dummy_user = User(user_id='testuser5')
+            # dummy_user.set_password('1234')  # 해싱된 비밀번호 저장
             db.session.add(dummy_user)
             db.session.commit()
-            print("Dummy user 'testuser' with plain password '1234' added to the database.")
+            print("Dummy user 'testuser6' with hashed password added to the database.")
 
         if not SecurityHubFinding.query.first():
             insert_securityhub_findings_data()
