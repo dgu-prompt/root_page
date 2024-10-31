@@ -105,23 +105,31 @@ def serve_react():
 
 @app.route('/test', methods=['POST'])
 def save_yaml():
-     # static 폴더가 없으면 생성
+    # static 폴더가 없으면 생성
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     
     # 요청이 들어올 때마다 static 폴더를 초기화
     clear_static_folder()
-    
+
+    # 파일명을 문자열로 받아옴
+    file_name = request.form.get('file_name')
+    # 파일명에 '.yaml' 확장자 추가
+    file_name += '.yaml'
+    if not file_name:
+        return jsonify({"error": "Missing 'file_name' in request"}), 400
+
     # JSON 데이터에서 'input_value' 추출 및 파싱
     json_data = request.get_json()
     if not json_data or 'input_value' not in json_data:
-        return jsonify({"error": "Missing 'input_value' in request"}), 400
+        return jsonify({"error": "Missing 'input_value' in JSON data"}), 400
 
     yaml_text = json_data['input_value']
+    print(f"Received file name: {file_name}")
     print("Received raw YAML text:", yaml_text)
 
-    # YAML 텍스트를 Python 객체로 파싱 (순서 유지) 
+    # YAML 텍스트를 Python 객체로 파싱 (순서 유지)
     try:
-        yaml_data = yaml.load(yaml_text, Loader=yaml.FullLoader) # FullLoader로 로드
+        yaml_data = yaml.load(yaml_text, Loader=yaml.FullLoader)  # FullLoader로 로드
         print("Parsed YAML data with preserved order:", yaml_data)
     except yaml.YAMLError as e:
         print("YAML parsing error:", e)
@@ -135,13 +143,13 @@ def save_yaml():
 
     # 대상 경로가 없으면 생성
     os.makedirs(target_dir, exist_ok=True)
-    target_path = os.path.join(target_dir, 'config.yaml')
+    target_path = os.path.join(target_dir, file_name)
     print("Target directory ensured:", target_dir)
     
     # 임시 파일을 대상 경로로 이동
     os.replace(temp_yaml_path, target_path)
     print("YAML file moved to:", target_path)
-    # 저장 완료 후 메인 페이지로 리디렉션
+
     return redirect('/')
 
 # /load_yaml 경로에서 static_yaml 폴더의 yaml 파일들을 불러오는 엔드포인트 추가
