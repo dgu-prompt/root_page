@@ -22,6 +22,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # 정확한 경로 설정
+#나중에 코드 완성할 때는 실제 yaml이 저장될 위치로 수정
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static')
 target_dir = os.path.join(os.path.dirname(__file__), 'static_yaml')
 
@@ -104,6 +105,9 @@ def serve_react():
 
 @app.route('/test', methods=['POST'])
 def save_yaml():
+     # static 폴더가 없으면 생성
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    
     # 요청이 들어올 때마다 static 폴더를 초기화
     clear_static_folder()
     
@@ -139,6 +143,38 @@ def save_yaml():
     print("YAML file moved to:", target_path)
     # 저장 완료 후 메인 페이지로 리디렉션
     return redirect('/')
+
+# /load_yaml 경로에서 static_yaml 폴더의 yaml 파일들을 불러오는 엔드포인트 추가
+
+'''
+호출되는 json 형태 예시는 아래와 같습니당~
+{
+  "yaml_files": [
+    {
+      "config.yaml": {
+        "key1": "value1",
+        "key2": "value2"
+      }
+    },
+    {
+      "settings.yaml": {
+        "setting1": "optionA",
+        "setting2": "optionB"
+      }
+    }
+  ]
+}
+'''
+@app.route('/load_yaml', methods=['GET'])
+def load_yaml_files():
+    yaml_files = []
+    for filename in os.listdir(target_dir):
+        if filename.endswith('.yaml'):
+            file_path = os.path.join(target_dir, filename)
+            with open(file_path, 'r', encoding='utf-8') as file:
+                yaml_content = yaml.safe_load(file)
+                yaml_files.append({filename: yaml_content})
+    return jsonify({"yaml_files": yaml_files})
 
 @app.route('/db_test')
 def db_test():
@@ -198,8 +234,6 @@ def get_control_item_list():
     return jsonify(controls)
 
 if __name__ == '__main__':
-    # 정적 폴더가 없을 시 생성
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     
     with app.app_context():
         db.create_all()
