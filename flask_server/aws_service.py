@@ -30,43 +30,58 @@ def get_standards_subscription_arn(standards_name='nist-800-53'):
             return standard.get('StandardsSubscriptionArn')
     return None
 
-# 활성화된 NIST 보안 표준 ARN(standards_arn)을 동적으로 가져오는 함수
-def get_standards_arn(standards_name='nist-800-53'):
+# 개별 제어 항목의 ARN을 동적으로 가져오는 함수
+def get_control_arn(control_id, standards_subscription_arn):
     client = get_securityhub_client()
-    response = client.get_enabled_standards()
+    paginator = client.get_paginator('describe_standards_controls')
+    page_iterator = paginator.paginate(StandardsSubscriptionArn=standards_subscription_arn)
 
-    for standard in response.get('StandardsSubscriptions', []):
-        if standards_name in standard.get('StandardsArn', ''):
-            return standard.get('StandardsArn').replace('subscription', 'standards') # StandardsArn 반환
+    for page in page_iterator:
+        for control in page['Controls']:
+            if control['ControlId'] == control_id:
+                return control['StandardsControlArn']
     return None
 
 # NIST 보안 표준 개별 제어 항목 활성화 설정 함수
-def set_securityhub_control_activation(control_arn, status):
-    standards_arn = get_standards_arn()
-    if not standards_arn:
+def set_securityhub_control_activation(control_id, status):
+    standards_subscription_arn = get_standards_subscription_arn()
+    if not standards_subscription_arn:
         raise ValueError("NIST 표준이 활성화되어 있지 않거나 ARN을 찾을 수 없습니다.")
     
+    # 개별 제어 항목의 ARN 가져오기
+    control_arn = get_control_arn(control_id, standards_subscription_arn)
+    if not control_arn:
+        raise ValueError("제어 항목을 찾을 수 없습니다.")
+
     client = get_securityhub_client()
-    response = client.batch_update_standards_control_associations(
-        StandardsControlAssociationUpdates=[
-            {
-                'StandardsArn': standards_arn,
-                'SecurityControlId': control_arn,
-                'AssociationStatus': status,  # 'ENABLED' 또는 'DISABLED'
-                'UpdatedReason': 'User request'  # 업데이트 이유 (선택 사항)
-            }
-        ]
-    )
-    return response
+    
+    try:
+        # `DisabledReason`은 `DISABLED`일 때만 추가
+        update_params = {
+            'StandardsControlArn': control_arn,
+            'ControlStatus': status
+        }
+        if status == 'DISABLED':
+            update_params['DisabledReason'] = 'User request'
+
+        response = client.update_standards_control(**update_params)
+        return response
+    
+    except client.exceptions.ResourceNotFoundException:
+        raise ValueError("제어 항목을 찾을 수 없습니다.")
+    except client.exceptions.InvalidInputException as e:
+        raise ValueError(f"잘못된 입력: {str(e)}")
+    except client.exceptions.AccessDeniedException as e:
+        raise PermissionError(f"권한이 거부되었습니다: {str(e)}")
 
 # NIST 보안 표준 리스트 가져오는 함수
 def get_nist_controls_list():
-    standards_arn = get_standards_subscription_arn()
-    if not standards_arn:
+    standards_subscription_arn = get_standards_subscription_arn()
+    if not standards_subscription_arn:
         raise ValueError("NIST 표준이 활성화되어 있지 않거나 ARN을 찾을 수 없습니다.")
     
     client = get_securityhub_client()
     response = client.describe_standards_controls(
-        StandardsSubscriptionArn=standards_arn
+        StandardsSubscriptionArn=standards_subscription_arn
     )
     return response.get('Controls', [])

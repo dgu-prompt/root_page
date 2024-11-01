@@ -255,8 +255,19 @@ def insert_securityhub_findings_data():
 def set_control_item(control_id):
     data = request.json
     status = data.get('status')  # 'ENABLED' 또는 'DISABLED'
-    response = set_securityhub_control_activation(control_id, status)
-    return jsonify(response)
+    
+    if status not in ['ENABLED', 'DISABLED']:
+        return jsonify({"error": "Invalid status. Use 'ENABLED' or 'DISABLED'."}), 400
+
+    try:
+        response = set_securityhub_control_activation(control_id, status)
+        return jsonify({"message": f"Control {control_id} successfully updated", "response": response}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+    except PermissionError as e:
+        return jsonify({"error": str(e)}), 403
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
         
 # NIST 보안 표준 리스트 가져오기
 @app.route('/control', methods=['GET'])
