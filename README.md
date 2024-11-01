@@ -1,4 +1,4 @@
-# root_page
+# [2024 종합설계] - CSPM 관리자 페이지
 
 ## Flask Server 가상 환경 설정 및 실행 가이드
 
