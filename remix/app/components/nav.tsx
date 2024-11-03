@@ -19,7 +19,6 @@ function Nav() {
     { label: "Dashboard", to: "/" },
     { label: "Rules", to: "/rules" },
     { label: "Controls", to: "/controls" },
-    { label: "Settings", to: "/settings" },
   ];
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
@@ -27,16 +26,22 @@ function Nav() {
   const handleToggle = () => setIsOpen((prev) => !prev);
 
   return (
-    <Box width="full" boxShadow="sm">
-      <Container py="4">
-        <Flex alignItems="center" justifyContent="space-between">
+    <Box
+      width="full"
+      bg="bg.subtle/80"
+      position="sticky"
+      top="0"
+      zIndex="1100"
+      backdropFilter="blur(8px)"
+    >
+      <Container>
+        <Flex alignItems="center" justifyContent="space-between" h="48px">
           <Flex alignItems="center">
             {/* Mobile Hamburger Menu */}
             <IconButton
               display={{ md: "none" }}
               variant="ghost"
               onClick={handleToggle}
-              aria-label="Toggle navigation"
             >
               <LuMenu />
             </IconButton>
@@ -47,20 +52,29 @@ function Nav() {
                 SecurityCircle
               </Text>
             </NavLink>
-
-            {/* Desktop Nav */}
-            <HStack align="center" display={{ base: "none", md: "flex" }}>
-              {navItems.map((item) => (
-                <Button
-                  key={item.to}
-                  variant={location.pathname === item.to ? "subtle" : "ghost"}
-                  asChild
-                >
-                  <NavLink to={item.to}>{item.label}</NavLink>
-                </Button>
-              ))}
-            </HStack>
           </Flex>
+
+          {/* Desktop Nav */}
+          <HStack
+            align="center"
+            display={{ base: "none", md: "flex" }}
+            position="absolute"
+            top="0"
+            left="50%"
+            translate="-50%"
+            h="full"
+          >
+            {navItems.map((item) => (
+              <Button
+                key={item.to}
+                variant="plain"
+                color={location.pathname === item.to ? "fg" : "fg.muted"}
+                asChild
+              >
+                <NavLink to={item.to}>{item.label}</NavLink>
+              </Button>
+            ))}
+          </HStack>
 
           <Flex>
             {/* <Logout /> */}

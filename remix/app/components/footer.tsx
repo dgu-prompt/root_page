@@ -13,8 +13,8 @@ import { LuGithub } from "react-icons/lu";
 
 function Footer() {
   return (
-    <Box w="full">
-      <Container py="4" borderTopWidth="1px">
+    <Box as="footer" w="full" pt="40" pb="8">
+      <Container>
         <Flex
           justify="space-between"
           align="center"

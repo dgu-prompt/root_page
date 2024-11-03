@@ -1,4 +1,3 @@
-// src/routes/protectedPage.tsx
 import { Box, Container } from "@chakra-ui/react";
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 import Footer from "~/components/footer";
