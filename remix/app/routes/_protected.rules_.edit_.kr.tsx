@@ -1,13 +1,5 @@
-import {
-  Box,
-  Code,
-  Container,
-  Flex,
-  Heading,
-  HStack,
-  Stack,
-} from "@chakra-ui/react";
-import RuleForm from "~/components/RuleForm";
+import { Box, Code, Container, Flex, Heading, HStack } from "@chakra-ui/react";
+import RuleForm from "~/components/RuleForm.kr";
 import YamlPreview from "~/components/YamlPreview";
 import { useState } from "react";
 import yamlData from "~/data/yamlData";
@@ -31,7 +23,7 @@ function RuleEditPage() {
         {/* Left Side - Rule Editing Form */}
         <Box flex="1">
           <HStack mb="8" alignItems="baseline">
-            <Heading size="2xl">Edit Rule</Heading>
+            <Heading size="2xl">알림 규칙 수정</Heading>
             <Code variant="plain" size="lg">
               samplerule.yaml
             </Code>
@@ -44,7 +36,7 @@ function RuleEditPage() {
         <Box flex="1" bg="bg.subtle" borderRadius="md" position="relative">
           <Box position="sticky" top="20">
             <Heading size="md" mb="4">
-              YAML Preview
+              YAML 미리보기
             </Heading>
             <YamlPreview content={yamlContent} />
           </Box>

@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { Field } from "~/components/ui/field";
 import { Switch } from "~/components/ui/switch";
 
-function SlackSettings() {
+function JiraSettings() {
   const [isMounted, setIsMounted] = useState(false);
   const [slackWebhookUrls, setSlackWebhookUrls] = useState<string[]>([]);
   const [slackChannels, setSlackChannels] = useState<string[]>([]);
@@ -163,4 +163,4 @@ function SlackSettings() {
   );
 }
 
-export default SlackSettings;
+export default JiraSettings;

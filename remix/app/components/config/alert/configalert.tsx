@@ -1,4 +1,9 @@
-import { CheckboxGroup, Fieldset, Input, Tabs } from "@chakra-ui/react";
+import { CheckboxGroup, Fieldset, HStack, Input, Tabs } from "@chakra-ui/react";
+import {
+  RadioCardItem,
+  RadioCardLabel,
+  RadioCardRoot,
+} from "~/components/ui/radio-card";
 import { Checkbox } from "~/components/ui/checkbox";
 import ConfigAlertJira from "./configalertjira";
 import ConfigAlertSlack from "./configalertslack";
@@ -54,6 +59,23 @@ function AlertConfiguration() {
             Select Alert Destinations
           </Fieldset.Legend>
           <Fieldset.Content>
+            <RadioCardRoot>
+              <RadioCardLabel />
+              <HStack align="stretch">
+                <RadioCardItem
+                  label="Jira"
+                  description="Jira Description"
+                  key="jira"
+                  value="jira"
+                />
+                <RadioCardItem
+                  label="Slack"
+                  description="Slack Description"
+                  key="slack"
+                  value="slack"
+                />
+              </HStack>
+            </RadioCardRoot>
             <Checkbox
               value="slack"
               checked={selectedAlerts.includes("slack")}

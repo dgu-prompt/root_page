@@ -11,13 +11,13 @@ import {
 } from "@chakra-ui/react";
 import { Form, NavLink, useLocation } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
-import { LuMenu } from "react-icons/lu";
+import { LuLogOut, LuMenu } from "react-icons/lu";
 import { useState } from "react";
 
 function Nav() {
   const navItems = [
     { label: "Dashboard", to: "/" },
-    { label: "Rules", to: "/rules" },
+    { label: "Rules", to: "/rules/edit" },
     { label: "Controls", to: "/controls" },
   ];
   const location = useLocation();
@@ -28,24 +28,16 @@ function Nav() {
   return (
     <Box
       width="full"
-      bg="bg.subtle/80"
+      bg="bg/80"
       position="sticky"
       top="0"
       zIndex="1100"
       backdropFilter="blur(8px)"
+      borderBottomWidth="1px"
     >
       <Container>
         <Flex alignItems="center" justifyContent="space-between" h="48px">
           <Flex alignItems="center">
-            {/* Mobile Hamburger Menu */}
-            <IconButton
-              display={{ md: "none" }}
-              variant="ghost"
-              onClick={handleToggle}
-            >
-              <LuMenu />
-            </IconButton>
-
             {/* Logo */}
             <NavLink to="/">
               <Text fontSize="md" fontWeight="semibold" mr="4">
@@ -63,6 +55,7 @@ function Nav() {
             left="50%"
             translate="-50%"
             h="full"
+            gap="0"
           >
             {navItems.map((item) => (
               <Button
@@ -80,12 +73,22 @@ function Nav() {
             {/* <Logout /> */}
             <Box display={{ base: "none", md: "flex" }}>
               <Form action="/logout" method="post">
-                <Button type="submit" variant="ghost">
-                  Logout
-                </Button>
+                <IconButton aria-label="Logout" type="submit" variant="plain">
+                  <LuLogOut />
+                </IconButton>
               </Form>
             </Box>
           </Flex>
+
+          {/* Mobile Hamburger Menu */}
+          <IconButton
+            display={{ md: "none" }}
+            variant="plain"
+            onClick={handleToggle}
+            me={"-10px"}
+          >
+            <LuMenu />
+          </IconButton>
         </Flex>
 
         {/* Mobile Menu */}

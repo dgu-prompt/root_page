@@ -31,7 +31,7 @@ const RegionSelect = ({
     defaultValue={[selectedRegion]}
     onValueChange={(e) => onRegionChange(e.value as unknown as string)}
   >
-    <SelectLabel>Select Region</SelectLabel>
+    <SelectLabel>리전 선택</SelectLabel>
     <SelectTrigger>
       <SelectValueText />
     </SelectTrigger>

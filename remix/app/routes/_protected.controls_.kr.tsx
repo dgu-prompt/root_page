@@ -12,10 +12,10 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
-import ControlCard from "~/components/ControlCard";
-import ControlStatusBadge from "~/components/ControlStatusBadge";
-import RegionSelect from "~/components/RegionSelect";
-import SeverityBadge from "~/components/SeverityBadge";
+import ControlCard from "~/components/ControlCard.kr";
+import ControlStatusBadge from "~/components/ControlStatusBadge.kr";
+import RegionSelect from "~/components/RegionSelect.kr";
+import SeverityBadge from "~/components/SeverityBadge.kr";
 import { Switch } from "~/components/ui/switch";
 import controlsData from "~/data/controlsData";
 
@@ -69,7 +69,7 @@ const SecurityControlsList = () => {
   return (
     <Container pt="16">
       <Heading mb="8" size="2xl">
-        Controls
+        제어 항목 관리
       </Heading>
 
       <Stack gap="4">
@@ -102,7 +102,7 @@ const SecurityControlsList = () => {
                   SeverityRating={control.SeverityRating}
                   SecurityControlStatus={control.SecurityControlStatus}
                   controlStatus={"FAILED"}
-                  failedChecks={"0 of 1"}
+                  failedChecks={"0 / 1"}
                 />
               </GridItem>
             ))}

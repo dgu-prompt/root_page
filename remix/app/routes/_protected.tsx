@@ -1,5 +1,5 @@
-import { Box, Container } from "@chakra-ui/react";
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
+import { Box } from "@chakra-ui/react";
 import Footer from "~/components/footer";
 import Nav from "~/components/nav";
 import { Outlet } from "@remix-run/react";
@@ -18,9 +18,7 @@ export default function ProtectedPage() {
     <>
       <Nav />
       <Box as="main" flex="1">
-        <Container py="4">
-          <Outlet />
-        </Container>
+        <Outlet />
       </Box>
       <Footer />
     </>
