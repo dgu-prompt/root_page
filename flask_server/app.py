@@ -7,8 +7,10 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
 from aws_service import set_securityhub_control_activation, get_nist_controls_list
+from dashboard_service import get_tickets_status
 from dotenv import load_dotenv
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+
 
 load_dotenv()  # .env 파일에서 환경 변수 로드
 
@@ -278,6 +280,12 @@ def get_control_item_list():
         return jsonify(controls)
     except ValueError as e:
         return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
+
+# Dashboard에서 Jira 티켓 현황 보여주기
+@app.route('/dashboard', methods=['GET'])
+def dashboard():
+    tickets_status = get_tickets_status()
+    return jsonify(tickets_status) 
 
 if __name__ == '__main__':
     
