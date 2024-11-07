@@ -8,6 +8,7 @@ from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
 from aws_service import set_securityhub_control_activation, get_nist_controls_list
 from dashboard_service import get_tickets_status
+from dashboard_service import get_ticket_details
 from dotenv import load_dotenv
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 
@@ -281,11 +282,22 @@ def get_control_item_list():
     except ValueError as e:
         return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
 
-# Dashboard에서 Jira 티켓 현황 보여주기
+# Dashboard에서 Jira 티켓 현황 통계 조회
 @app.route('/dashboard', methods=['GET'])
-def dashboard():
+def dashboard_tickets_status():
     tickets_status = get_tickets_status()
     return jsonify(tickets_status) 
+
+# Dashboard에서 특정 Jira 티켓 조회
+@app.route('/dashboard/<ticket_id>', methods=['GET'])
+def dashboard_ticket_details(ticket_id):
+    ticket_details = get_ticket_details(ticket_id)
+    
+    if "error" in ticket_details:
+        return jsonify(ticket_details), 500
+    
+    return jsonify(ticket_details), 200
+
 
 if __name__ == '__main__':
     

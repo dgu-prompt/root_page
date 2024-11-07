@@ -8,12 +8,14 @@ load_dotenv()
 
 # 환경 변수에서 Jira API URL과 토큰 가져오기
 JIRA_API_URL = os.getenv("JIRA_API_URL")
+JIRA_API_URL_2 = os.getenv("JIRA_API_URL_2")
 API_TOKEN = os.getenv("JIRA_API_TOKEN")
 HEADERS = {
     "Authorization": os.getenv("JIRA_AUTH_HEADER"),
     "Content-Type": "application/json"
 }
 
+# 전체 티켓 상태 조회 함수
 def get_tickets_status():
     jql_query = "project = VT" # JQL 쿼리로 전체 Elastalert 관련 티켓 가져오기
     params = {
@@ -59,3 +61,23 @@ def get_tickets_status():
         "unresolved_ticket_count": unresolved_count,
         "ticket_details": ticket_details
     }
+
+# 특정 티켓 세부 내용 추적 함수
+def get_ticket_details(ticket_id):
+    try:
+        response = requests.get(f"{JIRA_API_URL_2}{ticket_id}", headers=HEADERS)
+        response.raise_for_status()
+        ticket_data = response.json()
+
+        ticket_details = {
+            "id": ticket_data["id"],
+            "key": ticket_data["key"],
+            "summary": ticket_data["fields"]["summary"],
+            "status": ticket_data["fields"]["status"]["name"],
+            "created": ticket_data["fields"]["created"],
+            "updated": ticket_data["fields"]["updated"],
+            "description": ticket_data["fields"]["description"]
+        }
+        return ticket_details
+    except requests.exceptions.RequestException as e:
+        return {"error": str(e)}
