@@ -10,7 +10,7 @@ load_dotenv()
 JIRA_API_URL = os.getenv("JIRA_API_URL")
 API_TOKEN = os.getenv("JIRA_API_TOKEN")
 HEADERS = {
-    "Authorization": f"Bearer {API_TOKEN}",
+    "Authorization": os.getenv("JIRA_AUTH_HEADER"),
     "Content-Type": "application/json"
 }
 
@@ -27,31 +27,32 @@ def get_tickets_status():
         response = requests.get(JIRA_API_URL, headers=HEADERS, params=params)
         response.raise_for_status()
         issues = response.json().get("issues", [])
+        
+    except requests.exceptions.HTTPError as e:
+        # HTTP 에러의 경우 상태 코드와 메시지를 반환
+        return {
+            "error": f"{e}: {response.text}",
+            "status_code": response.status_code if response else None
+        }, response.status_code if response else 500
+        
     except requests.exceptions.RequestException as e:
-        return {"error": str(e)}, 500  # JSON 형식의 오류 메시지 반환
-
+        # 기타 요청 예외 처리
+        return {"error": str(e), "status_code": None}, 500
+    
     # 통계 변수 초기화
-    total_count = len(issues)  # 전체 티켓 개수
-    resolved_count = 0         # 해결된 티켓 개수
-    unresolved_count = 0       # 미해결 티켓 개수
-    ticket_details = []
-
-    # 티켓 상태별 개수 계산 및 상세 정보 수집
-    for issue in issues:
-        status = issue["fields"]["status"]["name"]
-        is_resolved = status == "Resolved"  # 상태가 "Resolved"일 때 해결된 티켓으로 간주
-        resolved_count += is_resolved
-        unresolved_count += not is_resolved
-
-        # 티켓 상세 정보 추가
-        ticket_details.append({
+    total_count = len(issues) # 전체 티켓 개수
+    resolved_count = sum(1 for issue in issues if issue["fields"]["status"]["name"] == "Resolved") # 해결된 티켓 개수
+    unresolved_count = total_count - resolved_count # 미해결 티켓 개수
+    ticket_details = [
+        {
             "summary": issue["fields"]["summary"],
             "created": issue["fields"]["created"],
-            "resolved": issue["fields"]["resolutiondate"] if is_resolved else None,
-            "status": status
-        })
+            "resolved": issue["fields"]["resolutiondate"] if issue["fields"]["status"]["name"] == "Resolved" else None,
+            "status": issue["fields"]["status"]["name"]
+        }
+        for issue in issues
+    ]
 
-    # 반환할 통계 데이터 구조화
     return {
         "total_ticket_count": total_count,
         "resolved_ticket_count": resolved_count,
