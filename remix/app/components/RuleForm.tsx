@@ -1,75 +1,72 @@
-import { Card, Stack, VStack } from "@chakra-ui/react";
-import AlertConfiguration from "./config/alert/configalert";
-import SlackSettings from "./config/alert/configalertslack";
-import ConfigGeneral from "./config/alert/ConfigGeneral";
-import ConfigFilter from "./config/alert/ConfigFilter";
+import { Card, Stack } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
+
+import ConfigFilter from "./config/ConfigFilter";
+import ConfigGeneral from "./config/ConfigGeneral";
+import AlertConfiguration from "./config/alert/ConfigAlert";
+import SlackSettings from "./config/alert/ConfigAlertSlack";
+import AlertForm from "./config/alert/ConfigAlertMigration";
+import AlertField from "./AlertField";
 
 type YamlPreviewProps = {
   content: string;
 };
 
 const RuleForm = ({ content }: YamlPreviewProps) => {
+  const { t } = useTranslation();
+
   return (
     <Stack gap="8">
-      <Card.Root
-        size={{
-          base: "sm",
-          md: "md",
-          lg: "lg",
-        }}
-      >
+      <Card.Root size={{ base: "sm", md: "md", lg: "lg" }}>
         <Card.Header>
-          <Card.Title>General</Card.Title>
+          <Card.Title>{t("ruleForm.generalTitle")}</Card.Title>
         </Card.Header>
         <Card.Body>
-          <ConfigGeneral />
+          <ConfigGeneral formData={undefined} setFormData={undefined} />
         </Card.Body>
       </Card.Root>
 
       <ConfigFilter />
 
-      <Card.Root
-        size={{
-          base: "sm",
-          md: "md",
-          lg: "lg",
-        }}
-      >
+      <Card.Root size={{ base: "sm", md: "md", lg: "lg" }}>
         <Card.Header>
-          <Card.Title>Alert</Card.Title>
+          <Card.Title>{t("ruleForm.alertTitle")}</Card.Title>
         </Card.Header>
         <Card.Body>
           <AlertConfiguration />
         </Card.Body>
       </Card.Root>
 
-      <Card.Root
-        size={{
-          base: "sm",
-          md: "md",
-          lg: "lg",
-        }}
-      >
+      <Card.Root size={{ base: "sm", md: "md", lg: "lg" }}>
         <Card.Header>
-          <Card.Title>Slack</Card.Title>
+          <Card.Title>{t("ruleForm.slackTitle")}</Card.Title>
         </Card.Header>
         <Card.Body>
           <SlackSettings />
         </Card.Body>
       </Card.Root>
 
-      <Card.Root
-        size={{
-          base: "sm",
-          md: "md",
-          lg: "lg",
-        }}
-      >
+      <Card.Root size={{ base: "sm", md: "md", lg: "lg" }}>
         <Card.Header>
-          <Card.Title>Jira</Card.Title>
+          <Card.Title>{t("ruleForm.jiraTitle")}</Card.Title>
         </Card.Header>
         <Card.Body>
           <SlackSettings />
+        </Card.Body>
+      </Card.Root>
+
+      <Card.Root size={{ base: "sm", md: "md", lg: "lg" }}>
+        <Card.Header>
+          <Card.Title>{t("ruleForm.test")}</Card.Title>
+        </Card.Header>
+        <Card.Body>
+          <AlertField
+            label={""}
+            value={""}
+            setValue={function (): void {
+              throw new Error("Function not implemented.");
+            }}
+          />
         </Card.Body>
       </Card.Root>
     </Stack>

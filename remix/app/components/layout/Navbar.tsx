@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Box,
   Container,
@@ -10,15 +8,17 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { Form, NavLink, useLocation } from "@remix-run/react";
-import { Button } from "~/components/ui/button";
-import { LuLogOut, LuMenu } from "react-icons/lu";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { LuLogOut, LuMenu } from "react-icons/lu";
+import { Button } from "~/components/ui/button";
 
-function Nav() {
+function Navbar() {
+  const { t } = useTranslation();
   const navItems = [
-    { label: "Dashboard", to: "/" },
-    { label: "Rules", to: "/rules/edit" },
-    { label: "Controls", to: "/controls" },
+    { label: t("menu.dashboard"), to: "/" },
+    { label: t("menu.rules"), to: "/rules" },
+    { label: t("menu.controls"), to: "/controls" },
   ];
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
@@ -27,21 +27,21 @@ function Nav() {
 
   return (
     <Box
-      width="full"
+      backdropFilter="blur(8px)"
       bg="bg/80"
+      borderBottomWidth="1px"
       position="sticky"
       top="0"
+      width="full"
       zIndex="1100"
-      backdropFilter="blur(8px)"
-      borderBottomWidth="1px"
     >
       <Container>
-        <Flex alignItems="center" justifyContent="space-between" h="48px">
+        <Flex alignItems="center" h="48px" justifyContent="space-between">
           <Flex alignItems="center">
             {/* Logo */}
             <NavLink to="/">
               <Text fontSize="md" fontWeight="semibold" mr="4">
-                SecurityCircle
+                {t("appName")}
               </Text>
             </NavLink>
           </Flex>
@@ -50,19 +50,19 @@ function Nav() {
           <HStack
             align="center"
             display={{ base: "none", md: "flex" }}
+            gap="0"
+            h="full"
+            left="50%"
             position="absolute"
             top="0"
-            left="50%"
             translate="-50%"
-            h="full"
-            gap="0"
           >
             {navItems.map((item) => (
               <Button
+                asChild
+                color={location.pathname === item.to ? "fg" : "fg.muted"}
                 key={item.to}
                 variant="plain"
-                color={location.pathname === item.to ? "fg" : "fg.muted"}
-                asChild
               >
                 <NavLink to={item.to}>{item.label}</NavLink>
               </Button>
@@ -73,7 +73,11 @@ function Nav() {
             {/* <Logout /> */}
             <Box display={{ base: "none", md: "flex" }}>
               <Form action="/logout" method="post">
-                <IconButton aria-label="Logout" type="submit" variant="plain">
+                <IconButton
+                  aria-label={t("menu.logout")}
+                  type="submit"
+                  variant="plain"
+                >
                   <LuLogOut />
                 </IconButton>
               </Form>
@@ -83,9 +87,9 @@ function Nav() {
           {/* Mobile Hamburger Menu */}
           <IconButton
             display={{ md: "none" }}
-            variant="plain"
-            onClick={handleToggle}
             me={"-10px"}
+            onClick={handleToggle}
+            variant="plain"
           >
             <LuMenu />
           </IconButton>
@@ -97,17 +101,17 @@ function Nav() {
             <Stack>
               {navItems.map((item) => (
                 <Button
-                  key={item.to}
-                  variant={location.pathname === item.to ? "subtle" : "ghost"}
-                  onClick={handleToggle}
                   asChild
+                  key={item.to}
+                  onClick={handleToggle}
+                  variant={location.pathname === item.to ? "subtle" : "ghost"}
                 >
                   <NavLink to={item.to}>{item.label}</NavLink>
                 </Button>
               ))}
               <Form action="/logout" method="post">
                 <Button type="submit" variant="ghost">
-                  Logout
+                  {t("menu.logout")}
                 </Button>
               </Form>
             </Stack>
@@ -118,4 +122,4 @@ function Nav() {
   );
 }
 
-export default Nav;
+export default Navbar;

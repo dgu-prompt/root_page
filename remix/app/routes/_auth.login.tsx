@@ -1,15 +1,17 @@
+import { Card, Center, Fieldset, Input, Stack, Text } from "@chakra-ui/react";
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   json,
   redirect,
 } from "@remix-run/node";
-import { Card, Center, Fieldset, Input, Stack, Text } from "@chakra-ui/react";
 import { Form, useLoaderData } from "@remix-run/react";
-import { commitSession, getSession } from "~/sessions";
+import { useTranslation } from "react-i18next";
 import { Button } from "~/components/ui/button";
 import { Field } from "~/components/ui/field";
 import { PasswordInput } from "~/components/ui/password-input";
+
+import { commitSession, getSession } from "~/sessions";
 import { validateCredentials } from "~/utils/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -59,32 +61,34 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Login() {
+  const { t } = useTranslation();
   const { error } = useLoaderData<typeof loader>();
 
   return (
-    <Center flex="1" bg="bg.subtle">
+    <Center bg="bg.subtle" flex="1">
       <Card.Root size="lg" variant="elevated">
         <Card.Header>
-          <Text fontWeight="medium" textStyle="sm" color="fg">
-            SecurityCircle
+          <Text color="fg" fontWeight="medium" textStyle="sm">
+            {t("appName")}
           </Text>
-          <Card.Title>Log in to your account</Card.Title>
-          <Card.Description>
-            Enter your credentials to access your account
-          </Card.Description>
+          <Card.Title>{t("loginTitle")}</Card.Title>
+          <Card.Description>{t("loginDescription")}</Card.Description>
         </Card.Header>
         <Form method="post">
           <Card.Body>
             <Stack gap="4">
               <Fieldset.Root invalid={!!error}>
                 <Fieldset.Content>
-                  <Field label="Username" invalid={!!error}>
-                    <Input name="username" placeholder="Enter your username" />
+                  <Field invalid={!!error} label={t("usernameLabel")}>
+                    <Input
+                      name="username"
+                      placeholder={t("usernamePlaceholder")}
+                    />
                   </Field>
-                  <Field label="Password" invalid={!!error}>
+                  <Field invalid={!!error} label={t("passwordLabel")}>
                     <PasswordInput
                       name="password"
-                      placeholder="Enter your password"
+                      placeholder={t("passwordPlaceholder")}
                     />
                   </Field>
                 </Fieldset.Content>
@@ -93,8 +97,8 @@ export default function Login() {
             </Stack>
           </Card.Body>
           <Card.Footer>
-            <Button type="submit" flex="1">
-              Login
+            <Button flex="1" type="submit">
+              {t("loginButton")}
             </Button>
           </Card.Footer>
         </Form>

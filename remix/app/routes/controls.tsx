@@ -7,16 +7,16 @@ import {
   Heading,
   Stack,
   Table,
-  Text,
-  VStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "~/components/ui/button";
-import ControlCard from "~/components/ControlCard.kr";
-import ControlStatusBadge from "~/components/ControlStatusBadge.kr";
-import RegionSelect from "~/components/RegionSelect.kr";
-import SeverityBadge from "~/components/SeverityBadge.kr";
 import { Switch } from "~/components/ui/switch";
+
+import ControlCard from "~/components/ControlCard";
+import ControlStatusBadge from "~/components/ControlStatusBadge";
+import RegionSelect from "~/components/RegionSelect";
+import SeverityBadge from "~/components/SeverityBadge";
 import controlsData from "~/data/controlsData";
 
 type ControlCardProps = {
@@ -36,6 +36,7 @@ type RegionData = {
 const regionData: RegionData = controlsData;
 
 const SecurityControlsList = () => {
+  const { t } = useTranslation();
   const [selectedRegion, setSelectedRegion] = useState("ap-southeast-2");
   const [securityControls, setSecurityControls] = useState<ControlCardProps[]>(
     regionData["us-east-1"] || []
@@ -55,7 +56,7 @@ const SecurityControlsList = () => {
     }
   }, [selectedRegion]);
 
-  if (!isMounted) return null; // 클라이언트 렌더링이 완료될 때까지 기다림
+  if (!isMounted) return null;
 
   const handleStatusChange = (id: string, status: boolean) => {
     setModifiedControls((prev) => ({ ...prev, [id]: status }));
@@ -69,40 +70,40 @@ const SecurityControlsList = () => {
   return (
     <Container pt="16">
       <Heading mb="8" size="2xl">
-        제어 항목 관리
+        {t("controlsHeading")}
       </Heading>
 
       <Stack gap="4">
         <RegionSelect
-          selectedRegion={selectedRegion}
           onRegionChange={setSelectedRegion}
+          selectedRegion={selectedRegion}
         />
         <Switch
           checked={isGridView}
-          onCheckedChange={() => setIsGridView(!isGridView)}
-          label="리스트 / 카드 뷰 전환"
           display={{ base: "none" }}
+          label={t("toggleViewLabel")}
+          onCheckedChange={() => setIsGridView(!isGridView)}
         />
 
         {isGridView ? (
           <Grid
+            gap="3"
             templateColumns={{
               base: "repeat(1, 1fr)",
               md: "repeat(2, 1fr)",
               lg: "repeat(3, 1fr)",
             }}
-            gap="3"
           >
             {securityControls.map((control) => (
               <GridItem key={control.SecurityControlId}>
                 <ControlCard
-                  SecurityControlId={control.SecurityControlId}
-                  Title={control.Title}
                   Description={control.Description}
-                  SeverityRating={control.SeverityRating}
+                  SecurityControlId={control.SecurityControlId}
                   SecurityControlStatus={control.SecurityControlStatus}
+                  SeverityRating={control.SeverityRating}
+                  Title={control.Title}
                   controlStatus={"FAILED"}
-                  failedChecks={"0 / 1"}
+                  failedChecks={"0 of 1"}
                 />
               </GridItem>
             ))}
@@ -114,11 +115,13 @@ const SecurityControlsList = () => {
                 <Table.Header>
                   <Table.Row>
                     <Table.ColumnHeader></Table.ColumnHeader>
-                    <Table.ColumnHeader>ID</Table.ColumnHeader>
-                    <Table.ColumnHeader>Title</Table.ColumnHeader>
-                    <Table.ColumnHeader>Control Status</Table.ColumnHeader>
-                    <Table.ColumnHeader>Severity</Table.ColumnHeader>
-                    <Table.ColumnHeader>Failed Checks</Table.ColumnHeader>
+                    <Table.ColumnHeader>{t("id")}</Table.ColumnHeader>
+                    <Table.ColumnHeader>{t("title")}</Table.ColumnHeader>
+                    <Table.ColumnHeader>
+                      {t("controlStatus")}
+                    </Table.ColumnHeader>
+                    <Table.ColumnHeader>{t("severity")}</Table.ColumnHeader>
+                    <Table.ColumnHeader>{t("failedChecks")}</Table.ColumnHeader>
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
@@ -162,10 +165,10 @@ const SecurityControlsList = () => {
         <Flex justify="flex-end">
           <Button
             colorScheme="teal"
-            onClick={handleSaveChanges}
             disabled={Object.keys(modifiedControls).length === 0}
+            onClick={handleSaveChanges}
           >
-            변경 사항 저장
+            {t("saveChangesButton")}
           </Button>
         </Flex>
       </Stack>

@@ -25,16 +25,25 @@ module.exports = {
   extends: ["eslint:recommended", "prettier"],
 
   rules: {
-    "sort-imports": [
-      "error",
+    "import/order": [
+      "warn",
       {
-        ignoreCase: false,
-        ignoreDeclarationSort: false,
-        ignoreMemberSort: false,
-        memberSyntaxSortOrder: ["none", "all", "multiple", "single"],
-        allowSeparatedGroups: false,
+        "newlines-between": "always",
+        pathGroups: [
+          {
+            pattern: "~/components/ui/**",
+            group: "external",
+            position: "after",
+          },
+        ],
+        distinctGroup: false,
+        named: true,
+        alphabetize: {
+          order: "asc",
+        },
       },
     ],
+    "react/jsx-sort-props": "warn",
   },
 
   overrides: [

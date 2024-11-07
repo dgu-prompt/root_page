@@ -7,6 +7,7 @@ import {
   Link,
   StatUpIndicator,
 } from "@chakra-ui/react";
+import { LuExternalLink } from "react-icons/lu";
 import { DataListItem, DataListRoot } from "~/components/ui/data-list";
 import { ProgressBar, ProgressRoot } from "~/components/ui/progress";
 import {
@@ -15,9 +16,9 @@ import {
   StatRoot,
   StatValueText,
 } from "~/components/ui/stat";
-import { LuExternalLink } from "react-icons/lu";
-import RegionSelect from "~/components/RegionSelect.kr";
 import { Status } from "~/components/ui/status";
+
+import RegionSelect from "~/components/RegionSelect";
 
 export default function Index() {
   return (
@@ -33,31 +34,31 @@ export default function Index() {
       </Heading>
 
       <RegionSelect
-        selectedRegion={"ap-southeast-2"}
         onRegionChange={function (): void {
           throw new Error("Function not implemented.");
         }}
+        selectedRegion={"ap-southeast-2"}
       />
       <Grid
-        mt="3"
+        gap="3"
         mb="10"
+        mt="3"
         templateColumns={{
           base: "repeat(2, 1fr)",
           md: "repeat(4, 1fr)",
           lg: "repeat(6, 1fr)",
         }}
         templateRows="repeat(1, 1fr)"
-        gap="3"
       >
         <GridItem colSpan={2}>
           <Card.Root
+            h="full"
             size={{
               base: "sm",
               md: "md",
               lg: "lg",
             }}
             variant="elevated"
-            h="full"
           >
             <Card.Body>
               <StatRoot>
@@ -73,13 +74,13 @@ export default function Index() {
         </GridItem>
         <GridItem colSpan={2}>
           <Card.Root
+            h="full"
             size={{
               base: "sm",
               md: "md",
               lg: "lg",
             }}
             variant="elevated"
-            h="full"
           >
             <Card.Header>
               <Card.Title>리전별 분석 결과</Card.Title>
@@ -87,28 +88,28 @@ export default function Index() {
             <Card.Body>
               <DataListRoot orientation="horizontal">
                 <DataListItem
+                  grow
                   key={"Critical"}
                   label={<Status colorPalette="purple">매우 중요</Status>}
                   value={123}
-                  grow
                 />
                 <DataListItem
+                  grow
                   key={"High"}
                   label={<Status colorPalette="red">높음</Status>}
                   value={155}
-                  grow
                 />
                 <DataListItem
+                  grow
                   key={"Medium"}
                   label={<Status colorPalette="orange">보통</Status>}
                   value={583}
-                  grow
                 />
                 <DataListItem
+                  grow
                   key={"Low"}
                   label={<Status colorPalette="yellow">낮음</Status>}
                   value={83}
-                  grow
                 />
               </DataListRoot>
             </Card.Body>
@@ -122,23 +123,23 @@ export default function Index() {
         </Link>
       </Heading>
       <Grid
+        gap="3"
         templateColumns={{
           base: "repeat(2, 1fr)",
           md: "repeat(4, 1fr)",
           lg: "repeat(6, 1fr)",
         }}
         templateRows="repeat(1, 1fr)"
-        gap="3"
       >
         <GridItem>
           <Card.Root
+            h="full"
             size={{
               base: "sm",
               md: "md",
               lg: "lg",
             }}
             variant="elevated"
-            h="full"
           >
             <Card.Body>
               <StatRoot>
@@ -150,13 +151,13 @@ export default function Index() {
         </GridItem>
         <GridItem>
           <Card.Root
+            h="full"
             size={{
               base: "sm",
               md: "md",
               lg: "lg",
             }}
             variant="elevated"
-            h="full"
           >
             <Card.Body>
               <StatRoot>
@@ -169,13 +170,13 @@ export default function Index() {
         </GridItem>
         <GridItem colSpan={2}>
           <Card.Root
+            h="full"
             size={{
               base: "sm",
               md: "md",
               lg: "lg",
             }}
             variant="elevated"
-            h="full"
           >
             <Card.Header>
               <Card.Title>상태별 티켓</Card.Title>
@@ -183,22 +184,22 @@ export default function Index() {
             <Card.Body>
               <DataListRoot orientation="horizontal">
                 <DataListItem
+                  grow
                   key={"Open Issues"}
                   label={"열린 이슈"}
                   value={25}
-                  grow
                 />
                 <DataListItem
+                  grow
                   key={"Closed Issues"}
                   label={"해결된 이슈"}
                   value={74}
-                  grow
                 />
                 <DataListItem
+                  grow
                   key={"In Progress Issues"}
                   label={"진행 중인 이슈"}
                   value={4}
-                  grow
                 />
               </DataListRoot>
             </Card.Body>
@@ -206,13 +207,13 @@ export default function Index() {
         </GridItem>
         <GridItem>
           <Card.Root
+            h="full"
             size={{
               base: "sm",
               md: "md",
               lg: "lg",
             }}
             variant="elevated"
-            h="full"
           >
             <Card.Body>
               <StatRoot>

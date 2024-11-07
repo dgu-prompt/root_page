@@ -1,6 +1,7 @@
-import { ClipboardIconButton, ClipboardRoot } from "~/components/ui/clipboard";
-import AutoResizeTextArea from "./AutoResizeTextArea";
 import { Card } from "@chakra-ui/react";
+import { ClipboardIconButton, ClipboardRoot } from "~/components/ui/clipboard";
+
+import AutoResizeTextArea from "./AutoResizeTextArea";
 
 type YamlPreviewProps = {
   content: string;
@@ -18,10 +19,10 @@ const YamlPreview = ({ content }: YamlPreviewProps) => {
     >
       <Card.Body>
         <AutoResizeTextArea
-          value={content}
           onChange={undefined}
+          value={content}
         ></AutoResizeTextArea>
-        <ClipboardRoot value={content} position="absolute" top="2" right="2">
+        <ClipboardRoot position="absolute" right="2" top="2" value={content}>
           <ClipboardIconButton />
         </ClipboardRoot>
       </Card.Body>

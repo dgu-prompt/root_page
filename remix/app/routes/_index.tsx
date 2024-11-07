@@ -7,6 +7,7 @@ import {
   Link,
   StatUpIndicator,
 } from "@chakra-ui/react";
+import { LuExternalLink } from "react-icons/lu";
 import { DataListItem, DataListRoot } from "~/components/ui/data-list";
 import { ProgressBar, ProgressRoot } from "~/components/ui/progress";
 import {
@@ -15,55 +16,49 @@ import {
   StatRoot,
   StatValueText,
 } from "~/components/ui/stat";
-import { LuExternalLink } from "react-icons/lu";
-import RegionSelect from "~/components/RegionSelect";
 import { Status } from "~/components/ui/status";
+import RegionSelect from "~/components/RegionSelect";
+import { useTranslation } from "react-i18next";
 
 export default function Index() {
+  const { t } = useTranslation();
+
   return (
     <Container pt="16">
       <Heading mb="8" size="2xl">
-        Dashboard
+        {t("dashboardTitle")}
       </Heading>
 
       <Heading mb="4">
         <Link href="#">
-          Security Hub <LuExternalLink />
+          {t("securityHubTitle")} <LuExternalLink />
         </Link>
       </Heading>
 
       <RegionSelect
+        onRegionChange={() => {}}
         selectedRegion={"ap-southeast-2"}
-        onRegionChange={function (): void {
-          throw new Error("Function not implemented.");
-        }}
       />
       <Grid
-        mt="3"
+        gap="3"
         mb="10"
+        mt="3"
         templateColumns={{
           base: "repeat(2, 1fr)",
           md: "repeat(4, 1fr)",
           lg: "repeat(6, 1fr)",
         }}
         templateRows="repeat(1, 1fr)"
-        gap="3"
       >
         <GridItem colSpan={2}>
-          <Card.Root
-            size={{
-              base: "sm",
-              md: "md",
-              lg: "lg",
-            }}
-            variant="elevated"
-            h="full"
-          >
+          <Card.Root h="full" size="lg" variant="elevated">
             <Card.Body>
               <StatRoot>
-                <StatLabel>Security score</StatLabel>
+                <StatLabel>{t("securityScoreLabel")}</StatLabel>
                 <StatValueText>77%</StatValueText>
-                <StatHelpText mb="2">198 of 258 controls passed</StatHelpText>
+                <StatHelpText mb="2">
+                  {t("controlsPassed", { passed: 198, total: 258 })}
+                </StatHelpText>
                 <ProgressRoot value={77}>
                   <ProgressBar />
                 </ProgressRoot>
@@ -71,44 +66,47 @@ export default function Index() {
             </Card.Body>
           </Card.Root>
         </GridItem>
+
         <GridItem colSpan={2}>
-          <Card.Root
-            size={{
-              base: "sm",
-              md: "md",
-              lg: "lg",
-            }}
-            variant="elevated"
-            h="full"
-          >
+          <Card.Root h="full" size="lg" variant="elevated">
             <Card.Header>
-              <Card.Title>Findings by Region</Card.Title>
+              <Card.Title>{t("findingsByRegion")}</Card.Title>
             </Card.Header>
             <Card.Body>
               <DataListRoot orientation="horizontal">
                 <DataListItem
-                  key={"Critical"}
-                  label={<Status colorPalette="purple">Critical</Status>}
+                  grow
+                  key="Critical"
+                  label={
+                    <Status colorPalette="purple">
+                      {t("severityCritical")}
+                    </Status>
+                  }
                   value={123}
-                  grow
                 />
                 <DataListItem
-                  key={"High"}
-                  label={<Status colorPalette="red">High</Status>}
+                  grow
+                  key="High"
+                  label={
+                    <Status colorPalette="red">{t("severityHigh")}</Status>
+                  }
                   value={155}
-                  grow
                 />
                 <DataListItem
-                  key={"Medium"}
-                  label={<Status colorPalette="orange">Medium</Status>}
+                  grow
+                  key="Medium"
+                  label={
+                    <Status colorPalette="orange">{t("severityMedium")}</Status>
+                  }
                   value={583}
-                  grow
                 />
                 <DataListItem
-                  key={"Low"}
-                  label={<Status colorPalette="yellow">Low</Status>}
-                  value={83}
                   grow
+                  key="Low"
+                  label={
+                    <Status colorPalette="yellow">{t("severityLow")}</Status>
+                  }
+                  value={83}
                 />
               </DataListRoot>
             </Card.Body>
@@ -118,108 +116,80 @@ export default function Index() {
 
       <Heading mb="4">
         <Link href="#">
-          Jira <LuExternalLink />
+          {t("jiraTitle")} <LuExternalLink />
         </Link>
       </Heading>
+
       <Grid
+        gap="3"
         templateColumns={{
           base: "repeat(2, 1fr)",
           md: "repeat(4, 1fr)",
           lg: "repeat(6, 1fr)",
         }}
         templateRows="repeat(1, 1fr)"
-        gap="3"
       >
         <GridItem>
-          <Card.Root
-            size={{
-              base: "sm",
-              md: "md",
-              lg: "lg",
-            }}
-            variant="elevated"
-            h="full"
-          >
+          <Card.Root h="full" size="lg" variant="elevated">
             <Card.Body>
               <StatRoot>
-                <StatLabel>Open Tickets with Critical Severity</StatLabel>
+                <StatLabel>{t("openCriticalTicketsLabel")}</StatLabel>
                 <StatValueText>12</StatValueText>
               </StatRoot>
             </Card.Body>
           </Card.Root>
         </GridItem>
+
         <GridItem>
-          <Card.Root
-            size={{
-              base: "sm",
-              md: "md",
-              lg: "lg",
-            }}
-            variant="elevated"
-            h="full"
-          >
+          <Card.Root h="full" size="lg" variant="elevated">
             <Card.Body>
               <StatRoot>
-                <StatLabel>New Tickets</StatLabel>
+                <StatLabel>{t("newTicketsLabel")}</StatLabel>
                 <StatValueText>10</StatValueText>
-                <StatHelpText>since last 7 days</StatHelpText>
+                <StatHelpText>{t("newTicketsTimeFrame")}</StatHelpText>
               </StatRoot>
             </Card.Body>
           </Card.Root>
         </GridItem>
+
         <GridItem colSpan={2}>
-          <Card.Root
-            size={{
-              base: "sm",
-              md: "md",
-              lg: "lg",
-            }}
-            variant="elevated"
-            h="full"
-          >
+          <Card.Root h="full" size="lg" variant="elevated">
             <Card.Header>
-              <Card.Title>Tickets by Status</Card.Title>
+              <Card.Title>{t("ticketsByStatus")}</Card.Title>
             </Card.Header>
             <Card.Body>
               <DataListRoot orientation="horizontal">
                 <DataListItem
-                  key={"Open Issues"}
-                  label={"Open Issues"}
+                  grow
+                  key="Open Issues"
+                  label={t("openIssuesLabel")}
                   value={25}
-                  grow
                 />
                 <DataListItem
-                  key={"Closed Issues"}
-                  label={"Closed Issues"}
+                  grow
+                  key="Closed Issues"
+                  label={t("closedIssuesLabel")}
                   value={74}
-                  grow
                 />
                 <DataListItem
-                  key={"In Progress Issues"}
-                  label={"In Progress Issues"}
-                  value={4}
                   grow
+                  key="In Progress Issues"
+                  label={t("inProgressIssuesLabel")}
+                  value={4}
                 />
               </DataListRoot>
             </Card.Body>
           </Card.Root>
         </GridItem>
+
         <GridItem>
-          <Card.Root
-            size={{
-              base: "sm",
-              md: "md",
-              lg: "lg",
-            }}
-            variant="elevated"
-            h="full"
-          >
+          <Card.Root h="full" size="lg" variant="elevated">
             <Card.Body>
               <StatRoot>
-                <StatLabel>Issue Resolution Rate</StatLabel>
+                <StatLabel>{t("issueResolutionRate")}</StatLabel>
                 <StatValueText>92%</StatValueText>
                 <StatHelpText>
-                  <StatUpIndicator /> 5% 증가
+                  <StatUpIndicator /> 5% {t("increase")}
                 </StatHelpText>
               </StatRoot>
             </Card.Body>

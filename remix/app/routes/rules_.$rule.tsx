@@ -1,5 +1,6 @@
 import {
   Box,
+  Container,
   Flex,
   HStack,
   Heading,
@@ -12,8 +13,8 @@ import {
   Tabs,
   Text,
 } from "@chakra-ui/react";
-import { LuFiles, LuPenSquare, LuTrash } from "react-icons/lu";
 import { useEffect, useState } from "react";
+import { LuFiles, LuPenSquare, LuTrash } from "react-icons/lu";
 import { Alert } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import { Tag } from "~/components/ui/tag";
@@ -41,8 +42,8 @@ function RuleView() {
   };
 
   return (
-    <>
-      <Flex justifyContent="space-between" alignItems="center" mb="4">
+    <Container pt="16">
+      <Flex alignItems="center" justifyContent="space-between" mb="4">
         <Heading>{ruleName}</Heading>
         <Tag colorPalette={isEnabled ? "green" : "yellow"}>
           {isEnabled ? "Enabled" : "Disabled"}
@@ -51,7 +52,7 @@ function RuleView() {
 
       {isEditing ? (
         <HStack>
-          <Input value={newName} onChange={(e) => setNewName(e.target.value)} />
+          <Input onChange={(e) => setNewName(e.target.value)} value={newName} />
           <Button onClick={handleRename}>Save</Button>
           <Button onClick={() => setIsEditing(false)}>Cancel</Button>
         </HStack>
@@ -61,8 +62,8 @@ function RuleView() {
             <LuPenSquare /> Rename
           </Button>
           <Button
-            onClick={handleToggleEnable}
             colorPalette={isEnabled ? "yellow" : "green"}
+            onClick={handleToggleEnable}
           >
             {isEnabled ? "Disable" : "Enable"}
           </Button>
@@ -150,7 +151,7 @@ function RuleView() {
           </Box>
         </Tabs.Content>
       </Tabs.Root>
-    </>
+    </Container>
   );
 }
 

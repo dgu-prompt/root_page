@@ -10,15 +10,15 @@ const AutoResizeTextArea = ({ value, onChange }) => {
   const styles = recipe({ variant: "subtle" });
   return (
     <StyledAutoResize
-      value={value}
-      onChange={onChange}
-      placeholder="This textarea will autoresize as you type"
-      minH="initial"
-      resize="none"
-      overflow="hidden"
-      lineHeight="inherit"
-      fontFamily="monospace"
       css={styles}
+      fontFamily="monospace"
+      lineHeight="inherit"
+      minH="initial"
+      onChange={onChange}
+      overflow="hidden"
+      placeholder="This textarea will autoresize as you type"
+      resize="none"
+      value={value}
     />
   );
 };

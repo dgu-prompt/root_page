@@ -1,15 +1,17 @@
 import {
   Box,
+  Container,
   Flex,
   Heading,
   Input,
   Table,
   useDisclosure,
 } from "@chakra-ui/react";
-import { LuFile, LuFolderPlus } from "react-icons/lu";
-import { useEffect, useState } from "react";
-import { Button } from "~/components/ui/button";
 import { useNavigate } from "@remix-run/react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { LuFile, LuFolderPlus } from "react-icons/lu";
+import { Button } from "~/components/ui/button";
 
 // 임시 데이터 (나중에 API 또는 DB 연결 가능)
 const mockRules = [
@@ -19,6 +21,7 @@ const mockRules = [
 ];
 
 export default function Rules() {
+  const { t } = useTranslation();
   const [isMounted, setIsMounted] = useState(false);
   const navigate = useNavigate();
   const { open, onOpen, onClose } = useDisclosure();
@@ -37,18 +40,20 @@ export default function Rules() {
   };
 
   return (
-    <>
-      <Heading mb="4">Rules</Heading>
+    <Container pt="16">
+      <Heading mb="4" size="2xl">
+        {t("rulesPage.heading")}
+      </Heading>
 
       <Flex gap="4" mb="4">
         <Button colorScheme="blue" onClick={() => navigate("add")}>
           <LuFile style={{ marginRight: "8px" }} />
-          Add Rule
+          {t("rulesPage.addRuleButton")}
         </Button>
 
         <Button colorScheme="teal" onClick={onOpen}>
           <LuFolderPlus style={{ marginRight: "8px" }} />
-          Add Folder
+          {t("rulesPage.addFolderButton")}
         </Button>
       </Flex>
 
@@ -56,7 +61,9 @@ export default function Rules() {
       <Table.Root>
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeader>Rules</Table.ColumnHeader>
+            <Table.ColumnHeader>
+              {t("rulesPage.tableHeader")}
+            </Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -69,7 +76,7 @@ export default function Rules() {
                     as="span"
                     color="blue.500"
                     cursor="pointer"
-                    onClick={() => navigate(`/rules/${rule.val}`)}
+                    onClick={() => navigate(`/rules/${rule.val}/edit`)}
                   >
                     {rule.val}
                   </Box>
@@ -82,22 +89,22 @@ export default function Rules() {
 
       {/* 폴더 추가 모달 */}
       {open && (
-        <Box p="4" bg="gray.50" rounded="md" shadow="sm">
-          <Heading size="md" mb="4">
-            Add Folder
+        <Box bg="gray.50" p="4" rounded="md" shadow="sm">
+          <Heading mb="4" size="md">
+            {t("rulesPage.modalTitle")}
           </Heading>
           <Input
-            placeholder="Enter folder name"
-            value={newFolder}
-            onChange={(e) => setNewFolder(e.target.value)}
             mb="4"
+            onChange={(e) => setNewFolder(e.target.value)}
+            placeholder={t("rulesPage.inputPlaceholder")}
+            value={newFolder}
           />
           <Button colorScheme="teal" mr="4" onClick={handleAddFolder}>
-            OK
+            {t("rulesPage.okButton")}
           </Button>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={onClose}>{t("rulesPage.cancelButton")}</Button>
         </Box>
       )}
-    </>
+    </Container>
   );
 }

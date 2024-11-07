@@ -1,4 +1,7 @@
 import { Card, HStack } from "@chakra-ui/react";
+import { useState } from "react";
+import { LuInfo } from "react-icons/lu";
+import { Button } from "~/components/ui/button";
 import { DataListItem, DataListRoot } from "~/components/ui/data-list";
 import {
   HoverCardArrow,
@@ -6,12 +9,10 @@ import {
   HoverCardRoot,
   HoverCardTrigger,
 } from "~/components/ui/hover-card";
-import { Button } from "~/components/ui/button";
-import ControlStatusBadge from "./ControlStatusBadge";
-import { LuInfo } from "react-icons/lu";
-import SeverityBadge from "./SeverityBadge";
 import { Switch } from "~/components/ui/switch";
-import { useState } from "react";
+import ControlStatusBadge from "./ControlStatusBadge";
+import SeverityBadge from "./SeverityBadge";
+import { useTranslation } from "react-i18next";
 
 type ControlCardProps = {
   SecurityControlId: string;
@@ -32,16 +33,17 @@ const ControlCard = ({
   controlStatus,
   failedChecks,
 }: ControlCardProps) => {
+  const { t } = useTranslation();
   const [checked] = useState(SecurityControlStatus === "ENABLED");
 
   return (
     <Card.Root
+      h="full"
       size={{
         base: "sm",
         md: "md",
         lg: "lg",
       }}
-      h="full"
     >
       <Card.Header>
         <HStack justify="space-between">
@@ -52,13 +54,17 @@ const ControlCard = ({
           {Title}
           <HoverCardRoot>
             <HoverCardTrigger>
-              <Button size="2xs" variant="plain">
+              <Button
+                size="2xs"
+                variant="plain"
+                aria-label={t("infoButtonLabel")}
+              >
                 <LuInfo />
               </Button>
             </HoverCardTrigger>
             <HoverCardContent>
               <HoverCardArrow />
-              {Description}
+              {t("descriptionLabel")}: {Description}
             </HoverCardContent>
           </HoverCardRoot>
         </Card.Description>
@@ -66,22 +72,22 @@ const ControlCard = ({
       <Card.Body>
         <DataListRoot orientation="horizontal">
           <DataListItem
+            grow
             key={"Control status"}
-            label={"Control status"}
+            label={t("controlStatusLabel")}
             value={<ControlStatusBadge status={controlStatus} />}
-            grow
           />
           <DataListItem
+            grow
             key={"Severity"}
-            label={"Severity"}
+            label={t("severityLabel")}
             value={<SeverityBadge severity={SeverityRating} />}
-            grow
           />
           <DataListItem
-            key={"Failed Checks"}
-            label={"Failed Checks"}
-            value={failedChecks}
             grow
+            key={"Failed Checks"}
+            label={t("failedChecksLabel")}
+            value={failedChecks}
           />
         </DataListRoot>
       </Card.Body>
