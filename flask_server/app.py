@@ -6,9 +6,8 @@ from flask import redirect, Flask, send_from_directory, request, jsonify, sessio
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
-from aws_service import set_securityhub_control_activation, get_nist_controls_list, get_security_hub_compliance_summary
-from dashboard_service import get_tickets_status
-from dashboard_service import get_ticket_details
+from aws_service import set_securityhub_control_activation, get_nist_controls_list
+from dashboard_service import get_ticket_details, get_tickets_stats
 from dotenv import load_dotenv
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 
@@ -322,8 +321,8 @@ def get_control_item_list():
 # Dashboard에서 Jira 티켓 현황 통계 조회
 @app.route('/dashboard', methods=['GET'])
 def dashboard_tickets_status():
-    tickets_status = get_tickets_status()
-    return jsonify(tickets_status) 
+    tickets_stats = get_tickets_stats()
+    return jsonify(tickets_stats)
 
 # Dashboard에서 특정 Jira 티켓 조회
 @app.route('/dashboard/<ticket_id>', methods=['GET'])
