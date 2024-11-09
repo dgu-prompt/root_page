@@ -6,7 +6,7 @@ from flask import redirect, Flask, send_from_directory, request, jsonify, sessio
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
-from aws_service import set_securityhub_control_activation, get_nist_controls_list
+from aws_service import set_securityhub_control_activation, get_nist_controls_list, get_security_hub_compliance_summary
 from dashboard_service import get_tickets_status
 from dashboard_service import get_ticket_details
 from dotenv import load_dotenv
@@ -335,6 +335,26 @@ def dashboard_ticket_details(ticket_id):
     
     return jsonify(ticket_details), 200
 
+# SecurityHub 규정 준수 요약 가져오기 API
+@app.route('/compliance_summary/<control_id>', methods=['GET'])
+def get_compliance_summary(control_id):
+    try:
+        summary = get_security_hub_compliance_summary(control_id)
+        return jsonify(summary), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# # NIST 보안 표준 개별 제어 항목 세부 정보 불러오는 API
+# @app.route('/control/<control_id>', methods=['GET'])
+# @login_required
+# def get_control_item(control_id):
+#     try:
+#         control_details = get_control_details(control_id)
+#         return jsonify({"control_details": control_details}), 200
+#     except ValueError as e:
+#         return jsonify({"error": str(e)}), 404
+#     except Exception as e:
+#         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 if __name__ == '__main__':
     
