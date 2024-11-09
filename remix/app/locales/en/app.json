@@ -1,0 +1,157 @@
+{
+  "login": "Login",
+  "logout": "Logout",
+  "appName": "SecurityCircle",
+  "loginTitle": "Log in to your account",
+  "loginDescription": "Enter your credentials to access your account",
+  "usernameLabel": "Username",
+  "usernamePlaceholder": "Enter your username",
+  "passwordLabel": "Password",
+  "passwordPlaceholder": "Enter your password",
+  "loginButton": "Login",
+  "statusPassed": "Passed",
+  "statusFailed": "Failed",
+  "severityCritical": "Critical",
+  "severityHigh": "High",
+  "severityMedium": "Medium",
+  "severityLow": "Low",
+  "severityInformational": "Informational",
+  "menu": {
+    "dashboard": "Dashboard",
+    "rules": "Rules",
+    "controls": "Controls",
+    "logout": "Logout"
+  },
+  "footerCopyright": "© 2024 Prompt",
+  "footerGitHub": "GitHub",
+  "controlsHeading": "Controls",
+  "toggleViewLabel": "Switch between list and card view",
+  "saveChangesButton": "Save Changes",
+  "id": "ID",
+  "title": "Title",
+  "controlStatus": "Control Status",
+  "severity": "Severity",
+  "regionSelectLabel": "Select Region",
+  "regionUsEast1": "US East (N. Virginia)",
+  "regionUsWest2": "US West (Oregon)",
+  "regionEuCentral1": "EU Central (Frankfurt)",
+  "regionApSoutheast2": "Asia Pacific (Seoul)",
+  "controlStatusLabel": "Control Status",
+  "severityLabel": "Severity",
+  "failedChecksLabel": "Failed Checks",
+  "descriptionLabel": "Description",
+  "infoButtonLabel": "More Information",
+  "languageEnglish": "English",
+  "languageKorean": "Korean",
+  "dashboardTitle": "Dashboard",
+  "securityHubTitle": "Security Hub",
+  "securityScoreLabel": "Security score",
+  "controlsPassed": "{{passed}} of {{total}} controls passed",
+  "findingsByRegion": "Findings by Region",
+  "openCriticalTicketsLabel": "Open Tickets with Critical Severity",
+  "newTicketsLabel": "New Tickets",
+  "newTicketsTimeFrame": "since last 7 days",
+  "ticketsByStatus": "Tickets by Status",
+  "openIssuesLabel": "Open Issues",
+  "closedIssuesLabel": "Closed Issues",
+  "inProgressIssuesLabel": "In Progress Issues",
+  "issueResolutionRate": "Issue Resolution Rate",
+  "increase": "increase",
+  "jiraTitle": "Jira",
+  "addRuleTitle": "Add Rule",
+  "editRuleTitle": "Edit Rule",
+  "yamlPreviewTitle": "YAML Preview",
+  "yamlFileName": "samplerule.yaml",
+  "configGeneral": {
+    "nameLabel": "Name",
+    "nameHelperText": "The name of the rule, must be unique.",
+    "numEventsLabel": "Num Events",
+    "numEventsHelperText": "The number of events which will trigger an alert, inclusive.",
+    "timeframeLabel": "Timeframe",
+    "timeframeHelperText": "The time that num events must occur within.",
+    "timeframeOptions": {
+      "minutes": "Minutes",
+      "hours": "Hours",
+      "days": "Days"
+    }
+  },
+  "configFilter": {
+    "filterTitle": "Filter",
+    "filterOptionalBadge": "Optional",
+    "filterTypeLabel": "Filter Type",
+    "filterTypePlaceholder": "Select filter type",
+    "addFilterButton": "Add Filter",
+    "filterTypes": {
+      "query_string": "Query String",
+      "term": "Term",
+      "wildcard": "Wildcard",
+      "range": "Range",
+      "bool": "Boolean"
+    },
+    "filterDescriptions": {
+      "query_string": "The query_string type follows the Lucene query format and can be used for partial or full matches to multiple fields.",
+      "term": "The term type allows for exact field matches."
+    },
+    "queryString": {
+      "label": "Query",
+      "placeholder": "username: bob"
+    },
+    "term": {
+      "fieldLabel": "Field",
+      "valueLabel": "Value",
+      "fieldPlaceholder": "name_field",
+      "valuePlaceholder": "bob"
+    },
+    "wildcard": {
+      "fieldLabel": "Field",
+      "patternLabel": "Pattern",
+      "fieldPlaceholder": "field",
+      "patternPlaceholder": "foo*bar"
+    },
+    "range": {
+      "fieldLabel": "Field",
+      "fromLabel": "From",
+      "toLabel": "To",
+      "fieldPlaceholder": "status_code",
+      "fromPlaceholder": "500",
+      "toPlaceholder": "599"
+    },
+    "boolean": {
+      "label": "Boolean Logic (must, must_not, should)"
+    }
+  },
+  "rulesPage": {
+    "heading": "Rules",
+    "addRuleButton": "Add Rule",
+    "addFolderButton": "Add Folder",
+    "tableHeader": "Rules",
+    "modalTitle": "Add Folder",
+    "inputPlaceholder": "Enter folder name",
+    "okButton": "OK",
+    "cancelButton": "Cancel"
+  },
+
+  "ruleForm": {
+    "generalTitle": "General",
+    "alertTitle": "Alert",
+    "slackTitle": "Slack",
+    "jiraTitle": "Jira"
+  },
+  "aggregationSchedule": "Aggregation Schedule",
+  "reAlertTime": "Re-alert Time (minutes)",
+  "enterReAlertTime": "Enter re-alert time",
+  "alertWarning": "WARNING: Alerts will trigger every time without limit.",
+  "alertInfo": "Alerts will trigger, at most, every {{minutes}} minute(s) to prevent flooding.",
+  "selectAlertDestinations": "Select Alert Destinations",
+  "jiraDescription": "Creates a Jira ticket.",
+  "slackDescription": "Generates a Slack notification.",
+  "jira": "Jira",
+  "slack": "Slack",
+  "selectAtLeastOneAlert": "You must select at least one alert destination.",
+  "searchControlsPlaceholder": "Search controls",
+  "assigneeLabel": "Assignee",
+  "failedChecksValue": "{{failed}} of {{total}}",
+
+  "emptyControlsTitle": "No results for \"{{query}}\"",
+  "emptyControlsDescription": "We couldn't find any controls matching your search. Try different keywords or remove filters."
+}

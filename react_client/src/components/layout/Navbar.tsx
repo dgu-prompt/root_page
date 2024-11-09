@@ -21,11 +21,12 @@ function Logout() {
 
 function Navbar() {
   const { pathname } = useResolvedPath();
+  const segment = "/" + pathname.split("/")[1];
 
   return (
     <Box w="full">
       <Container alignContent="center" py="3">
-        <Tabs.Root value={pathname} activationMode="manual" variant="subtle">
+        <Tabs.Root value={segment} activationMode="manual" variant="subtle">
           <Tabs.List>
             <Tabs.Trigger asChild>
               <NavLink to="/">
