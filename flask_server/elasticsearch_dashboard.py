@@ -17,31 +17,56 @@ es = Elasticsearch(
     verify_certs=False,  # 인증서 확인 비활성화
     request_timeout=30
 )
-# 보안 이슈 데이터 구조 확인 함수
-def get_all_security_issues(index=".ds-logs-aws.securityhub_findings-default-*"):
-    query = {
-        "size": 50,  # 가져올 문서 수
-        "_source": ["aws.securityhub_findings"],  # 가져올 필드 지정
-        "query": {
-            "match_all": {}  # 모든 문서 가져오기
-        }
-    }
-    response = es.search(index=index, body=query)
-    return response['hits']['hits']  # Elasticsearch의 히트 데이터를 반환
+def analyze_security_issues(data):
+    severity_count = {}
+    resource_type_count = {'Account': 0, 'IAM': 0, 'EC2': 0, 'S3': 0, 'RDS': 0, 'VPC': 0}
 
-# 데이터 가져오기
-data = get_all_security_issues()
+    for hit in data:
+        # 키 존재 여부 체크
+        if 'aws.securityhub_findings' in hit['_source']:
+            finding = hit['_source']['aws.securityhub_findings']
+            severity = finding['severity']['original']  # 위험도
+            resource_type = finding.get('resource', {}).get('Type')  # 자원 유형
+            
+            # 위험도 통계
+            if severity not in severity_count:
+                severity_count[severity] = 0
+            severity_count[severity] += 1
+            
+            # 자원 유형 통계
+            if resource_type in resource_type_count:
+                resource_type_count[resource_type] += 1
+        else:
+            print("Key 'aws.securityhub_findings' not found in hit:", hit)
 
-# 있는 데이터를 그대로 출력
-def print_security_issues(data):
-    if data:
-        for hit in data:
-            print(hit['_source'])  # 각 문서의 _source 필드 출력
-    else:
-        print("No security issues found.")
+    return severity_count, resource_type_count
 
+
+# # 보안 이슈 데이터 구조 확인 함수
+# def get_all_security_issues(index=".ds-logs-aws.securityhub_findings-default-*"):
+#     query = {
+#         "size": 50,  # 가져올 문서 수
+#         "_source": ["aws.securityhub_findings"],  # 가져올 필드 지정
+#         "query": {
+#             "match_all": {}  # 모든 문서 가져오기
+#         }
+#     }
+#     response = es.search(index=index, body=query)
+#     return response['hits']['hits']  # Elasticsearch의 히트 데이터를 반환
+
+# # 데이터 가져오기
+# data = get_all_security_issues()
+
+# # 있는 데이터를 그대로 출력
+# def print_security_issues(data):
+#     if data:
+#         for hit in data:
+#             print(hit['_source'])  # 각 문서의 _source 필드 출력
+#     else:
+#         print("No security issues found.")
+# -----------------
 # 보안 이슈 출력
-print_security_issues(data)
+# print_security_issues(data)
 
 
 # # 데이터 시각화 함수

@@ -55,14 +55,14 @@ class User(UserMixin, db.Model):
 
     def get_id(self):
         return str(self.id)
+# 해싱 시도 --
+    # 비밀번호 해싱을 통한 설정
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
 
-    # # 비밀번호 해싱을 통한 설정
-    # def set_password(self, password):
-    #     self.password = generate_password_hash(password)
-
-    # # 비밀번호 확인 메서드 추가
-    # def check_password(self, password):
-    #     return check_password_hash(self.password, password)
+    # 비밀번호 확인 메서드 추가
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
 
 
 # flask-login 사용자 로드 함수
@@ -74,19 +74,56 @@ def load_user(user_id):
 @app.route('/login', methods=['POST'])
 def login():
     json_data = request.get_json()
-    if not json_data or 'user_id' not in json_data or 'password' not in json_data:
-        return jsonify({"error": "User ID and password required"}), 400
 
-    user_id = json_data['user_id']
+    # 필수 데이터 유효성 검사
+    if not json_data:
+        return jsonify({"error": "No JSON data provided"}), 400
+    if 'username' not in json_data or 'password' not in json_data:
+        return jsonify({"error": "Username and password required"}), 400
+        
+    username = json_data['username']
     password = json_data['password']
     
-    # 사용자 확인
-    user = User.query.filter_by(user_id=user_id, password=password).first()
-    if user:
-        login_user(user)  # flask-login을 사용하여 로그인
-        return jsonify({"message": "Login successful!"}), 200
-    else:
-        return jsonify({"error": "Invalid credentials"}), 401
+    # `username`을 `user_id`로 매칭해서 사용자 찾기
+    user = User.query.filter_by(user_id=username).first()
+    
+    if not user:
+            return jsonify({"error": "User not found"}), 404  # 사용자 없음
+        
+    # 비밀번호 체크
+    if user.password != password:
+        return jsonify({"error": "Invalid password"}), 401  # 비밀번호 불일치
+
+    # 로그인 처리
+    login_user(user)  # flask-login을 사용하여 로그인
+
+    # 로그인 성공 시 username과 메시지 반환
+    return jsonify({"message": "Login successful!", "username": user.user_id}), 200
+
+
+    # if user and user.check_password(password):  # 해싱된 비밀번호 비교
+    #     login_user(user)  # flask-login을 사용하여 로그인
+    #     return jsonify({"message": "Login successful!", "username": user.user_id}), 200
+    # else:
+    #     return jsonify({"error": "Invalid credentials"}), 401
+
+# # 로그인 엔드포인트
+# @app.route('/login', methods=['POST'])
+# def login():
+#     json_data = request.get_json()
+#     if not json_data or 'user_id' not in json_data or 'password' not in json_data:
+#         return jsonify({"error": "User ID and password required"}), 400
+
+#     user_id = json_data['user_id']
+#     password = json_data['password']
+    
+#     # 사용자 확인
+#     user = User.query.filter_by(user_id=user_id, password=password).first()
+#     if user:
+#         login_user(user)  # flask-login을 사용하여 로그인 # username도 반환하도록
+#         return jsonify({"message": "Login successful!"}), 200
+#     else:
+#         return jsonify({"error": "Invalid credentials"}), 401
 
     # # 사용자 확인 - seceretkey 사용
     # user = User.query.filter_by(user_id=user_id).first()
