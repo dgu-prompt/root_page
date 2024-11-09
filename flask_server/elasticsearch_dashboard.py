@@ -21,10 +21,39 @@ es = Elasticsearch(
 )
 
 
+# EC2.19에 대한 보안 이슈만 가져오는 함수
+def get_all_security_issues(index=".ds-logs-aws.securityhub_findings-default-*"):
+    query = {
+        "size": 100,  # 가져올 문서 수
+        "_source": ["aws.securityhub_findings"],  # 가져올 필드 지정
+        "query": {
+            "term": {
+                "aws.securityhub_findings.generator.id": "security-control/EC2.19"  # EC2.19에 해당하는 문서만 필터링
+            }
+        }
+    }
+
+    # Elasticsearch에서 데이터 검색
+    response = es.search(index=index, body=query)
+    
+    # Elasticsearch의 히트 데이터를 JSON 형식으로 반환
+    hits = response['hits']['hits']
+    
+    # JSON 형식으로 보기 좋게 들여쓰기
+    json_data = json.dumps(hits, indent=4)
+    
+    return json_data  # JSON 형식으로 반환
+
+# EC2.19에 해당하는 보안 이슈 데이터를 JSON 형식으로 가져오기
+json_result = get_all_security_issues()
+
+# 결과 출력 (json 형식으로 출력)
+# print(json_result)
+
 # 보안 이슈 데이터 구조 확인 함수 (전체 데이터를 JSON 형식으로 반환)
 def get_all_security_issues(index=".ds-logs-aws.securityhub_findings-default-*"):
     query = {
-        "size": 10,  # 가져올 문서 수
+        "size": 100,  # 가져올 문서 수
         "_source": ["aws.securityhub_findings"],  # 가져올 필드 지정
         "query": {
             "match_all": {}  # 모든 문서 가져오기
@@ -46,59 +75,74 @@ def get_all_security_issues(index=".ds-logs-aws.securityhub_findings-default-*")
 json_result = get_all_security_issues()
 
 # 결과 출력 (json 형식으로 출력)
-print(json_result)
+# print(json_result)
 
-# def analyze_security_issues(data):
-#     severity_count = {}
-#     resource_type_count = {'Account': 0, 'IAM': 0, 'EC2': 0, 'S3': 0, 'RDS': 0, 'VPC': 0}
-
-#     for hit in data:
-#         # 키 존재 여부 체크
-#         if 'aws.securityhub_findings' in hit['_source']:
-#             finding = hit['_source']['aws.securityhub_findings']
-#             severity = finding['severity']['original']  # 위험도
-#             resource_type = finding.get('resource', {}).get('Type')  # 자원 유형
-            
-#             # 위험도 통계
-#             if severity not in severity_count:
-#                 severity_count[severity] = 0
-#             severity_count[severity] += 1
-            
-#             # 자원 유형 통계
-#             if resource_type in resource_type_count:
-#                 resource_type_count[resource_type] += 1
-#         else:
-#             print("Key 'aws.securityhub_findings' not found in hit:", hit)
-
-#     return severity_count, resource_type_count
+# 비활성화, 활성화, 통과 갯수는 securityhub에서 가져오기
 
 
-# # 보안 이슈 데이터 구조 확인 함수
-# def get_all_security_issues(index=".ds-logs-aws.securityhub_findings-default-*"):
-#     query = {
-#         "size": 1,  # 가져올 문서 수
-#         "_source": ["aws.securityhub_findings"],  # 가져올 필드 지정
-#         "query": {
-#             "match_all": {}  # 모든 문서 가져오기
-#         }
-#     }
-#     response = es.search(index=index, body=query)
-#     return response['hits']['hits']  # Elasticsearch의 히트 데이터를 반환
 
-# 데이터 가져오기
-#data = get_all_security_issues()
 
-# # 있는 데이터를 그대로 출력
-# def print_security_issues(data):
-#     if data:
-#         for hit in data:
-#             print(hit['_source'])  # 각 문서의 _source 필드 출력
-#     else:
-#         print("No security issues found.")
-# -----------------
-# 보안 이슈 출력
-#print_security_issues(data)
+# 보안 이슈 데이터에서 필요한 정보만 추출하는 함수 (PASSED 상태 제외)
+# 검사가 여러개 된 애들에 대해서는 가장 최근에 검사된 애로 가져와야한다.
+# check가 어떤 식으로 구분되어있는지 확인하기
+def get_security_issues_filtered(index=".ds-logs-aws.securityhub_findings-default-*"):
+    query = {
+        "size": 10,  # 가져올 문서 수
+        "_source": [
+            "aws.securityhub_findings.severity",
+            "aws.securityhub_findings.compliance.status",
+            "aws.securityhub_findings.id",
+            "aws.securityhub_findings.generator.id",
+            "aws.securityhub_findings.region",
+            "aws.securityhub_findings.last_observed_at",
+            "aws.securityhub_findings.workflow.state",
+            "aws.securityhub_findings.product.fields.aws/securityhub/FindingId"
+        ],  # 필요한 필드만 지정
+        "query": {
+            "bool": {
+                "must": [
+                    {"match_all": {}}
+                ],
+                "filter": [
+                    {"term": {"aws.securityhub_findings.compliance.status": "FAILED"}},  # PASSED 상태 제외, FAILED만
+                ]
+            }
+        }
+    }
+    
+    response = es.search(index=index, body=query)
+    hits = response['hits']['hits']
 
+    # 필요한 정보만 추출하여 리스트에 담기
+    filtered_data = []
+
+    for hit in hits:
+        # 정확한 경로로 데이터 추출
+        if 'aws' in hit['_source'] and 'securityhub_findings' in hit['_source']['aws']:
+            finding = hit['_source']['aws']['securityhub_findings']
+            filtered_data.append({
+                "region": finding['region'],  
+                "last_observed_at": finding['last_observed_at'],
+                "severity": finding['severity']['original'],
+                "status": finding['compliance']['status'],
+                "ControlId": finding['id'],
+                "FindingsId": finding.get('product', {}).get('fields', {}).get('aws/securityhub/FindingId', ''),
+                            
+                "workflow_state": finding['workflow']['state']
+            })
+        else:
+            print(f"Key 'aws.securityhub_findings' not found in hit: {hit}")  # 디버깅용 출력
+
+    # JSON 형식으로 보기 좋게 들여쓰기
+    json_data = json.dumps(filtered_data, indent=4)
+
+    return json_data
+
+# 필터링된 보안 이슈 데이터 가져오기
+filtered_result = get_security_issues_filtered()
+
+# 결과 출력 (json 형식으로 출력)
+print(filtered_result)
 
 # # 데이터 시각화 함수
 # def visualize_failed_compliance(data):
