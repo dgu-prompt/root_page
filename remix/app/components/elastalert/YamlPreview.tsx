@@ -1,7 +1,7 @@
 import { Card } from "@chakra-ui/react";
 import { ClipboardIconButton, ClipboardRoot } from "~/components/ui/clipboard";
 
-import AutoResizeTextArea from "./AutoResizeTextArea";
+import AutoResizeTextArea from "../common/AutoResizeTextArea";
 
 type YamlPreviewProps = {
   content: string;

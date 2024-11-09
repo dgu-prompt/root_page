@@ -1,5 +1,7 @@
 import { Card, HStack } from "@chakra-ui/react";
+import { Link } from "@remix-run/react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { LuInfo } from "react-icons/lu";
 import { Button } from "~/components/ui/button";
 import { DataListItem, DataListRoot } from "~/components/ui/data-list";
@@ -10,19 +12,11 @@ import {
   HoverCardTrigger,
 } from "~/components/ui/hover-card";
 import { Switch } from "~/components/ui/switch";
-import ControlStatusBadge from "./ControlStatusBadge";
-import SeverityBadge from "./SeverityBadge";
-import { useTranslation } from "react-i18next";
 
-type ControlCardProps = {
-  SecurityControlId: string;
-  Title: string;
-  Description: string;
-  SeverityRating: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-  SecurityControlStatus: "ENABLED" | "DISABLED";
-  controlStatus: "PASSED" | "FAILED";
-  failedChecks: string;
-};
+import ControlStatus from "./ControlStatus";
+import SeverityBadge from "./SeverityBadge";
+
+import type { Control } from "~/types/control";
 
 const ControlCard = ({
   SecurityControlId,
@@ -32,7 +26,9 @@ const ControlCard = ({
   SecurityControlStatus,
   controlStatus,
   failedChecks,
-}: ControlCardProps) => {
+  totalChecks,
+  assignee,
+}: Control) => {
   const { t } = useTranslation();
   const [checked] = useState(SecurityControlStatus === "ENABLED");
 
@@ -47,7 +43,9 @@ const ControlCard = ({
     >
       <Card.Header>
         <HStack justify="space-between">
-          <Card.Title>{SecurityControlId}</Card.Title>
+          <Card.Title>
+            <Link to="/rules/Sample%20Rule%201/edit">{SecurityControlId}</Link>
+          </Card.Title>
           <Switch checked={checked} />
         </HStack>
         <Card.Description>
@@ -55,16 +53,16 @@ const ControlCard = ({
           <HoverCardRoot>
             <HoverCardTrigger>
               <Button
+                aria-label={t("infoButtonLabel")}
                 size="2xs"
                 variant="plain"
-                aria-label={t("infoButtonLabel")}
               >
                 <LuInfo />
               </Button>
             </HoverCardTrigger>
             <HoverCardContent>
               <HoverCardArrow />
-              {t("descriptionLabel")}: {Description}
+              {Description}
             </HoverCardContent>
           </HoverCardRoot>
         </Card.Description>
@@ -75,7 +73,7 @@ const ControlCard = ({
             grow
             key={"Control status"}
             label={t("controlStatusLabel")}
-            value={<ControlStatusBadge status={controlStatus} />}
+            value={<ControlStatus status={controlStatus} />}
           />
           <DataListItem
             grow
@@ -87,7 +85,16 @@ const ControlCard = ({
             grow
             key={"Failed Checks"}
             label={t("failedChecksLabel")}
-            value={failedChecks}
+            value={t("failedChecksValue", {
+              failed: failedChecks,
+              total: totalChecks,
+            })}
+          />
+          <DataListItem
+            grow
+            key={"Assignee"}
+            label={t("assigneeLabel")}
+            value={assignee}
           />
         </DataListRoot>
       </Card.Body>

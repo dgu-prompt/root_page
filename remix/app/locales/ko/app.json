@@ -14,6 +14,8 @@
   "severityHigh": "높음",
   "severityMedium": "보통",
   "severityLow": "낮음",
+  "severityInformational": "정보",
+
   "menu": {
     "dashboard": "대시보드",
     "rules": "규칙",
@@ -28,7 +30,7 @@
   "title": "제목",
   "controlStatus": "제어 상태",
   "severity": "심각도",
-  "failedChecks": "실패한 점검",
+
   "regionSelectLabel": "지역 선택",
   "regionUsEast1": "미국 동부 (버지니아 북부)",
   "regionUsWest2": "미국 서부 (오리건)",
@@ -36,14 +38,14 @@
   "regionApSoutheast2": "아시아 태평양 (서울)",
   "controlStatusLabel": "컨트롤 상태",
   "severityLabel": "심각도",
-  "failedChecksLabel": "실패한 점검",
+  "failedChecksLabel": "실패한 검사",
   "descriptionLabel": "설명",
   "infoButtonLabel": "자세한 정보",
   "languageEnglish": "영어",
   "languageKorean": "한국어",
   "dashboardTitle": "대시보드",
   "securityScoreLabel": "보안 점수",
-  "controlsPassed": "{{passed}}개 중 {{total}}개 통과",
+  "controlsPassed": "{{total}}개 중 {{passed}}개 통과",
   "findingsByRegion": "지역별 결과",
   "openCriticalTicketsLabel": "매우 높은 심각도 티켓",
   "newTicketsLabel": "새로운 티켓",
@@ -144,5 +146,11 @@
   "slackDescription": "Slack 알림을 생성합니다.",
   "jira": "Jira",
   "slack": "Slack",
-  "selectAtLeastOneAlert": "최소 하나의 알림 대상을 선택해야 합니다."
+  "selectAtLeastOneAlert": "최소 하나의 알림 대상을 선택해야 합니다.",
+  "searchControlsPlaceholder": "제어 항목 검색",
+  "assigneeLabel": "담당자",
+  "failedChecksValue": "{{failed}} / {{total}}",
+
+  "emptyControlsTitle": "\"{{query}}\"에 대한 결과가 없습니다",
+  "emptyControlsDescription": "검색 조건에 맞는 컨트롤을 찾을 수 없습니다. 다른 키워드로 검색하거나 필터를 제거해 보세요."
 }

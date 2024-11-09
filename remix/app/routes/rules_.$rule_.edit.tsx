@@ -2,8 +2,8 @@ import { Box, Code, Container, Flex, HStack, Heading } from "@chakra-ui/react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import RuleForm from "~/components/RuleForm";
-import YamlPreview from "~/components/YamlPreview";
+import RuleForm from "~/components/elastalert/RuleForm";
+import YamlPreview from "~/components/elastalert/YamlPreview";
 import yamlData from "~/data/yamlData";
 
 function RuleEditPage() {

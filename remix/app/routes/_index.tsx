@@ -7,6 +7,7 @@ import {
   Link,
   StatUpIndicator,
 } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 import { LuExternalLink } from "react-icons/lu";
 import { DataListItem, DataListRoot } from "~/components/ui/data-list";
 import { ProgressBar, ProgressRoot } from "~/components/ui/progress";
@@ -17,8 +18,8 @@ import {
   StatValueText,
 } from "~/components/ui/stat";
 import { Status } from "~/components/ui/status";
-import RegionSelect from "~/components/RegionSelect";
-import { useTranslation } from "react-i18next";
+
+import RegionSelect from "~/components/aws/general/RegionSelect";
 
 export default function Index() {
   const { t } = useTranslation();

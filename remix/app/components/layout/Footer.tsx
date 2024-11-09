@@ -18,8 +18,8 @@ function Footer() {
         <Flex
           align="center"
           direction={{ base: "column", md: "row" }}
-          justify="space-between"
           gap="4"
+          justify="space-between"
         >
           <Text color="gray.600" fontSize="sm">
             {t("footerCopyright")}

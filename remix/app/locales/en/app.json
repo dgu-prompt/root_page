@@ -15,6 +15,7 @@
   "severityHigh": "High",
   "severityMedium": "Medium",
   "severityLow": "Low",
+  "severityInformational": "Informational",
   "menu": {
     "dashboard": "Dashboard",
     "rules": "Rules",
@@ -30,7 +31,6 @@
   "title": "Title",
   "controlStatus": "Control Status",
   "severity": "Severity",
-  "failedChecks": "Failed Checks",
   "regionSelectLabel": "Select Region",
   "regionUsEast1": "US East (N. Virginia)",
   "regionUsWest2": "US West (Oregon)",
@@ -147,5 +147,11 @@
   "slackDescription": "Generates a Slack notification.",
   "jira": "Jira",
   "slack": "Slack",
-  "selectAtLeastOneAlert": "You must select at least one alert destination."
+  "selectAtLeastOneAlert": "You must select at least one alert destination.",
+  "searchControlsPlaceholder": "Search controls",
+  "assigneeLabel": "Assignee",
+  "failedChecksValue": "{{failed}} of {{total}}",
+
+  "emptyControlsTitle": "No results for \"{{query}}\"",
+  "emptyControlsDescription": "We couldn't find any controls matching your search. Try different keywords or remove filters."
 }

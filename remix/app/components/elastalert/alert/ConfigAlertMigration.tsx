@@ -1,12 +1,12 @@
-import { useState, useRef, useEffect } from "react";
 import {
+  Box,
   Container,
+  Stack,
+  Text,
   Textarea,
   VStack,
-  Stack,
-  Box,
-  Text,
 } from "@chakra-ui/react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Field } from "~/components/ui/field";
 
@@ -73,19 +73,19 @@ const AlertForm = ({ alertData, setAlertData }) => {
       <Box
         border="1px solid"
         borderColor="gray.200"
-        p={4}
         borderRadius="md"
         mb={4}
+        p={4}
       >
-        <VStack spacing={4} mt={2}>
+        <VStack mt={2} spacing={4}>
           {/* 알림 텍스트 필드 */}
           <Field label="알림 텍스트">
             <Textarea
-              ref={textRef}
-              placeholder="Alert Text"
-              value={alertText}
               onChange={(e) => setAlertText(e.target.value)}
               onFocus={() => setFocusedField("text")}
+              placeholder="Alert Text"
+              ref={textRef}
+              value={alertText}
             />
             {focusedField === "text" && (
               <TemplateFields onFieldSelect={addFieldToTemplate} />
@@ -104,7 +104,7 @@ const TemplateFields = ({ onFieldSelect }) => (
     <Text fontSize="sm" fontWeight="bold">
       미리 정의된 필드 추가
     </Text>
-    <Stack direction="row" flexWrap="wrap" spacing={2} mt={2}>
+    <Stack direction="row" flexWrap="wrap" mt={2} spacing={2}>
       {predefinedFields.map((field) => (
         <Button
           key={field.name}
@@ -126,11 +126,11 @@ const Preview = ({ content }) => (
       미리보기
     </Text>
     <Box
+      bg="gray.50"
       border="1px solid"
       borderColor="gray.300"
-      p={2}
       borderRadius="md"
-      bg="gray.50"
+      p={2}
     >
       {content.split("\n").map((line, index) => (
         <Text key={index}>{line}</Text>

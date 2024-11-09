@@ -1,12 +1,12 @@
 import { Card, Stack } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 
-import ConfigFilter from "./config/ConfigFilter";
-import ConfigGeneral from "./config/ConfigGeneral";
-import AlertConfiguration from "./config/alert/ConfigAlert";
-import SlackSettings from "./config/alert/ConfigAlertSlack";
-import AlertForm from "./config/alert/ConfigAlertMigration";
-import AlertField from "./AlertField";
+import ConfigFilter from "./ConfigFilter";
+import ConfigGeneral from "./ConfigGeneral";
+import AlertField from "./alert/AlertField";
+import AlertConfiguration from "./alert/ConfigAlert";
+import AlertForm from "./alert/ConfigAlertMigration";
+import SlackSettings from "./alert/ConfigAlertSlack";
 
 type YamlPreviewProps = {
   content: string;
@@ -62,10 +62,10 @@ const RuleForm = ({ content }: YamlPreviewProps) => {
         <Card.Body>
           <AlertField
             label={""}
-            value={""}
             setValue={function (): void {
               throw new Error("Function not implemented.");
             }}
+            value={""}
           />
         </Card.Body>
       </Card.Root>

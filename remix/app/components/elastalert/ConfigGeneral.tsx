@@ -1,7 +1,7 @@
 import { HStack, Input, VStack } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 import { Field } from "~/components/ui/field";
 import { Radio, RadioGroup } from "~/components/ui/radio";
-import { useTranslation } from "react-i18next";
 
 const ConfigGeneral = ({ formData, setFormData }) => {
   const { t } = useTranslation();
