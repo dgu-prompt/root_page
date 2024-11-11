@@ -3,7 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import json
-
+from collections import defaultdict, Counter
+from datetime import datetime, timedelta
 
 
 # 환경 변수에서 Elasticsearch 연결 정보 가져오기
@@ -28,7 +29,7 @@ def get_all_security_issues(index=".ds-logs-aws.securityhub_findings-default-*")
         "_source": ["aws.securityhub_findings"],  # 가져올 필드 지정
         "query": {
             "term": {
-                "aws.securityhub_findings.generator.id": "security-control/EC2.19"  # EC2.19에 해당하는 문서만 필터링
+                "aws.securityhub_findings.generator.id": "security-control/IAM.2"  # EC2.19에 해당하는 문서만 필터링
             }
         }
     }
@@ -59,7 +60,6 @@ def get_all_security_issues(index=".ds-logs-aws.securityhub_findings-default-*")
             "match_all": {}  # 모든 문서 가져오기
         }
     }
-    
     # Elasticsearch에서 데이터 검색
     response = es.search(index=index, body=query)
     
@@ -72,22 +72,22 @@ def get_all_security_issues(index=".ds-logs-aws.securityhub_findings-default-*")
     return json_data  # JSON 형식으로 반환
 
 # 모든 보안 이슈 데이터를 JSON 형식으로 가져오기
-json_result = get_all_security_issues()
+# json_result = get_all_security_issues()
 
 # 결과 출력 (json 형식으로 출력)
 # print(json_result)
 
 # 비활성화, 활성화, 통과 갯수는 securityhub에서 가져오기
 
-
-
-
 # 보안 이슈 데이터에서 필요한 정보만 추출하는 함수 (PASSED 상태 제외)
 # 검사가 여러개 된 애들에 대해서는 가장 최근에 검사된 애로 가져와야한다.
-# check가 어떤 식으로 구분되어있는지 확인하기
 def get_security_issues_filtered(index=".ds-logs-aws.securityhub_findings-default-*"):
+    # 현재 시간에서 7일 전의 날짜 계산
+    seven_days_ago = datetime.now() - timedelta(days=7)
+    seven_days_ago_str = seven_days_ago.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+
     query = {
-        "size": 10,  # 가져올 문서 수
+        "size": 100,  # 가져올 문서 수
         "_source": [
             "aws.securityhub_findings.severity",
             "aws.securityhub_findings.compliance.status",
@@ -96,8 +96,9 @@ def get_security_issues_filtered(index=".ds-logs-aws.securityhub_findings-defaul
             "aws.securityhub_findings.region",
             "aws.securityhub_findings.last_observed_at",
             "aws.securityhub_findings.workflow.state",
-            "aws.securityhub_findings.product.fields.aws/securityhub/FindingId"
-        ],  # 필요한 필드만 지정
+            "aws.securityhub_findings.product.fields.aws/securityhub/FindingId",
+            "aws.securityhub_findings.resources"  # resources도 가져오도록 설정
+        ],
         "query": {
             "bool": {
                 "must": [
@@ -105,91 +106,87 @@ def get_security_issues_filtered(index=".ds-logs-aws.securityhub_findings-defaul
                 ],
                 "filter": [
                     {"term": {"aws.securityhub_findings.compliance.status": "FAILED"}},  # PASSED 상태 제외, FAILED만
+                    {"range": {
+                        "aws.securityhub_findings.last_observed_at": {
+                            "gte": seven_days_ago_str  # 최근 7일 내의 데이터만
+                        }
+                    }}
                 ]
             }
         }
     }
-    
+
     response = es.search(index=index, body=query)
     hits = response['hits']['hits']
 
-    # 필요한 정보만 추출하여 리스트에 담기
-    filtered_data = []
+    # 중복된 검사 log를 id와 resources를 기준으로 그룹화
+    grouped_data = defaultdict(list)
 
     for hit in hits:
         # 정확한 경로로 데이터 추출
         if 'aws' in hit['_source'] and 'securityhub_findings' in hit['_source']['aws']:
             finding = hit['_source']['aws']['securityhub_findings']
-            filtered_data.append({
-                "region": finding['region'],  
-                "last_observed_at": finding['last_observed_at'],
-                "severity": finding['severity']['original'],
-                "status": finding['compliance']['status'],
-                "ControlId": finding['id'],
-                "FindingsId": finding.get('product', {}).get('fields', {}).get('aws/securityhub/FindingId', ''),
-                            
-                "workflow_state": finding['workflow']['state']
-            })
-        else:
-            print(f"Key 'aws.securityhub_findings' not found in hit: {hit}")  # 디버깅용 출력
+            control_id = finding['id']
+            resource_id = finding['resources'][0]['Id'] if 'resources' in finding else None
+
+            if resource_id:
+                # id와 resource_id를 키로 그룹화
+                grouped_data[(control_id, resource_id)].append(finding)
+    
+    # 각 그룹에서 최신의 'last_observed_at' 값을 가진 항목만 선택
+    filtered_data = []
+    for key, findings in grouped_data.items():
+        # 최신 날짜 기준으로 정렬
+        latest_finding = max(findings, key=lambda x: x['last_observed_at'])
+        filtered_data.append({
+            "region": latest_finding['region'],
+            "last_observed_at": latest_finding['last_observed_at'],
+            "severity": latest_finding['severity']['original'],
+            "status": latest_finding['compliance']['status'],
+            "ControlId": latest_finding['id'],
+            "FindingsId": latest_finding.get('product', {}).get('fields', {}).get('aws/securityhub/FindingId', ''),
+            "workflow_state": latest_finding['workflow']['state']
+        })
 
     # JSON 형식으로 보기 좋게 들여쓰기
     json_data = json.dumps(filtered_data, indent=4)
 
     return json_data
 
+
 # 필터링된 보안 이슈 데이터 가져오기
 filtered_result = get_security_issues_filtered()
 
 # 결과 출력 (json 형식으로 출력)
-print(filtered_result)
+#print(filtered_result)
+# 함수 정의: 데이터를 가져온 후 Severity와 ControlId 종류별 분포 계산
+def analyze_security_issues(filtered_data):
+    # Severity별 분포 계산
+    severity_counter = Counter([issue['severity'] for issue in filtered_data])
+    
+    # Control 종류별 분포 계산 (ControlId에서 "EC2", "IAM" 등만 추출)
+    control_counter = Counter([issue['ControlId'].split('/')[1].split('.')[0] for issue in filtered_data])
 
-# # 데이터 시각화 함수
-# def visualize_failed_compliance(data):
-#     # 데이터 가공
-#     records = [hit['_source']['aws.securityhub_findings'] for hit in data]
-#     df = pd.DataFrame(records)
+    # 지정된 순서대로 Severity 결과 정렬
+    severity_order = ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFORMATIONAL"]
+    ordered_severity = {severity: severity_counter.get(severity, 0) for severity in severity_order}
+    
+    # 결과를 JSON 형식으로 변환
+    result = {
+        "severity_distribution": ordered_severity,
+        "control_type_distribution": dict(control_counter.most_common(5))  # 상위 5개의 Control 종류
+    }
 
-#     # 'FAILED'인 항목만 필터링
-#     failed_df = df[df['ComplianceStatus'] == 'FAILED']
+    # JSON 형식으로 보기 좋게 들여쓰기
+    json_data = json.dumps(result, indent=4)
 
-#     # severity 분포 시각화
-#     plt.figure(figsize=(12, 6))
-#     failed_df['Severity'].value_counts().plot(kind='bar', color='orange')
-#     plt.title('Distribution of Severity Levels for FAILED Items')
-#     plt.xlabel('Severity Level')
-#     plt.ylabel('Count')
-#     plt.xticks(rotation=45)
-#     plt.tight_layout()
-#     plt.show()
+    return json_data
 
-#     # ResourceType 분포 시각화
-#     plt.figure(figsize=(12, 6))
-#     failed_df['ResourceType'].value_counts().plot(kind='bar', color='blue')
-#     plt.title('Distribution of Resource Types for FAILED Items')
-#     plt.xlabel('Resource Type')
-#     plt.ylabel('Count')
-#     plt.xticks(rotation=45)
-#     plt.tight_layout()
-#     plt.show()
+# 예시 데이터 (필터링된 데이터, 실제로는 `filtered_result` 변수를 사용)
+filtered_data = json.loads(filtered_result)
 
+# 분석 실행
+json_result = analyze_security_issues(filtered_data)
 
-# # 대시보드 시각화
-# def plot_dashboard():
-#     fig, ax = plt.subplots(1, 2, figsize=(15, 6))
-
-#     # 1. 발견된 보안 이슈 항목 통계 (IAM, DATA, Network, Security)
-#     ax[0].pie(issue_counts, labels=issue_counts.index, autopct='%1.1f%%', startangle=90)
-#     ax[0].set_title("Security Issue Counts by Resource Type")
-
-#     # 2. 보안 이슈 항목 심각도 분포
-#     severity_counts.plot(kind="bar", ax=ax[1], color=['green', 'yellow', 'orange', 'red', 'darkred'])
-#     ax[1].set_title("Security Issue Severity Distribution")
-#     ax[1].set_xlabel("Severity")
-#     ax[1].set_ylabel("Counts")
-
-#     plt.tight_layout()
-#     plt.show()
-
-# # 대시보드 실행
-# plot_dashboard()
+# 결과 출력 (json 형식으로 출력)
+print(json_result)
