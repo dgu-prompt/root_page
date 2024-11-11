@@ -3,25 +3,35 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import json
+from flask import redirect, Flask, send_from_directory, request, jsonify, session
 from collections import defaultdict, Counter
 from datetime import datetime, timedelta
-
+from aws_service import set_securityhub_control_activation, get_nist_controls_list
 
 # 환경 변수에서 Elasticsearch 연결 정보 가져오기
-# elasticsearch_url = os.getenv('ELASTICSEARCH_URL')
-# password = os.getenv('ELASTICSEARCH_PASSWORD')
+elasticsearch_url = [os.getenv('ELASTICSEARCH_URL')]
+password = os.getenv('ELASTICSEARCH_PASSWORD')
 ca_certs = os.getenv('ELASTICSEARCH_CA_CERTS')
 
 # Elasticsearch 연결 설정
 es = Elasticsearch(
-    "https://3.36.50.130:9200",  # URL을 리스트로 감싸기
+   "https://3.36.50.130:9200",  # URL을 리스트로 감싸기
     basic_auth=("elastic", "changeme"),  # http_auth 대신 basic_auth 사용
     ca_certs=ca_certs,
     verify_certs=False,  # 인증서 확인 비활성화
     request_timeout=30
 )
 
-
+# 비활성화, 활성화, 통과 갯수는 securityhub에서 가져오기
+# @app.route('/control', methods=['GET'])
+# @app.route('/notificationRule', methods=['GET'])
+def get_control_item_list():
+    try:
+        controls = get_nist_controls_list()
+        return jsonify(controls)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
+    
 # EC2.19에 대한 보안 이슈만 가져오는 함수
 def get_all_security_issues(index=".ds-logs-aws.securityhub_findings-default-*"):
     query = {
@@ -76,8 +86,6 @@ def get_all_security_issues(index=".ds-logs-aws.securityhub_findings-default-*")
 
 # 결과 출력 (json 형식으로 출력)
 # print(json_result)
-
-# 비활성화, 활성화, 통과 갯수는 securityhub에서 가져오기
 
 # 보안 이슈 데이터에서 필요한 정보만 추출하는 함수 (PASSED 상태 제외)
 # 검사가 여러개 된 애들에 대해서는 가장 최근에 검사된 애로 가져와야한다.

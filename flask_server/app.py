@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
 from aws_service import set_securityhub_control_activation, get_nist_controls_list
+from model import initialize_db, User, db
 from dashboard_service import get_ticket_details, get_tickets_stats
 from dotenv import load_dotenv
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
@@ -39,31 +40,9 @@ db_name = os.getenv("DB_NAME")
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+db.init_app(app)  # SQLAlchemy 객체 초기화
+
 # 데이터베이스 초기화
-db = SQLAlchemy(app)
-
-# User 모델 정의
-class User(UserMixin, db.Model):
-    __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.String(50), nullable=False, unique=True)
-    password = db.Column(db.String(100), nullable=False)
-
-    def __repr__(self):
-        return f'<User {self.user_id}>'
-
-    def get_id(self):
-        return str(self.id)
-# 해싱 시도 --
-    # 비밀번호 해싱을 통한 설정
-    def set_password(self, password):
-        self.password = generate_password_hash(password)
-
-    # 비밀번호 확인 메서드 추가
-    def check_password(self, password):
-        return check_password_hash(self.password, password)
-
-
 # flask-login 사용자 로드 함수
 @login_manager.user_loader
 def load_user(user_id):
@@ -144,13 +123,6 @@ def logout():
 @login_required
 def protected():
     return jsonify({"message": f"Hello, {current_user.user_id}!"})
-
-# SecurityHubFinding 모델 정의
-class SecurityHubFinding(db.Model):
-    __tablename__ = 'securityhub_findings'
-    findings_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    findings_name = db.Column(db.String(100), nullable=False)
-    option = db.Column(db.String(50), nullable=True)
 
 # 정적 폴더 초기화 함수
 def clear_static_folder():
@@ -255,39 +227,6 @@ def db_test():
     except Exception as e:
         return f"Error connecting to MySQL Database: {e}"
     
-# SecurityHubFinding 테이블에 초기 데이터 삽입
-def insert_securityhub_findings_data():
-    findings_data = [
-        {"findings_name": "aws.securityhub_findings.aws_account_id", "option": None},
-        {"findings_name": "aws.securityhub_findings.workflow.state", "option": "NEW"},
-        {"findings_name": "aws.securityhub_findings.workflow.state", "option": "ASSIGNED"},
-        {"findings_name": "aws.securityhub_findings.workflow.state", "option": "IN_PROGRESS"},
-        {"findings_name": "aws.securityhub_findings.workflow.state", "option": "DEFERRED"},
-        {"findings_name": "aws.securityhub_findings.workflow.state", "option": "RESOLVED"},
-        {"findings_name": "aws.securityhub_findings.resources.Type", "option": None},
-        {"findings_name": "aws.securityhub_findings.region", "option": "ap-northeast-1"},
-        {"findings_name": "aws.securityhub_findings.region", "option": "ap-northeast-2"},
-        {"findings_name": "aws.securityhub_findings.region", "option": "us-east-1"},
-        {"findings_name": "aws.securityhub_findings.region", "option": "us-west-2"},
-        {"findings_name": "aws.securityhub_findings.description", "option": None},
-        {"findings_name": "aws.securityhub_findings.severity.label", "option": "INFORMATIONAL"},
-        {"findings_name": "aws.securityhub_findings.severity.label", "option": "LOW"},
-        {"findings_name": "aws.securityhub_findings.severity.label", "option": "MEDIUM"},
-        {"findings_name": "aws.securityhub_findings.severity.label", "option": "HIGH"},
-        {"findings_name": "aws.securityhub_findings.severity.label", "option": "CRITICAL"},
-        {"findings_name": "aws.securityhub_findings.workflow.status", "option": "NEW"},
-        {"findings_name": "aws.securityhub_findings.workflow.status", "option": "NOTIFIED"},
-        {"findings_name": "aws.securityhub_findings.workflow.status", "option": "RESOLVED"},
-        {"findings_name": "aws.securityhub_findings.workflow.status", "option": "SUPPRESSED"},
-        {"findings_name": "aws.securityhub_findings.title", "option": None},
-    ]
-    
-    for data in findings_data:
-        finding = SecurityHubFinding(findings_name=data["findings_name"], option=data["option"])
-        db.session.add(finding)
-    
-    db.session.commit()
-    print("SecurityHub findings data inserted successfully!")
 
 # NIST 보안 표준 개별 제어 항목 활성화 상태 설정하기
 @app.route('/control/<control_id>', methods=['POST'])
@@ -358,21 +297,7 @@ def get_compliance_summary(control_id):
 if __name__ == '__main__':
     
     with app.app_context():
-        db.create_all()
-        print("User and SecurityHubFinding tables created.")
-        
-        # Dummy user 생성 시 비밀번호 해싱
-        if not User.query.filter_by(user_id='testuser6').first():
-            
-            dummy_user = User(user_id='testuser6', password='1234')  # 해싱 없이 저장
-            # dummy_user = User(user_id='testuser5')
-            # dummy_user.set_password('1234')  # 해싱된 비밀번호 저장
-            db.session.add(dummy_user)
-            db.session.commit()
-            print("Dummy user 'testuser6' with hashed password added to the database.")
-
-        if not SecurityHubFinding.query.first():
-            insert_securityhub_findings_data()
+        initialize_db()  # 데이터베이스 초기화 및 더미 사용자 생성
 
     print("Starting Flask server...")
     app.run(debug=True, port=5001)
