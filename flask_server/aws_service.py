@@ -1,5 +1,9 @@
 import boto3
 import os
+import json
+from flask import Flask, jsonify
+from dotenv import load_dotenv
+load_dotenv()  # .env 파일 로드
 
 # AWS 세션 생성 함수
 def create_session():
@@ -86,89 +90,83 @@ def get_nist_controls_list():
     )
     return response.get('Controls', [])
 
-# SecurityHub 규정 준수 요약 가져오기 함수
-def get_security_hub_compliance_summary(control_id):
-    # AWS 계정 ID와 리전 정보를 환경 변수에서 가져옵니다.
-    account_id = os.getenv('AWS_ACCOUNT_ID')
-    region = os.getenv('AWS_DEFAULT_REGION', 'ap-northeast-2')  # 기본 리전 설정
-
-    # 클라이언트 생성
+# NIST 보안 표준 리스트 가져오는 함수
+# 그간 정의된 함수에는 PASSED, FAILED 상태(compliance)를 나타내는 함수가 없었기에 새롭게 정의.
+# 필요하다면 기존 함수와 통합 가능# NIST 보안 표준 제어 항목 목록 가져오기# NIST 보안 표준 제어 항목 목록 가져오기
+def get_nist_controls_list_with_compliance():
+    standards_subscription_arn = get_standards_subscription_arn()
+    if not standards_subscription_arn:
+        raise ValueError("NIST 표준이 활성화되어 있지 않거나 ARN을 찾을 수 없습니다.")
+    
     client = get_securityhub_client()
-
-    # Findings 가져오기
-    response = client.get_findings(
-        Filters={
-            'AwsAccountId': [
-                {
-                    'Value': account_id,
-                    'Comparison': 'EQUALS'
-                },
-            ],
-            'Region': [
-                {
-                    'Value': region,
-                    'Comparison': 'EQUALS'
-                },
-            ],
-            'ComplianceSecurityControlId': [
-                {
-                    'Value': control_id,
-                    'Comparison': 'EQUALS'
-                },
-            ]
-        },
-        MaxResults=100
+    controls = client.describe_standards_controls(
+        StandardsSubscriptionArn=standards_subscription_arn
+    ).get('Controls', [])
+    
+    # 각 제어 항목의 ComplianceStatus 확인
+    for control in controls:
+        control_id = control.get('ControlId')
+        findings = client.get_findings(
+            Filters={
+                'ComplianceStatus': [{'Value': 'PASSED', 'Comparison': 'EQUALS'}],
+                'ProductFields': [{'Key': 'ControlId', 'Value': control_id, 'Comparison': 'EQUALS'}]
+            }
+        ).get('Findings', [])
+        
+        control['ComplianceStatus'] = 'PASSED' if findings else 'FAILED'
+    
+    # 필요한 필드만 추출 및 ControlId 기준으로 정렬
+    filtered_controls = sorted(
+        [
+            {
+                "StandardsControlArn": control.get("StandardsControlArn"),
+                "ControlStatus": control.get("ControlStatus"),
+                "ControlStatusUpdatedAt": control.get("ControlStatusUpdatedAt"),
+                "ControlId": control.get("ControlId"),
+                "SeverityRating": control.get("SeverityRating"),
+                "ComplianceStatus": control.get("ComplianceStatus")
+            }
+            for control in controls
+        ],
+        key=lambda x: x["ControlId"]  # ControlId로 정렬
     )
-
-    total_checks = 0
-    failed_checks = 0
-
-    # 실패한 체크 카운트
-    for finding in response['Findings']:
-        total_checks += 1
-        compliance_status = finding['Compliance']['Status']
-        if compliance_status == 'FAILED':
-            failed_checks += 1
-
-    # 결과 요약
-    compliance_status_summary = {
-        'TotalChecks': total_checks,
-        'FailedChecks': failed_checks,
-        'ComplianceStatus': 'PASSED' if failed_checks == 0 else 'FAILED'
-    }
-
-    return compliance_status_summary
-
-
-
-# 사용 예시
-control_id = 'arn:aws:securityhub:ap-northeast-2::control/aws-foundational-security-best-practices/v/1.0.0/EC2.4'  # 대상 컨트롤 ID
-
-# # 특정 control_id에 대한 세부 항목을 불러오는 함수
-# def get_control_details(control_id):
-#     standards_subscription_arn = get_standards_subscription_arn()
-#     if not standards_subscription_arn:
-#         raise ValueError("NIST 표준이 활성화되어 있지 않거나 ARN을 찾을 수 없습니다.")
     
-#     client = get_securityhub_client()
-#     paginator = client.get_paginator('describe_standards_controls')
-#     page_iterator = paginator.paginate(StandardsSubscriptionArn=standards_subscription_arn)
+    return json.dumps(filtered_controls, indent=4, default=str)
 
-#     for page in page_iterator:
-#         for control in page['Controls']:
-#             if control['ControlId'] == control_id:
-#                 return {
-#                     'ControlId': control['ControlId'],
-#                     'Title': control['Title'],
-#                     'Description': control.get('Description', 'No description available'),
-#                     'Severity': control.get('Severity', 'No severity specified'),
-#                     'RelatedRequirements': control.get('RelatedRequirements', 'No related requirements')
-#                 }
-    
-#     raise ValueError(f"{control_id}에 해당하는 검사항목을 찾을 수 없습니다.")
+# SecurityHub 규정 준수 요약 가져오기 함수
+def get_control_status_counts():
+    try:
+        # NIST 표준 목록을 가져옴
+        controls = get_nist_controls_list_with_compliance()
+        
+        # 각 상태별 갯수를 셈
+        disabled_count = 0
+        enabled_count = 0
+        passed_count = 0
+        
+        for control in controls:
+            # ControlStatus가 'DISABLED'인 항목 수 세기
+            if control.get('ControlStatus') == 'DISABLED':
+                disabled_count += 1
+            
+            # ControlStatus가 'ENABLED'인 항목 수 세기
+            if control.get('ControlStatus') == 'ENABLED':
+                enabled_count += 1
+            
+            # ComplianceStatus가 'PASSED'인 항목 수 세기
+            if control.get('ComplianceStatus', '') == 'PASSED':
+                passed_count += 1
+        data = [
+            {
+            "disabled_count": disabled_count,
+            "enabled_count": enabled_count,
+            "passed_count": passed_count
+        }
+        ]
 
+        # 결과 반환
+        return json.dumps(data, indent=4)
+    except Exception as e:
+        return {"error": f"An error occurred: {str(e)}"}
 
-# # EC2.19에 대한 세부 항목 가져오기 예시
-# control_id = 'EC2.19'  # 예시로 EC2.19를 사용
-# control_details = get_control_details(control_id)
-# print(control_details)
+print(get_nist_controls_list())

@@ -8,17 +8,22 @@ from collections import defaultdict, Counter
 from datetime import datetime, timedelta
 from aws_service import set_securityhub_control_activation, get_nist_controls_list
 
+from dotenv import load_dotenv
+load_dotenv()  # .env 파일 로드
+
 # 환경 변수에서 Elasticsearch 연결 정보 가져오기
 elasticsearch_url = [os.getenv('ELASTICSEARCH_URL')]
 password = os.getenv('ELASTICSEARCH_PASSWORD')
 ca_certs = os.getenv('ELASTICSEARCH_CA_CERTS')
 
+# print("elasticsearch_url : ",elasticsearch_url)
+
 # Elasticsearch 연결 설정
 es = Elasticsearch(
-   "https://3.36.50.130:9200",  # URL을 리스트로 감싸기
-    basic_auth=("elastic", "changeme"),  # http_auth 대신 basic_auth 사용
+   elasticsearch_url,  # URL을 리스트로 감싸기
+    basic_auth=("elastic", password),  # http_auth 대신 basic_auth 사용
     ca_certs=ca_certs,
-    verify_certs=False,  # 인증서 확인 비활성화
+    verify_certs=False,  # 인증서 확인 비활성화 // 환경변수설정에 crt파일 경로 붙여넣기
     request_timeout=30
 )
 
@@ -32,7 +37,28 @@ def get_control_item_list():
     except ValueError as e:
         return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
     
-# EC2.19에 대한 보안 이슈만 가져오는 함수
+
+# 보안 이슈 데이터 구조 확인 함수 (전체 데이터를 JSON 형식으로 반환)
+def get_all_security_issues(index=".ds-logs-aws.securityhub_findings-default-*"):
+    query = {
+        "size": 100,  # 가져올 문서 수
+        "_source": ["aws.securityhub_findings"],  # 가져올 필드 지정
+        "query": {
+            "match_all": {}  # 모든 문서 가져오기
+        }
+    }
+    # Elasticsearch에서 데이터 검색
+    response = es.search(index=index, body=query)
+    
+    # Elasticsearch의 히트 데이터를 JSON 형식으로 반환
+    hits = response['hits']['hits']
+    
+    # JSON 형식으로 보기 좋게 들여쓰기
+    json_data = json.dumps(hits, indent=4)
+    
+    return json_data  # JSON 형식으로 반환
+
+# test : 특정 controlid에 대한 보안 이슈만 가져오는 함수
 def get_all_security_issues(index=".ds-logs-aws.securityhub_findings-default-*"):
     query = {
         "size": 100,  # 가져올 문서 수
@@ -55,42 +81,11 @@ def get_all_security_issues(index=".ds-logs-aws.securityhub_findings-default-*")
     
     return json_data  # JSON 형식으로 반환
 
-# EC2.19에 해당하는 보안 이슈 데이터를 JSON 형식으로 가져오기
-json_result = get_all_security_issues()
-
-# 결과 출력 (json 형식으로 출력)
-# print(json_result)
-
-# 보안 이슈 데이터 구조 확인 함수 (전체 데이터를 JSON 형식으로 반환)
-def get_all_security_issues(index=".ds-logs-aws.securityhub_findings-default-*"):
-    query = {
-        "size": 100,  # 가져올 문서 수
-        "_source": ["aws.securityhub_findings"],  # 가져올 필드 지정
-        "query": {
-            "match_all": {}  # 모든 문서 가져오기
-        }
-    }
-    # Elasticsearch에서 데이터 검색
-    response = es.search(index=index, body=query)
-    
-    # Elasticsearch의 히트 데이터를 JSON 형식으로 반환
-    hits = response['hits']['hits']
-    
-    # JSON 형식으로 보기 좋게 들여쓰기
-    json_data = json.dumps(hits, indent=4)
-    
-    return json_data  # JSON 형식으로 반환
-
-# 모든 보안 이슈 데이터를 JSON 형식으로 가져오기
-# json_result = get_all_security_issues()
-
-# 결과 출력 (json 형식으로 출력)
-# print(json_result)
 
 # 보안 이슈 데이터에서 필요한 정보만 추출하는 함수 (PASSED 상태 제외)
 # 검사가 여러개 된 애들에 대해서는 가장 최근에 검사된 애로 가져와야한다.
 def get_security_issues_filtered(index=".ds-logs-aws.securityhub_findings-default-*"):
-    # 현재 시간에서 7일 전의 날짜 계산
+    # 일주일 동안의 감사 로그 분석 - 현재 시간에서 7일 전의 날짜 계산
     seven_days_ago = datetime.now() - timedelta(days=7)
     seven_days_ago_str = seven_days_ago.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
@@ -141,7 +136,7 @@ def get_security_issues_filtered(index=".ds-logs-aws.securityhub_findings-defaul
                 # id와 resource_id를 키로 그룹화
                 grouped_data[(control_id, resource_id)].append(finding)
     
-    # 각 그룹에서 최신의 'last_observed_at' 값을 가진 항목만 선택
+    # 각 그룹에서 최신의 'last_observed_at' 값을 가진 항목만 선택 -> aws.securityhub_findings.updated_at 와도 다른지 확인 필요
     filtered_data = []
     for key, findings in grouped_data.items():
         # 최신 날짜 기준으로 정렬
@@ -194,7 +189,5 @@ def analyze_security_issues(filtered_data):
 filtered_data = json.loads(filtered_result)
 
 # 분석 실행
-json_result = analyze_security_issues(filtered_data)
+print(analyze_security_issues(filtered_data))
 
-# 결과 출력 (json 형식으로 출력)
-print(json_result)

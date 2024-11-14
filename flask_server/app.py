@@ -85,32 +85,6 @@ def login():
     # else:
     #     return jsonify({"error": "Invalid credentials"}), 401
 
-# # 로그인 엔드포인트
-# @app.route('/login', methods=['POST'])
-# def login():
-#     json_data = request.get_json()
-#     if not json_data or 'user_id' not in json_data or 'password' not in json_data:
-#         return jsonify({"error": "User ID and password required"}), 400
-
-#     user_id = json_data['user_id']
-#     password = json_data['password']
-    
-#     # 사용자 확인
-#     user = User.query.filter_by(user_id=user_id, password=password).first()
-#     if user:
-#         login_user(user)  # flask-login을 사용하여 로그인 # username도 반환하도록
-#         return jsonify({"message": "Login successful!"}), 200
-#     else:
-#         return jsonify({"error": "Invalid credentials"}), 401
-
-    # # 사용자 확인 - seceretkey 사용
-    # user = User.query.filter_by(user_id=user_id).first()
-    # if user and user.check_password(password):  # 해싱된 비밀번호 비교
-    #     login_user(user)  # flask-login을 사용하여 로그인
-    #     return jsonify({"message": "Login successful!"}), 200
-    # else:
-    #     return jsonify({"error": "Invalid credentials"}), 401
-
 # 로그아웃 엔드포인트
 @app.route('/logout', methods=['POST'])
 @login_required
