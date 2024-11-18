@@ -90,6 +90,67 @@ def get_nist_controls_list():
     )
     return response.get('Controls', [])
 
+# NIST 보안 표준 리스트 가져와 필터링 거쳐 제공하는 함수
+def get_nist_filtered_controls_list(page, page_size, status_filter, severity_filter, sort_field, sort_order, search_keyword):
+    standards_subscription_arn = get_standards_subscription_arn()
+    if not standards_subscription_arn:
+        raise ValueError("NIST 표준이 활성화되어 있지 않거나 ARN을 찾을 수 없습니다.")
+
+    client = get_securityhub_client()
+    response = client.describe_standards_controls(
+        StandardsSubscriptionArn=standards_subscription_arn
+    )
+
+    controls = response.get('Controls', [])
+
+    # Compliance 상태 확인 및 필터링
+    for control in controls:
+        control_id = control.get('ControlId')
+        findings = client.get_findings(
+            Filters={
+                'ComplianceStatus': [{'Value': 'PASSED', 'Comparison': 'EQUALS'}],
+                'ProductFields': [{'Key': 'ControlId', 'Value': control_id, 'Comparison': 'EQUALS'}]
+            }
+        ).get('Findings', [])
+
+        control['ComplianceStatus'] = 'PASSED' if findings else 'FAILED'
+
+    # 필터 적용
+    if status_filter:
+        controls = [c for c in controls if c.get('ControlStatus') == status_filter]
+    if severity_filter:
+        controls = [c for c in controls if c.get('SeverityRating') == severity_filter]
+    if search_keyword:
+        controls = [c for c in controls if search_keyword.lower() in c.get('Title', '').lower()]
+
+    # 정렬 적용
+    reverse_order = (sort_order == 'desc')
+    controls = sorted(controls, key=lambda x: x.get(sort_field, ''), reverse=reverse_order)
+
+    # 페이지네이션 적용
+    total_count = len(controls)
+    start_index = (page - 1) * page_size
+    end_index = start_index + page_size
+    paginated_controls = controls[start_index:end_index]
+
+    # 반환할 데이터 필터링
+    filtered_controls = [
+        {
+            "SecurityControlId": control.get("ControlId"),
+            "Title": control.get("Title"),
+            "Description": control.get("Description"),
+            "SeverityRating": control.get("SeverityRating"),
+            "SecurityControlStatus": control.get("ControlStatus"),
+            "controlStatus": control.get("ComplianceStatus"),
+            "failedChecks": control.get("FailedFindingsCount", 0),
+            "totalChecks": control.get("TotalFindingsCount", 0),
+            "assignee": control.get("Assignee", "")
+        }
+        for control in paginated_controls
+    ]
+    return filtered_controls, total_count
+    
+
 # NIST 보안 표준 리스트 가져오는 함수
 # 그간 정의된 함수에는 PASSED, FAILED 상태(compliance)를 나타내는 함수가 없었기에 새롭게 정의.
 # 필요하다면 기존 함수와 통합 가능# NIST 보안 표준 제어 항목 목록 가져오기# NIST 보안 표준 제어 항목 목록 가져오기
