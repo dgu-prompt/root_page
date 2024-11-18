@@ -106,14 +106,24 @@ def get_nist_filtered_controls_list(page, page_size, status_filter, severity_fil
     # Compliance 상태 확인 및 필터링
     for control in controls:
         control_id = control.get('ControlId')
-        findings = client.get_findings(
+        findings_response = client.get_findings(
             Filters={
-                'ComplianceStatus': [{'Value': 'PASSED', 'Comparison': 'EQUALS'}],
                 'ProductFields': [{'Key': 'ControlId', 'Value': control_id, 'Comparison': 'EQUALS'}]
             }
-        ).get('Findings', [])
+        )
+        findings = findings_response.get('Findings', [])
+        
+        # total, failed check 개수 세기
+        total_checks = len(findings)
+        failed_checks = sum(1 for finding in findings if finding.get('Compliance', {}).get('Status') == 'FAILED')
 
-        control['ComplianceStatus'] = 'PASSED' if findings else 'FAILED'
+        control['failedChecks'] = failed_checks
+        control['totalChecks'] = total_checks
+        control['ComplianceStatus'] = 'FAILED' if failed_checks > 0 else 'PASSED'
+
+        
+        # Debug log to confirm values
+        print(f"Debug - Control ID: {control_id}, Total Checks: {total_checks}, Failed Checks: {failed_checks}")
 
     # 필터 적용
     if status_filter:
@@ -122,7 +132,7 @@ def get_nist_filtered_controls_list(page, page_size, status_filter, severity_fil
         controls = [c for c in controls if c.get('SeverityRating') == severity_filter]
     if search_keyword:
         controls = [c for c in controls if search_keyword.lower() in c.get('Title', '').lower()]
-
+       
     # 정렬 적용
     reverse_order = (sort_order == 'desc')
     controls = sorted(controls, key=lambda x: x.get(sort_field, ''), reverse=reverse_order)
@@ -144,7 +154,7 @@ def get_nist_filtered_controls_list(page, page_size, status_filter, severity_fil
             "controlStatus": control.get("ComplianceStatus"),
             "failedChecks": control.get("FailedFindingsCount", 0),
             "totalChecks": control.get("TotalFindingsCount", 0),
-            "assignee": control.get("Assignee", "")
+            "assignee": control.get("Assignee", "") # 아직 assignee 불러오는 로직 없음
         }
         for control in paginated_controls
     ]
@@ -230,4 +240,4 @@ def get_control_status_counts():
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
 
-print(get_nist_controls_list())
+#print(get_nist_controls_list())

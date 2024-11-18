@@ -238,7 +238,7 @@ def get_filtered_control_item_list():
     try:
         # 쿼리 파라미터 가져오기
         page = int(request.args.get('page', 1))
-        page_size = int(request.args.get('pageSize', 10))
+        page_size = int(request.args.get('pageSize', 20))
         status_filter = request.args.get('filter[status]')
         severity_filter = request.args.get('filter[severity]')
         sort_field = request.args.get('sort[field]', 'ControlId')
