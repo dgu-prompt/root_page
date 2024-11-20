@@ -165,11 +165,15 @@ def get_nist_filtered_controls_list(page, page_size, status_filter, severity_fil
 # 그간 정의된 함수에는 PASSED, FAILED 상태(compliance)를 나타내는 함수가 없었기에 새롭게 정의.
 # 필요하다면 기존 함수와 통합 가능# NIST 보안 표준 제어 항목 목록 가져오기# NIST 보안 표준 제어 항목 목록 가져오기
 def get_nist_controls_list_with_compliance():
+    # NIST 표준 구독 ARN 가져오기
     standards_subscription_arn = get_standards_subscription_arn()
     if not standards_subscription_arn:
         raise ValueError("NIST 표준이 활성화되어 있지 않거나 ARN을 찾을 수 없습니다.")
     
+    # AWS Security Hub 클라이언트 생성
     client = get_securityhub_client()
+    
+    # NIST 표준의 모든 제어 항목 가져오기
     controls = client.describe_standards_controls(
         StandardsSubscriptionArn=standards_subscription_arn
     ).get('Controls', [])
@@ -177,14 +181,17 @@ def get_nist_controls_list_with_compliance():
     # 각 제어 항목의 ComplianceStatus 확인
     for control in controls:
         control_id = control.get('ControlId')
+        
+        # 특정 제어 항목에 대한 Findings 가져오기
         findings = client.get_findings(
             Filters={
-                'ComplianceStatus': [{'Value': 'PASSED', 'Comparison': 'EQUALS'}],
-                'ProductFields': [{'Key': 'ControlId', 'Value': control_id, 'Comparison': 'EQUALS'}]
+                'ComplianceSecurityControlId': [{'Value': control_id, 'Comparison': 'EQUALS'}],
+                'ComplianceStatus': [{'Value': 'FAILED', 'Comparison': 'EQUALS'}]  # FAILED 상태만 필터링
             }
         ).get('Findings', [])
         
-        control['ComplianceStatus'] = 'PASSED' if findings else 'FAILED'
+        # Findings가 없으면 PASSED, 있으면 FAILED
+        control['ComplianceStatus'] = 'PASSED' if not findings else 'FAILED'
     
     # 필요한 필드만 추출 및 ControlId 기준으로 정렬
     filtered_controls = sorted(
@@ -202,7 +209,9 @@ def get_nist_controls_list_with_compliance():
         key=lambda x: x["ControlId"]  # ControlId로 정렬
     )
     
-    return json.dumps(filtered_controls, indent=4, default=str)
+    # JSON 형식으로 반환
+    #return json.dumps(filtered_controls, indent=4, default=str)
+    return filtered_controls
 
 # SecurityHub 규정 준수 요약 가져오기 함수
 def get_control_status_counts():
@@ -227,17 +236,18 @@ def get_control_status_counts():
             # ComplianceStatus가 'PASSED'인 항목 수 세기
             if control.get('ComplianceStatus', '') == 'PASSED':
                 passed_count += 1
-        data = [
-            {
+        data = {
+            
             "disabled_count": disabled_count,
             "enabled_count": enabled_count,
             "passed_count": passed_count
         }
-        ]
+        
 
         # 결과 반환
         return json.dumps(data, indent=4)
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
+    
 
-#print(get_nist_controls_list())
+#print(get_control_status_counts())

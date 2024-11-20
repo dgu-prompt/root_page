@@ -2,12 +2,14 @@ import os
 import yaml
 from collections import OrderedDict
 from flask_cors import CORS
+import json
 from flask import redirect, Flask, send_from_directory, request, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
-from aws_service import get_nist_filtered_controls_list, set_securityhub_control_activation, get_nist_controls_list
+from aws_service import get_nist_filtered_controls_list, set_securityhub_control_activation, get_nist_controls_list, get_control_status_counts, get_nist_controls_list_with_compliance
 from model import initialize_db, User, db
+from elasticsearch_dashboard import get_security_issues_filtered, analyze_security_issues
 from dashboard_service import get_ticket_details, get_tickets_stats
 from dotenv import load_dotenv
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
@@ -281,15 +283,40 @@ def dashboard_ticket_details(ticket_id):
     
     return jsonify(ticket_details), 200
 
-# SecurityHub 규정 준수 요약 가져오기 API
-@app.route('/compliance_summary/<control_id>', methods=['GET'])
-def get_compliance_summary(control_id):
-    try:
-        summary = get_security_hub_compliance_summary(control_id)
-        return jsonify(summary), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+# # SecurityHub 규정 준수 요약 가져오기 API
+# @app.route('/compliance_summary/<control_id>', methods=['GET'])
+# def get_compliance_summary(control_id):
+#     try:
+#         summary = get_security_hub_compliance_summary(control_id)
+#         return jsonify(summary), 200
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
 
+# sec hub, ES 통계 불러오는 API. 향후 JIRA 대시보드 API와 합쳐야 함
+@app.route('/dashboard/findings', methods=['GET'])
+def get_dashboard_findings():
+    try:
+        # 1. SecurityHub 규정 준수 요약 데이터 가져오기
+        control_status_counts = json.loads(get_control_status_counts())
+        
+        # 2. 필터링된 보안 이슈 데이터 가져오기
+        filtered_security_issues = json.loads(get_security_issues_filtered())
+        
+        # 3. 보안 이슈 데이터 분석 (Severity와 ControlId 종류별 분포 계산)
+        analyzed_issues = json.loads(analyze_security_issues(filtered_security_issues))
+        
+        # 전체 결과를 통합하여 반환
+        result = {
+            "control_status_counts": control_status_counts,
+            "analyzed_issues": analyzed_issues
+        }
+
+        # JSON 형식으로 반환
+        return jsonify(result)
+
+    except Exception as e:
+        # 오류 발생 시 에러 메시지 반환
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 # # NIST 보안 표준 개별 제어 항목 세부 정보 불러오는 API
 # @app.route('/control/<control_id>', methods=['GET'])
 # @login_required
