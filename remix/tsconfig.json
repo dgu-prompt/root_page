@@ -23,6 +23,9 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
+      "@/*": ["./app/shared/*"],
+      "@features/*": ["./app/features/*"],
+      "@pages/*": ["./app/pages/*"],
       "~/*": ["./app/*"]
     },
 
