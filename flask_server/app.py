@@ -30,7 +30,29 @@ login_manager.login_view = 'login'
 #나중에 코드 완성할 때는 실제 yaml이 저장될 위치로 수정
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static')
 target_dir = os.path.join(os.path.dirname(__file__), 'static_yaml')
+ASSIGNEE_FILE_PATH = os.path.join(os.path.dirname(__file__), 'data', 'assignee.csv')
 
+# 담당자 정보 읽기
+def get_assignee_data():
+    assignee_data = []
+    with open(ASSIGNEE_FILE_PATH, mode='r', encoding='utf-8') as file:
+        csv_reader = csv.DictReader(file, delimiter='\t')
+        for row in csv_reader:
+            assignee_data.append({
+                "assigneeId": row['assigneeId'],
+                "assigneeName": row['assigneeName']
+            })
+    return assignee_data
+
+# 규칙 파일 여부 확인
+def check_rule_files(alert_type, aws_region, assignee_name):
+    directory = os.path.join(os.path.dirname(__file__), alert_type, aws_region)
+    if not os.path.exists(directory):
+        return False
+    yaml_files = [file for file in os.listdir(directory) if file.endswith('.yaml')]
+    # assignee_name 기반 YAML 파일 이름 탐색
+    rule_file_exists = any(assignee_name in yaml_file for yaml_file in yaml_files)
+    return rule_file_exists
 
 # MySQL 연결 설정 (환경 변수를 사용하여 설정)
 db_user = os.getenv("DB_USERNAME")
@@ -114,6 +136,27 @@ def serve_react():
     print("Serving React index.html")
     return send_from_directory('../react_client', 'index.html')
 
+
+# API 엔드포인트
+@app.route('/alerts/<alert_type>/regions/<aws_region>', methods=['GET'])
+def get_alerts(alert_type, aws_region):
+    assignee_data = get_assignee_data()
+    response_data = []
+
+    for assignee in assignee_data:
+        has_rule_file = check_rule_files(alert_type, aws_region, assignee['assigneeName'])
+        response_data.append({
+            "assigneeId": assignee['assigneeId'],
+            "assigneeName": assignee['assigneeName'],
+            "hasRuleFile": has_rule_file,
+            "awsRegion": aws_region
+        })
+    
+    return jsonify(response_data)
+
+
+
+'''
 @app.route('/test', methods=['POST'])
 def save_yaml():
     # static 폴더가 없으면 생성
@@ -162,7 +205,7 @@ def save_yaml():
     print("YAML file moved to:", target_path)
 
     return redirect('/')
-
+'''
 # /load_yaml 경로에서 static_yaml 폴더의 yaml 파일들을 불러오는 엔드포인트 추가
 
 '''
@@ -184,6 +227,7 @@ def save_yaml():
   ]
 }
 '''
+'''
 @app.route('/load_yaml', methods=['GET'])
 def load_yaml_files():
     yaml_files = []
@@ -202,7 +246,7 @@ def db_test():
         return "MySQL Database Connected Successfully!"
     except Exception as e:
         return f"Error connecting to MySQL Database: {e}"
-    
+'''   
 
 # NIST 보안 표준 개별 제어 항목 활성화 상태 설정하기
 @app.route('/control/<control_id>', methods=['POST'])
