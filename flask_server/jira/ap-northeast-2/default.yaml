@@ -1,0 +1,48 @@
+name: "Default"
+type: any
+index: .ds-logs-aws.securityhub_findings-default-*
+num_events: 1
+timeframe:
+  minutes: 1
+realert:
+  minutes: 0  # 모든 이벤트에 대해 알림을 보냅니다.
+
+alert:
+  - "jira"
+jira_server: "https://donggukicip.atlassian.net/"
+jira_project: "VT"
+jira_issuetype: "Task"
+jira_bump_tickets: false
+jira_watchers:
+  - "{jiraAssigneeName}"  # 동적으로 Jira Assignee 이름 입력
+jira_account_file: "default_account_file.json"
+
+alert_subject: "{alertSubject}"
+alert_subject_args:
+  - "{securityControlId}"  # 보안 컨트롤 ID
+  - "{severityRating}"     # 심각도 등급
+
+alert_text: |-
+  * *AWS Region*: {awsRegion}
+  * *Security Control ID*: {securityControlId}
+  * *Title*: {title}
+  * *Description*: {description}
+  * *Remediation URL*: {remediationUrl}
+  * *Severity*: {severityRating}
+  * *Status*: {securityControlStatus} / {checkStatus}
+  * *Checks*: {failedChecks}/{totalChecks} (Failed/Total)
+  * *Jira Assignee*: {jiraAssigneeName}
+
+alert_text_args:
+  - "{awsRegion}"
+  - "{securityControlId}"
+  - "{title}"
+  - "{description}"
+  - "{remediationUrl}"
+  - "{severityRating}"
+  - "{securityControlStatus}"
+  - "{checkStatus}"
+  - "{failedChecks}"
+  - "{totalChecks}"
+  - "{jiraAssigneeName}"
+alert_text_type: alert_text_only
