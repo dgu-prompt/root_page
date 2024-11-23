@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ToastButton from "@/components/ToastButton";
+import ColorModeToggle from "@/components/color-mode-toggle";
 
 function Footer() {
   const { t } = useTranslation();
@@ -32,6 +33,7 @@ function Footer() {
             <ChakraLink href="https://github.com/dgu-prompt/root_page">
               <Button variant="surface">{t("footerGitHub")}</Button>
             </ChakraLink>
+            <ColorModeToggle />
           </Flex>
         </Flex>
       </Container>
