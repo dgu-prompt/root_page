@@ -64,7 +64,7 @@ export default function EditRulePage() {
   };
 
   return (
-    <Container pt="16">
+    <Container pt={{ base: "6", md: "8", lg: "10" }}>
       <Heading mb="2" size="2xl">
         Jira 알림 규칙 편집
       </Heading>
@@ -121,7 +121,7 @@ export default function EditRulePage() {
             <Card.Footer mt="4">
               <Flex justify="space-between" width="full">
                 <Button asChild variant="surface">
-                  <Link to="#">Cancel</Link>
+                  <Link to="#">취소</Link>
                 </Button>
 
                 <Group>
@@ -130,12 +130,12 @@ export default function EditRulePage() {
                     onClick={handlePrev}
                     variant="surface"
                   >
-                    Prev
+                    이전
                   </Button>
                   {currentStep < 2 ? (
-                    <Button onClick={handleNext}>Next</Button>
+                    <Button onClick={handleNext}>다음</Button>
                   ) : (
-                    <Button onClick={handleSubmit}>Submit</Button>
+                    <Button onClick={handleSubmit}>제출</Button>
                   )}
                 </Group>
               </Flex>

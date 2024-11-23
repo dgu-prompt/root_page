@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   MenuContent,
   MenuItem,
+  MenuItemGroup,
   MenuRoot,
   MenuTrigger,
 } from "@/components/ui/menu";
@@ -11,6 +12,7 @@ import {
   Container,
   Flex,
   HStack,
+  Icon,
   IconButton,
   Stack,
   Text,
@@ -18,9 +20,9 @@ import {
 import { Form, NavLink, useLocation } from "@remix-run/react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { LuLogOut, LuMenu } from "react-icons/lu";
+import { LogOut, Menu } from "lucide-react";
 
-function Navbar() {
+export default function Navbar() {
   const { t } = useTranslation();
   const location = useLocation();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -111,10 +113,14 @@ function Navbar() {
                 <Avatar size="sm" />
               </MenuTrigger>
               <MenuContent zIndex="2200">
-                <MenuItem onClick={submitLogout} value="logout">
-                  <LuLogOut />
-                  <Text ml="2">{t("menu.logout")}</Text>
-                </MenuItem>
+                <MenuItemGroup title="현재 로그인된 아이디">
+                  <MenuItem onClick={submitLogout} value="logout">
+                    <Icon>
+                      <LogOut />
+                    </Icon>
+                    <Text ml="2">{t("menu.logout")}</Text>
+                  </MenuItem>
+                </MenuItemGroup>
               </MenuContent>
             </MenuRoot>
 
@@ -126,7 +132,7 @@ function Navbar() {
               rounded="full"
               variant="ghost"
             >
-              <LuMenu />
+              <Menu />
             </IconButton>
           </Flex>
 
@@ -145,5 +151,3 @@ function Navbar() {
     </Box>
   );
 }
-
-export default Navbar;

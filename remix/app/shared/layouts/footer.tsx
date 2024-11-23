@@ -2,12 +2,11 @@ import {
   Box,
   Container,
   Flex,
-  IconButton,
   Link as ChakraLink,
   Text,
+  Button,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import { LuGithub } from "react-icons/lu";
 
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ToastButton from "@/components/ToastButton";
@@ -31,13 +30,7 @@ function Footer() {
             <ToastButton />
             <LanguageSwitcher />
             <ChakraLink href="https://github.com/dgu-prompt/root_page">
-              <IconButton
-                aria-label={t("footerGitHub")}
-                rounded="full"
-                variant="surface"
-              >
-                <LuGithub />
-              </IconButton>
+              <Button variant="surface">{t("footerGitHub")}</Button>
             </ChakraLink>
           </Flex>
         </Flex>

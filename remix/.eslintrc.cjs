@@ -24,32 +24,6 @@ module.exports = {
   // Base config
   extends: ["eslint:recommended", "prettier"],
 
-  rules: {
-    // "import/order": [
-    //   "warn",
-    //   {
-    //     "newlines-between": "always",
-    //     pathGroups: [
-    //       {
-    //         pattern: "@/components/ui/**",
-    //         group: "external",
-    //       },
-    //     ],
-    //     distinctGroup: false,
-    //     named: true,
-    //     alphabetize: {
-    //       order: "asc",
-    //       orderImportKind: "asc",
-    //     },
-    //   },
-    // ],
-    // "react/jsx-sort-props": "warn",
-    // "func-style": "error",
-    // "@typescript-eslint/consistent-type-definitions": ["error", "type"],
-    // "@typescript-eslint/consistent-indexed-object-style": "error",
-    // "@typescript-eslint/prefer-function-type": "error",
-  },
-
   overrides: [
     // React
     {

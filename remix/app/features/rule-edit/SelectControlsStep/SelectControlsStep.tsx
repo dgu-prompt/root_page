@@ -6,6 +6,7 @@ import {
   Card,
   Center,
   HStack,
+  Icon,
   Input,
   Spinner,
   Stack,
@@ -13,7 +14,8 @@ import {
 } from "@chakra-ui/react";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { LuSearch } from "react-icons/lu";
+
+import { Search } from "lucide-react";
 
 import { ControlFilterMenu } from "../../controls/components/control-filter-menu";
 import { JiraRuleProps } from "../JiraRuleData";
@@ -176,7 +178,15 @@ const SelectControlsStep = ({
     <Card.Root>
       <Card.Body>
         <HStack align="center">
-          <InputGroup flex="1" startElement={<LuSearch />} width="full">
+          <InputGroup
+            flex="1"
+            startElement={
+              <Icon>
+                <Search />
+              </Icon>
+            }
+            width="full"
+          >
             <Input
               onChange={(e) =>
                 setFilters((prev) => ({
@@ -185,7 +195,7 @@ const SelectControlsStep = ({
                   page: 1,
                 }))
               }
-              placeholder="Search controls..."
+              placeholder="제어 검색"
               value={searchQuery}
             />
           </InputGroup>
@@ -204,9 +214,7 @@ const SelectControlsStep = ({
           </Center>
         ) : (
           <Stack gap="4" mt="8">
-            <Text>
-              {totalCount} {t("controls.total", { count: totalCount })}
-            </Text>
+            <Text>{totalCount}개의 제어 찾음</Text>
 
             {controls.map((control) => {
               const isChecked =

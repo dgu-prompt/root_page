@@ -43,7 +43,7 @@ const mockToggleControlStatusError =
 const mockToggleControlStatus = async (
   controlId: string
 ): Promise<ToggleControlStatusResponse> => {
-  if (Math.random() < 0.1) {
+  if (Math.random() < 0.001) {
     return mockToggleControlStatusError();
   } else {
     return mockToggleControlStatusOk(controlId);

@@ -122,7 +122,7 @@ const mockFetchControlAggregateError =
 const mockFetchControlAggregate = async (
   request: FetchControlAggregatePayload
 ): Promise<FetchControlAggregateResponse> => {
-  if (Math.random() < 0.1) {
+  if (Math.random() < 0.001) {
     return mockFetchControlAggregateError();
   } else {
     return mockFetchControlAggregateOk(request);

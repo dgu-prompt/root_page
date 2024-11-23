@@ -100,7 +100,7 @@ export default function Rules() {
   if (!isMounted) return null;
 
   return (
-    <Container pt="16">
+    <Container pt={{ base: "6", md: "8", lg: "10" }}>
       <Heading mb="8" size="2xl">
         {t("rulesPage.heading")}
       </Heading>
