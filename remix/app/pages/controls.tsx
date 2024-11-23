@@ -40,24 +40,26 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       pageSize,
     });
 
-    if (response.ok) {
-      const { controls, totalCount } = response;
-      console.log("Fetched controls:", controls);
-      console.log("Total count:", totalCount);
-      return json({
-        controls,
-        totalCount,
-        searchQuery,
-        region,
-        page,
-        pageSize,
-      });
-    } else {
-      const { errorMessage } = response;
-      console.error("Failed to fetch controls:", errorMessage);
+    if (!response.ok) {
+      throw new Error(response.errorMessage || "Failed to fetch controls");
     }
+
+    const { controls, totalCount } = response;
+
+    return json({
+      controls,
+      totalCount,
+      searchQuery,
+      region,
+      page,
+      pageSize,
+    });
   } catch (error) {
-    console.error("Unexpected error occurred:", error);
+    console.error("Loader error:", error);
+    throw json(
+      { errorMessage: "Failed to load controls data." },
+      { status: 500 }
+    );
   }
 };
 
@@ -65,12 +67,12 @@ export const ControlsPage = () => {
   const loaderData = useLoaderData<typeof loader>();
 
   const {
-    controls: initialControls,
-    searchQuery,
-    region,
-    totalCount: initialTotalCount,
-    page,
-    pageSize,
+    controls: initialControls = [],
+    searchQuery = "",
+    region = "ap-northeast-2",
+    totalCount: initialTotalCount = 0,
+    page = 1,
+    pageSize = 15,
   } = loaderData || {};
 
   const [controls, setControls] = useState(initialControls);

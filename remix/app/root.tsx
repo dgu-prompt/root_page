@@ -1,4 +1,3 @@
-import { withEmotionCache } from "@emotion/react";
 import type {
   LinksFunction,
   LoaderFunctionArgs,
@@ -12,16 +11,11 @@ import {
   ScrollRestoration,
   redirect,
 } from "@remix-run/react";
-import { ThemeProvider } from "next-themes";
-
-import { ChakraProvider } from "./shared/components/chakra-provider";
-import { useInjectStyles } from "./shared/utils/emotion/emotion-client";
+import { Provider } from "@/components/ui/provider";
 import { getSession } from "./shared/services/sessions";
 import "./shared/utils/i18n";
 
 import styles from "./shared/styles/shared.css?url";
-
-interface LayoutProps extends React.PropsWithChildren {}
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 
@@ -47,22 +41,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return null;
 }
 
-export const Layout = withEmotionCache((props: LayoutProps, cache) => {
-  const { children } = props;
-
-  useInjectStyles(cache);
-
+export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head suppressHydrationWarning>
+      <head>
         <meta charSet="utf-8" />
-        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
-        <meta
-          content="emotion-insertion-point"
-          name="emotion-insertion-point"
-        />
       </head>
       <body>
         {children}
@@ -71,61 +57,12 @@ export const Layout = withEmotionCache((props: LayoutProps, cache) => {
       </body>
     </html>
   );
-});
-
-// // ErrorBoundary 컴포넌트
-// export function ErrorBoundary() {
-//   const error = useRouteError();
-
-//   // Response 객체가 throw된 경우 처리
-//   if (isRouteErrorResponse(error)) {
-//     return (
-//       <Center bg="bg.muted" flex="1">
-//         <Card.Root size="lg" variant="elevated" width="sm">
-//           <Card.Body gap="2">
-//             <Card.Title>
-//               {error.status} {error.statusText}
-//             </Card.Title>
-//             <Card.Description>{error.data}</Card.Description>
-//           </Card.Body>
-//           <Card.Footer>
-//             <Button onClick={() => (window.location.href = "/")}>
-//               <Link to="/">Go back home</Link>
-//             </Button>
-//           </Card.Footer>
-//         </Card.Root>
-//       </Center>
-//     );
-//   }
-
-//   // React Error가 발생한 경우 처리
-//   return (
-//     <>
-//       <Center bg="bg.muted" flex="1">
-//         <Card.Root size="lg" variant="elevated">
-//           <Card.Header>
-//             <Card.Title>Something went wrong</Card.Title>
-//             <Card.Description>
-//               {error.message || "An unexpected error occurred."}
-//             </Card.Description>
-//           </Card.Header>
-//           <Card.Footer>
-//             <Button asChild>
-//               <Link to="/">Go back home</Link>
-//             </Button>
-//           </Card.Footer>
-//         </Card.Root>
-//       </Center>
-//     </>
-//   );
-// }
+}
 
 export default function App() {
   return (
-    <ChakraProvider>
-      <ThemeProvider attribute="class" disableTransitionOnChange>
-        <Outlet />
-      </ThemeProvider>
-    </ChakraProvider>
+    <Provider>
+      <Outlet />
+    </Provider>
   );
 }

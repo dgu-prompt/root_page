@@ -6,13 +6,14 @@ import {
   HoverCardRoot,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { LuInfo } from "react-icons/lu";
+
+import { Info } from "lucide-react";
 
 const InfoHoverCard = ({ info }: { info: string }) => (
   <HoverCardRoot>
     <HoverCardTrigger>
       <Button size="2xs" variant="plain">
-        <LuInfo />
+        <Info />
       </Button>
     </HoverCardTrigger>
     <HoverCardContent>

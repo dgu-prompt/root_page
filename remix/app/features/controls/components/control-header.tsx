@@ -1,10 +1,18 @@
 import { Field } from "@/components/ui/field";
 import { InputGroup } from "@/components/ui/input-group";
-import { Box, Card, Flex, Heading, IconButton, Input } from "@chakra-ui/react";
+import {
+  Box,
+  Card,
+  Flex,
+  Heading,
+  Icon,
+  IconButton,
+  Input,
+} from "@chakra-ui/react";
 import { Form } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
-import { HiOutlineViewGrid, HiOutlineViewList } from "react-icons/hi";
-import { LuSearch } from "react-icons/lu";
+
+import { Search, LayoutGrid, LayoutList } from "lucide-react";
 
 import { ControlFilterMenu } from "./control-filter-menu";
 
@@ -75,7 +83,7 @@ export default function ControlHeader(props: ControlHeaderProps) {
                   onClick={() => setIsGridView(true)}
                   variant={isGridView ? "surface" : "ghost"}
                 >
-                  <HiOutlineViewGrid />
+                  <LayoutGrid />
                 </IconButton>
 
                 <IconButton
@@ -83,7 +91,7 @@ export default function ControlHeader(props: ControlHeaderProps) {
                   onClick={() => setIsGridView(false)}
                   variant={!isGridView ? "surface" : "ghost"}
                 >
-                  <HiOutlineViewList />
+                  <LayoutList />
                 </IconButton>
               </Flex>
             )}
@@ -94,7 +102,15 @@ export default function ControlHeader(props: ControlHeaderProps) {
           {/* Search */}
           <Box flex="1">
             <Form id="search-form" method="get" role="search">
-              <InputGroup flex="1" startElement={<LuSearch />} width="full">
+              <InputGroup
+                flex="1"
+                startElement={
+                  <Icon>
+                    <Search />
+                  </Icon>
+                }
+                width="full"
+              >
                 <Input
                   aria-label="Search controls"
                   className={isSearching ? "loading" : ""}

@@ -13,7 +13,7 @@
 
   "menu": {
     "dashboard": "대시보드",
-    "alerts": "알림 규칙",
+    "rules": "알림 규칙",
     "controls": "제어",
     "logout": "로그아웃"
   },

@@ -4,7 +4,7 @@ import { Switch } from "@/components/ui/switch";
 import { Card, SimpleGrid } from "@chakra-ui/react";
 import { useEffect } from "react";
 
-const ControlCardSkeletonView = () => {
+export const ControlCardSkeletonView = () => {
   return (
     <Card.Root>
       <Card.Header flex="1">
