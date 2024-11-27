@@ -10,6 +10,23 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import {
+  Flex,
+  HStack,
+  Icon,
+  VStack,
+  Text,
+  AspectRatio,
+  Box,
+} from "@chakra-ui/react";
+import {
+  Check,
+  CircleCheck,
+  CircleDashed,
+  CircleEllipsis,
+  CircleMinus,
+  CircleX,
+} from "lucide-react";
 
 // ChartJS 등록
 ChartJS.register(
@@ -20,6 +37,19 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+
+const complianceStatus = [
+  { label: "통과", value: 198, color: "green.solid", icon: CircleCheck },
+  { label: "실패", value: 65, color: "red.solid", icon: CircleX },
+  {
+    label: "데이터 없음",
+    value: 30,
+    color: "blue.solid",
+    icon: CircleEllipsis,
+  },
+  { label: "알 수 없음", value: 0, color: "yellow.solid", icon: CircleDashed },
+  { label: "비활성화됨", value: 149, color: "gray.solid", icon: CircleMinus },
+];
 
 const StackedBarChart = () => {
   const [colors, setColors] = useState({});
@@ -53,11 +83,31 @@ const StackedBarChart = () => {
   const data = {
     labels: [""], // 라벨을 숨기기 위해 공백 사용
     datasets: [
-      { label: "Passed", data: [198], backgroundColor: colors.passed },
-      { label: "Failed", data: [65], backgroundColor: colors.failed },
-      { label: "No Data", data: [30], backgroundColor: colors.noData },
-      { label: "Unknown", data: [0], backgroundColor: colors.unknown },
-      { label: "Disabled", data: [149], backgroundColor: colors.disabled },
+      {
+        label: "Passed",
+        data: [198],
+        backgroundColor: colors.passed,
+      },
+      {
+        label: "Failed",
+        data: [65],
+        backgroundColor: colors.failed,
+      },
+      {
+        label: "No Data",
+        data: [30],
+        backgroundColor: colors.noData,
+      },
+      {
+        label: "Unknown",
+        data: [0],
+        backgroundColor: colors.unknown,
+      },
+      {
+        label: "Disabled",
+        data: [149],
+        backgroundColor: colors.disabled,
+      },
     ],
   };
 
@@ -66,39 +116,19 @@ const StackedBarChart = () => {
     indexAxis: "y", // 가로형 막대 그래프
     plugins: {
       legend: {
-        display: true,
-        position: "bottom", // 범례 위치를 아래로 설정
-        align: "start", // 범례 항목을 왼쪽 정렬
-        labels: {
-          generateLabels: (chart) => {
-            // 기본 레이블을 가져와 숫자 추가
-            const labels = chart.data.datasets.map((dataset, index) => {
-              return {
-                text: `${dataset.label}: ${dataset.data[0]}`, // 숫자 추가
-                fillStyle: dataset.backgroundColor,
-                hidden: chart.getDatasetMeta(index).hidden,
-                datasetIndex: index,
-              };
-            });
-            return labels;
-          },
-          boxWidth: 12,
-        },
+        display: false,
       },
     },
     maintainAspectRatio: false,
+    responsive: true,
     scales: {
       x: {
         stacked: true, // 스택 설정
-        display: false, // x축 숨기기
-        ticks: { display: false },
-        grid: { display: false }, // x축 격자 숨기기
+        display: false,
       },
       y: {
         stacked: true, // 스택 설정
-        display: false, // y축 숨기기
-        ticks: { display: false },
-        grid: { display: false }, // y축 격자 숨기기
+        display: false,
       },
     },
     elements: {
@@ -112,14 +142,29 @@ const StackedBarChart = () => {
         borderSkipped: false, // 막대의 테두리 안 보이게 설정
       },
     },
-    datasets: {
-      bar: {
-        barThickness: 28,
-      },
-    },
   };
 
-  return <Bar data={data} options={options} />;
+  return (
+    <Box>
+      <VStack gap="4">
+        <Flex width="full" height="48px">
+          <Bar data={data} options={options} />
+        </Flex>
+        <HStack gap="4">
+          {complianceStatus.map((status) => (
+            <HStack key={status.label} gap="2">
+              <Icon color={status.color}>
+                <status.icon />
+              </Icon>
+              <Text fontSize="sm" color="fg.muted">
+                {status.label}: {status.value}
+              </Text>
+            </HStack>
+          ))}
+        </HStack>
+      </VStack>
+    </Box>
+  );
 };
 
 export default StackedBarChart;

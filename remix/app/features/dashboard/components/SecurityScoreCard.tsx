@@ -93,7 +93,7 @@ interface RegionData {
 function mockFetchSecurityScore(region: string): Promise<SecurityScore> {
   const mockData: RegionData = {
     "us-east-1": { score: 90, passed: 200, total: 222 },
-    "ap-northeast-2": { score: 77, passed: 198, total: 258 },
+    "ap-northeast-2": { score: 75, passed: 198, total: 263 },
   };
 
   return new Promise((resolve, reject) => {

@@ -6,6 +6,7 @@ import Footer from "./footer";
 import Navbar from "./navbar";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { getSession } from "@/services/sessions";
+import { useState, useEffect } from "react";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -16,6 +17,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function AppLayout() {
   const { userId } = useLoaderData<typeof loader>();
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) return null;
 
   return (
     <>

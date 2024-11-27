@@ -13,7 +13,14 @@ export default function ColorModeToggle() {
   if (!isClient) return null;
 
   return (
-    <IconButton aria-label="toggle color mode" onClick={toggleColorMode}>
+    <IconButton
+      aria-label="toggle color mode"
+      onClick={toggleColorMode}
+      rounded="full"
+      variant="surface"
+      bg="bg"
+      _hover={{ bg: "bg.emphasized" }}
+    >
       {theme === "light" ? <Moon /> : <Sun />}
     </IconButton>
   );
