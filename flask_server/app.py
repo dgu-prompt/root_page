@@ -8,7 +8,7 @@ from flask import redirect, Flask, send_from_directory, request, jsonify, sessio
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
-from aws_service import get_filtered_controls_list, set_securityhub_control_activation, get_control_status_counts
+from aws_service import get_controls_with_compliance_results, get_filtered_controls_list, set_securityhub_control_activation, get_control_status_counts
 from model import initialize_db, User, db
 from elasticsearch_dashboard import get_security_issues_filtered, analyze_security_issues
 from dashboard_service import get_ticket_details, get_tickets_stats
