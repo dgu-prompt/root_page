@@ -374,6 +374,42 @@ def get_dashboard_findings():
 #     except Exception as e:
 #         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
+# BASE_PATH를 app.py의 위치에 기반하여 설정
+BASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+
+@app.route('/rules/<awsRegion>/assignees', methods=['GET'])
+def get_assignees(awsRegion):
+    # CSV 파일 경로
+    csv_file_path = os.path.join(BASE_PATH, f"{awsRegion}.csv")
+
+    # 디버깅용 로그
+    print(f"Looking for CSV file at: {csv_file_path}")
+
+    assignees = []
+    try:
+        # CSV 파일 읽기
+        with open(csv_file_path, mode='r', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            print(f"CSV Headers: {reader.fieldnames}")  # 디버깅: CSV 헤더 출력
+            for row in reader:
+                assignees.append({
+                    "SecurityControlId": row['conId'] if row['conId'] else None,
+                    "assigneeId": row['assigneeId'] if row['assigneeId'] else None,
+                    "assigneeName": row['assigneeName'] if row['assigneeName'] else None
+        })
+
+
+        if not assignees:
+            return jsonify({"message": f"No assignees found in '{awsRegion}' CSV file"}), 404
+
+        return jsonify({"assignees": assignees})
+
+    except FileNotFoundError:
+        return jsonify({"error": f"CSV file for region '{awsRegion}' not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+    
 if __name__ == '__main__':
     
     with app.app_context():
