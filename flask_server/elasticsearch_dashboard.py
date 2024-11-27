@@ -6,7 +6,7 @@ import json
 from flask import redirect, Flask, send_from_directory, request, jsonify, session
 from collections import defaultdict, Counter
 from datetime import datetime, timedelta
-from aws_service import set_securityhub_control_activation, get_nist_controls_list
+from aws_service import set_securityhub_control_activation, get_controls_list
 
 from dotenv import load_dotenv
 load_dotenv()  # .env 파일 로드
