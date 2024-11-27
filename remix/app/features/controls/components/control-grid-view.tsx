@@ -1,13 +1,13 @@
 import { GridItem, SimpleGrid } from "@chakra-ui/react";
 
-import type { ControlAggregate } from "../types/controls-types";
+import type { ControlFull } from "../types/typesV2";
 
 import { ControlCardView } from "./control-card-view";
 import { ControlCardSkeletonView } from "./control-grid-skeleton";
 
 // ControlGridView
 type ControlGridCardViewProps = {
-  controls: ControlAggregate[];
+  controls: ControlFull[];
   isLoading: boolean;
 };
 

@@ -19,26 +19,28 @@ import {
 } from "@chakra-ui/react";
 import { Form, NavLink, useLocation } from "@remix-run/react";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { LogOut, Menu } from "lucide-react";
 
-export default function Navbar() {
-  const { t } = useTranslation();
+export default function Navbar({ userId }: { userId: string }) {
   const location = useLocation();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Nav items shared by desktop and mobile
   const navItems = [
-    { label: t("menu.dashboard"), to: "/" },
-    { label: t("menu.rules"), to: "/rules" },
-    { label: t("menu.controls"), to: "/controls" },
+    { label: "대시보드", to: "/" },
+    { label: "알림 규칙", to: "/rules" },
+    { label: "제어 항목", to: "/controls" },
   ];
 
   // Toggle mobile menu visibility
   const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
 
   // Check if a nav item matches the current path
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    return path === "/"
+      ? location.pathname === "/"
+      : location.pathname.startsWith(path);
+  };
 
   // Submit the logout form programmatically
   const submitLogout = () =>
@@ -99,7 +101,7 @@ export default function Navbar() {
           {/* Logo */}
           <NavLink to="/">
             <Text fontSize="md" fontWeight="semibold">
-              {t("appName")}
+              SecurityCircle {process.env.NODE_ENV === "development" && "DEV"}
             </Text>
           </NavLink>
 
@@ -113,12 +115,12 @@ export default function Navbar() {
                 <Avatar size="sm" />
               </MenuTrigger>
               <MenuContent zIndex="2200">
-                <MenuItemGroup title="현재 로그인된 아이디">
+                <MenuItemGroup title={userId}>
                   <MenuItem onClick={submitLogout} value="logout">
                     <Icon>
                       <LogOut />
                     </Icon>
-                    <Text ml="2">{t("menu.logout")}</Text>
+                    <Text ml="2">로그아웃</Text>
                   </MenuItem>
                 </MenuItemGroup>
               </MenuContent>

@@ -21,16 +21,10 @@ export default defineConfig({
       routes(defineRoutes) {
         return defineRoutes((route) => {
           route("/", "shared/layouts/app-layout.tsx", () => {
-            route("/", "pages/dashboard.tsx"), { index: true };
-            route("rules", "pages/rules.tsx", () => {
-              route("", "features/rules/components/empty.tsx", { index: true });
-              route("jira/regions/:awsRegion", "pages/jira-rules.tsx");
-            });
-            route(
-              "alerts/jira/regions/:awsRegion/assignees/:assigneeId/edit",
-              "pages/jira-rule-edit.tsx"
-            );
-            route("controls", "pages/controls.tsx");
+            route("/", "features/dashboard/index.tsx"), { index: true };
+            route("rules", "features/rules/index.tsx");
+            route("rules/:ruleId/edit", "features/RuleEdit/index.tsx");
+            route("controls", "features/controls/index.tsx");
           });
 
           route("/login", "shared/layouts/auth-layout.tsx", () => {

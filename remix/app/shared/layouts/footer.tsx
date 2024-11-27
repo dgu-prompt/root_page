@@ -6,15 +6,11 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import { useTranslation } from "react-i18next";
 
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ToastButton from "@/components/ToastButton";
 import ColorModeToggle from "@/components/color-mode-toggle";
 
 function Footer() {
-  const { t } = useTranslation();
-
   return (
     <Box as="footer" pb="8" pt="40" width="full">
       <Container>
@@ -25,13 +21,12 @@ function Footer() {
           justifyContent="space-between"
         >
           <Text color="gray.600" fontSize="sm">
-            {t("footerCopyright")}
+            2024 © 프롬프트. All rights reserved.
           </Text>
           <Flex align="center" gap="4">
             <ToastButton />
-            <LanguageSwitcher />
             <ChakraLink href="https://github.com/dgu-prompt/root_page">
-              <Button variant="surface">{t("footerGitHub")}</Button>
+              <Button variant="surface">GitHub</Button>
             </ChakraLink>
             <ColorModeToggle />
           </Flex>

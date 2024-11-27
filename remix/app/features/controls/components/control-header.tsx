@@ -10,7 +10,6 @@ import {
   Input,
 } from "@chakra-ui/react";
 import { Form } from "@remix-run/react";
-import { useTranslation } from "react-i18next";
 
 import { Search, LayoutGrid, LayoutList } from "lucide-react";
 
@@ -19,7 +18,7 @@ import { ControlFilterMenu } from "./control-filter-menu";
 import RegionSelect from "@/components/RegionSelect";
 import { ComplianceStatus, Severity } from "../types/controls-types";
 
-type ControlHeaderProps = {
+interface ControlHeaderProps {
   isSearching: boolean;
   isGridView: boolean;
   region?: string;
@@ -28,15 +27,14 @@ type ControlHeaderProps = {
   setIsGridView: (isGridView: boolean) => void | undefined;
   filterState: {
     searchQuery?: string;
-    hasJiraAssignee?: boolean | null;
     severity?: Severity | null;
-    complianceStatus?: ComplianceStatus | null;
+    // complianceStatus?: ComplianceStatus | null;
   };
   onFilterChange: (filter: {
-    type: "searchQuery" | "hasJiraAssignee" | "severity" | "complianceStatus";
+    type: "searchQuery" | "severity";
     value: string | null;
   }) => void;
-};
+}
 
 export default function ControlHeader(props: ControlHeaderProps) {
   const {
@@ -49,7 +47,6 @@ export default function ControlHeader(props: ControlHeaderProps) {
     handleSearchChange,
     setIsGridView,
   } = props;
-  const { t } = useTranslation();
 
   return (
     <Card.Root
@@ -58,6 +55,7 @@ export default function ControlHeader(props: ControlHeaderProps) {
         base: "sm",
         md: "md",
       }}
+      variant="elevated"
     >
       <Card.Body>
         {/* Header */}
@@ -68,9 +66,9 @@ export default function ControlHeader(props: ControlHeaderProps) {
           justifyContent="space-between"
           mb="8"
         >
-          <Heading size="2xl">{t("controls.title")}</Heading>
+          <Heading size="2xl">제어 항목 관리</Heading>
           <Flex align="center" gap="8" width={{ base: "full", md: "md" }}>
-            <Field label={t("filters.region.label")} orientation="horizontal">
+            <Field label="리전 선택" orientation="horizontal">
               <RegionSelect
                 onRegionChange={handleRegionChange}
                 selectedRegion={region ?? ""}
@@ -79,7 +77,7 @@ export default function ControlHeader(props: ControlHeaderProps) {
             {setIsGridView !== undefined && (
               <Flex>
                 <IconButton
-                  aria-label={t("buttons.view.grid.label")}
+                  aria-label="그리드 보기"
                   onClick={() => setIsGridView(true)}
                   variant={isGridView ? "surface" : "ghost"}
                 >
@@ -87,7 +85,7 @@ export default function ControlHeader(props: ControlHeaderProps) {
                 </IconButton>
 
                 <IconButton
-                  aria-label={t("buttons.view.table.label")}
+                  aria-label="테이블 보기"
                   onClick={() => setIsGridView(false)}
                   variant={!isGridView ? "surface" : "ghost"}
                 >
@@ -118,7 +116,7 @@ export default function ControlHeader(props: ControlHeaderProps) {
                   id="q"
                   name="q"
                   onChange={handleSearchChange}
-                  placeholder={t("filters.search.placeholder")}
+                  placeholder="제어 항목 검색"
                   type="search"
                 />
               </InputGroup>
@@ -131,9 +129,23 @@ export default function ControlHeader(props: ControlHeaderProps) {
             onFilterChange={({ type, value }) =>
               onFilterChange({ type, value })
             }
+            filterOptions={{
+              severity: ["critical", "high", "medium", "low"],
+              controlStatus: ["enabled", "disabled"],
+              complianceStatus: ["passed", "failed", "no_data", "unknown"],
+            }}
+            onResetFilters={() => {}}
           />
         </Flex>
       </Card.Body>
     </Card.Root>
   );
 }
+
+// // filterState={filters}
+//           onFilterChange={({ type, value }) => onFilterChange({ type, value })}
+//           filterOptions={{
+//             controlStatus: ["enabled", "disabled"],
+//             severity: ["critical", "high", "medium", "low"],
+//           }}
+//           onResetFilters={handleResetFilters}

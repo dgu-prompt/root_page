@@ -6,59 +6,56 @@ import {
   CircleMinus,
   CircleX,
 } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
-import { ComplianceStatus } from "../types/controls-types";
+import { ComplianceStatus } from "../types/typesV2";
 
-type ComplianceStatusConfig = {
+interface ComplianceStatusConfig {
   color: string;
   icon: React.ElementType;
   label: string;
-};
+}
 
-function getDefaultComplianceStatusConfig(
-  t: (key: string) => string
-): Record<ComplianceStatus, ComplianceStatusConfig> {
+function getDefaultComplianceStatusConfig(): Record<
+  ComplianceStatus,
+  ComplianceStatusConfig
+> {
   return {
-    PASSED: {
+    passed: {
       color: "fg.success",
       icon: CircleCheck,
-      label: t("controls.fields.complianceStatus.values.passed"),
+      label: "통과",
     },
-    FAILED: {
+    failed: {
       color: "fg.error",
       icon: CircleX,
-      label: t("controls.fields.complianceStatus.values.failed"),
+      label: "실패",
     },
-    NO_DATA: {
+    no_data: {
       color: "fg.muted",
       icon: CircleEllipsis,
-      label: t("controls.fields.complianceStatus.values.noData"),
+      label: "데이터 없음",
     },
-    UNKNOWN: {
+    unknown: {
       color: "fg.muted",
       icon: CircleDashed,
-      label: t("controls.fields.complianceStatus.values.unknown"),
+      label: "알 수 없음",
     },
-    DISABLED: {
+    disabled: {
       color: "fg.muted",
       icon: CircleMinus,
-      label: t("controls.fields.complianceStatus.values.disabled"),
+      label: "비활성화됨",
     },
   };
 }
 
-type ComplianceStatusProps = {
+interface ComplianceStatusProps {
   status: ComplianceStatus;
-};
+}
 
-export default function ComplianceStatusIndicator(
-  props: ComplianceStatusProps
-) {
-  const { status } = props;
-  const { t } = useTranslation();
-
-  const config = getDefaultComplianceStatusConfig(t)[status];
+export default function ComplianceStatusIndicator({
+  status,
+}: ComplianceStatusProps) {
+  const config = getDefaultComplianceStatusConfig()[status];
   const StatusIcon = config.icon;
 
   return (

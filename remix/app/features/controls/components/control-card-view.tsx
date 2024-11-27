@@ -1,29 +1,30 @@
 import { DataListItem, DataListRoot } from "@/components/ui/data-list";
 import { Card, SimpleGrid, Text } from "@chakra-ui/react";
-import { useTranslation } from "react-i18next";
 
-import type {
-  ComplianceStatus,
-  ControlAggregate,
-  Severity,
-} from "../types/controls-types";
+import type { ComplianceStatus, ControlFull, Severity } from "../types/typesV2";
 
 import ComplianceStatusIndicator from "./compliance-status-indicator";
 import ControlStatusSwitch from "./control-status-switch";
-import JiraAssigneeNameIndicator from "./jira-assignee-name-indicator";
 import SeverityBadge from "./severity-badge";
 
 // ControlCardHeader
-type ControlCardHeaderProps = {
-  control: ControlAggregate;
-};
+interface ControlCardHeaderProps {
+  control: ControlFull;
+}
 
 const ControlCardHeader = (props: ControlCardHeaderProps) => {
   const { control } = props;
 
   return (
     <SimpleGrid columnGap="6" gridTemplateColumns="1fr auto" rowGap="2">
-      <Card.Title>{control.controlId}</Card.Title>
+      <Card.Title>
+        {control.controlId}
+        {control.controlStatus === "disabled" && (
+          <Text as="span" color="fg.muted" fontSize="sm" ms="1">
+            (비활성화됨)
+          </Text>
+        )}
+      </Card.Title>
       <ControlStatusSwitch
         controlId={control.controlId}
         controlStatus={control.controlStatus}
@@ -34,21 +35,19 @@ const ControlCardHeader = (props: ControlCardHeaderProps) => {
 };
 
 // ControlCardBody
-type ControlCardBodyProps = {
+interface ControlCardBodyProps {
   control: {
     severity: Severity;
     complianceStatus: ComplianceStatus;
     failedChecks: number;
     totalChecks: number;
-    jiraAssigneeName?: string;
   };
-};
+}
 
 enum ControlCardKeys {
   severity = "severity",
   complianceStatus = "complianceStatus",
   failedChecks = "failedChecks",
-  jiraAssigneeName = "jiraAssigneeName",
 }
 
 type ControlCardConfig = Record<
@@ -59,34 +58,24 @@ type ControlCardConfig = Record<
   }
 >;
 
-const getDefaultControlCardConfig = (
-  t: (key: string, options?: Record<string, unknown>) => string
-): ControlCardConfig => {
+const getDefaultControlCardConfig = (): ControlCardConfig => {
   return {
     severity: {
-      label: t("controls.fields.severity.label"),
+      label: "심각도",
       value: (control) => <SeverityBadge severity={control.severity} />,
     },
     complianceStatus: {
-      label: t("controls.fields.complianceStatus.label"),
+      label: "규정 준수 상태",
       value: (control) => (
         <ComplianceStatusIndicator status={control.complianceStatus} />
       ),
     },
     failedChecks: {
-      label: t("controls.fields.failedChecks.label"),
-      value: (control) =>
-        t("controls.fields.failedChecks.value", {
-          failed: control.failedChecks,
-          total: control.totalChecks,
-        }),
-    },
-    jiraAssigneeName: {
-      label: t("controls.fields.jiraAssigneeName.label"),
+      label: "실패한 검사",
       value: (control) => (
-        <JiraAssigneeNameIndicator
-          jiraAssigneeName={control.jiraAssigneeName}
-        />
+        <>
+          {control.failedChecks} / {control.totalChecks}
+        </>
       ),
     },
   };
@@ -94,9 +83,8 @@ const getDefaultControlCardConfig = (
 
 const ControlCardBody = (props: ControlCardBodyProps) => {
   const { control } = props;
-  const { t } = useTranslation();
 
-  const config = getDefaultControlCardConfig(t);
+  const config = getDefaultControlCardConfig();
 
   return (
     <DataListRoot orientation="horizontal">
@@ -108,9 +96,9 @@ const ControlCardBody = (props: ControlCardBodyProps) => {
 };
 
 // ControlCardView
-type ControlCardViewProps = {
-  control: ControlAggregate;
-};
+interface ControlCardViewProps {
+  control: ControlFull;
+}
 
 export const ControlCardView = (props: ControlCardViewProps) => {
   const { control } = props;
@@ -120,7 +108,7 @@ export const ControlCardView = (props: ControlCardViewProps) => {
       <Card.Header flex="1">
         <ControlCardHeader control={control} />
       </Card.Header>
-      <Card.Body>
+      <Card.Body flex="0">
         <ControlCardBody control={control} />
       </Card.Body>
     </Card.Root>

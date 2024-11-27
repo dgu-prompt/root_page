@@ -175,123 +175,119 @@ const SelectControlsStep = ({
   };
 
   return (
-    <Card.Root>
-      <Card.Body>
-        <HStack align="center">
-          <InputGroup
-            flex="1"
-            startElement={
-              <Icon>
-                <Search />
-              </Icon>
+    <>
+      <HStack align="center">
+        <InputGroup
+          flex="1"
+          startElement={
+            <Icon>
+              <Search />
+            </Icon>
+          }
+          width="full"
+        >
+          <Input
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                query: e.target.value,
+                page: 1,
+              }))
             }
-            width="full"
-          >
-            <Input
-              onChange={(e) =>
-                setFilters((prev) => ({
-                  ...prev,
-                  query: e.target.value,
-                  page: 1,
-                }))
-              }
-              placeholder="제어 검색"
-              value={searchQuery}
-            />
-          </InputGroup>
-
-          <ControlFilterMenu
-            filterState={filterState}
-            onFilterChange={({ type, value }) =>
-              onFilterChange({ type, value })
-            }
+            placeholder="제어 검색"
+            value={searchQuery}
           />
-        </HStack>
+        </InputGroup>
 
-        {loading ? (
-          <Center>
-            <Spinner />
-          </Center>
-        ) : (
-          <Stack gap="4" mt="8">
-            <Text>{totalCount}개의 제어 찾음</Text>
-
-            {controls.map((control) => {
-              const isChecked =
-                jiraRuleData.modifiedSecurityControlIds.added.includes(
-                  control.controlId
-                )
-                  ? true
-                  : jiraRuleData.modifiedSecurityControlIds.removed.includes(
-                        control.controlId
-                      )
-                    ? false
-                    : control.jiraAssigneeId === jiraRuleData.jiraAssignee;
-
-              const isModified =
-                jiraRuleData.modifiedSecurityControlIds.added.includes(
-                  control.controlId
-                ) ||
-                jiraRuleData.modifiedSecurityControlIds.removed.includes(
-                  control.controlId
-                );
-
-              return (
-                <CheckboxCard
-                  background={isModified ? "bg.info" : "none"}
-                  checked={isChecked}
-                  colorPalette={isModified ? "blue" : "gray"}
-                  description={
-                    <>
-                      <Text display="inline" me="2">
-                        {control.controlStatus}
-                      </Text>
-                      <SeverityBadge severity={control.severity} />
-                      <Text display="inline" ms="2">
-                        {control.title}
-                      </Text>
-                    </>
-                  }
-                  key={control.controlId}
-                  label={
-                    <>
-                      {`${control.controlId} - ${control.jiraAssigneeName || ""}`}
-                      {isModified && (
-                        <>
-                          {jiraRuleData.modifiedSecurityControlIds.added.includes(
-                            control.controlId
-                          ) ? (
-                            <Text as="span" color="blue.500">
-                              {/* 현재 편집 중인 담당자 이름 */}
-                              {`(${t("controls.modifiedTo")} ${jiraRuleData.jiraAssignee})`}
-                            </Text>
-                          ) : (
-                            <Text as="span" color="red.500">
-                              {/* 담당자 없음 */}
-                              {`(${t("controls.modifiedToNone")})`}
-                            </Text>
-                          )}
-                        </>
-                      )}
-                    </>
-                  }
-                  onChange={() => handleCheckboxChange(control.controlId)}
-                  value={control.controlId}
-                  width="full"
-                />
-              );
-            })}
-          </Stack>
-        )}
-
-        <Pagination
-          totalCount={totalCount}
-          currentPage={page}
-          pageSize={pageSize}
-          onPageChange={handlePageChange}
+        <ControlFilterMenu
+          filterState={filterState}
+          onFilterChange={({ type, value }) => onFilterChange({ type, value })}
         />
-      </Card.Body>
-    </Card.Root>
+      </HStack>
+
+      {loading ? (
+        <Center>
+          <Spinner />
+        </Center>
+      ) : (
+        <Stack gap="4" mt="8">
+          <Text>{totalCount}개의 제어 찾음</Text>
+
+          {controls.map((control) => {
+            const isChecked =
+              jiraRuleData.modifiedSecurityControlIds.added.includes(
+                control.controlId
+              )
+                ? true
+                : jiraRuleData.modifiedSecurityControlIds.removed.includes(
+                      control.controlId
+                    )
+                  ? false
+                  : control.jiraAssigneeId === jiraRuleData.jiraAssignee;
+
+            const isModified =
+              jiraRuleData.modifiedSecurityControlIds.added.includes(
+                control.controlId
+              ) ||
+              jiraRuleData.modifiedSecurityControlIds.removed.includes(
+                control.controlId
+              );
+
+            return (
+              <CheckboxCard
+                background={isModified ? "bg.info" : "none"}
+                checked={isChecked}
+                colorPalette={isModified ? "blue" : "gray"}
+                description={
+                  <>
+                    <Text display="inline" me="2">
+                      {control.controlStatus}
+                    </Text>
+                    <SeverityBadge severity={control.severity} />
+                    <Text display="inline" ms="2">
+                      {control.title}
+                    </Text>
+                  </>
+                }
+                key={control.controlId}
+                label={
+                  <>
+                    {`${control.controlId} - ${control.jiraAssigneeName || ""}`}
+                    {isModified && (
+                      <>
+                        {jiraRuleData.modifiedSecurityControlIds.added.includes(
+                          control.controlId
+                        ) ? (
+                          <Text as="span" color="blue.500">
+                            {/* 현재 편집 중인 담당자 이름 */}
+                            {`(${t("controls.modifiedTo")} ${jiraRuleData.jiraAssignee})`}
+                          </Text>
+                        ) : (
+                          <Text as="span" color="red.500">
+                            {/* 담당자 없음 */}
+                            {`(${t("controls.modifiedToNone")})`}
+                          </Text>
+                        )}
+                      </>
+                    )}
+                  </>
+                }
+                onChange={() => handleCheckboxChange(control.controlId)}
+                value={control.controlId}
+                width="full"
+              />
+            );
+          })}
+        </Stack>
+      )}
+
+      <Pagination
+        totalCount={totalCount}
+        currentPage={page}
+        pageSize={pageSize}
+        onPageChange={handlePageChange}
+      />
+    </>
   );
 };
 

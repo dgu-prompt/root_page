@@ -15,7 +15,7 @@ export const loader: LoaderFunction = async ({ params }) => {
   if (!awsRegion) throw new Error("Invalid parameters");
 
   const assignees: AssigneeDetails[] = await getAssignees("jira", awsRegion);
-  return json({ assignees });
+  return Response.json({ assignees });
 };
 
 export default function AssigneeListPage() {

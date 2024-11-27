@@ -1,6 +1,6 @@
 import { Center, Spinner } from "@chakra-ui/react";
 
-import type { ControlAggregate } from "../types/controls-types";
+import type { ControlFull } from "../types/typesV2";
 
 import ControlEmptyView from "./control-empty-view";
 import ControlGridView from "./control-grid-view";
@@ -10,7 +10,7 @@ import { ControlGridSkeletonView } from "./control-grid-skeleton";
 type ContentProps = {
   isSearching: boolean;
   isGridView: boolean;
-  controls: ControlAggregate[];
+  controls: ControlFull[];
   query: string;
 };
 

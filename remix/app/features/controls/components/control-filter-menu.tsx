@@ -1,5 +1,5 @@
 "use client";
-
+import { Text } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
 import {
   MenuContent,
@@ -7,57 +7,60 @@ import {
   MenuRoot,
   MenuTrigger,
 } from "@/components/ui/menu";
-import { Box, Flex, MenuItem } from "@chakra-ui/react";
+import { Box, Flex, MenuItem, MenuSeparator } from "@chakra-ui/react";
 import { Check, Filter } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { ComplianceStatus, Severity } from "../types/controls-types";
+import React from "react";
 
-type ControlFilterMenuProps = {
-  filterState: {
-    hasJiraAssignee?: boolean | null;
-    severity?: Severity | null;
-    complianceStatus?: ComplianceStatus | null;
-  };
-  onFilterChange: (filter: {
-    type: "hasJiraAssignee" | "severity" | "complianceStatus";
-    value: string | null;
-  }) => void;
+interface ControlFilterMenuProps {
+  filterState: Record<string, string | null>; // 유연한 필터 상태
+  onFilterChange: (filter: { type: string; value: string | null }) => void;
+  filterOptions: Record<string, string[]>; // 필터 옵션을 동적으로 전달
+  onResetFilters: () => void; // 필터 초기화 함수
+}
+
+const filterLabel = {
+  label: "필터",
+  region: {
+    label: "지역 선택",
+  },
+  search: {
+    placeholder: "제어 검색",
+  },
+  severity: {
+    label: "심각도",
+    values: {
+      critical: "매우 중요",
+      high: "높음",
+      medium: "보통",
+      low: "낮음",
+    },
+  },
+  assigneeStatus: {
+    label: "담당자 상태",
+    values: {
+      assigned: "할당됨",
+      unassigned: "미할당",
+    },
+  },
 };
-
-const FILTER_OPTIONS = {
-  hasJiraAssignee: [true, false],
-  severity: ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
-  complianceStatus: ["PASSED", "FAILED", "DISABLED", "UNKNOWN"],
-} as const;
 
 export const ControlFilterMenu = ({
   filterState,
   onFilterChange,
+  filterOptions,
+  onResetFilters,
 }: ControlFilterMenuProps) => {
-  const { t } = useTranslation();
-
-  // Filter label rendering
   const getFilterLabel = (): JSX.Element => (
     <>
       <Filter />
-      {t("filters.label")}
+      필터
     </>
   );
 
-  // Render a single menu item with a check icon if active
-  const renderMenuItem = (
-    type: "hasJiraAssignee" | "severity" | "complianceStatus",
-    value: string | boolean,
-    label: string
-  ) => (
+  const renderMenuItem = (type: string, value: string, label: string) => (
     <MenuItem
       key={`${type}:${value}`}
-      onClick={() => {
-        console.log("type:", type);
-        console.log("value:", value);
-
-        onFilterChange({ type, value: String(value) });
-      }}
+      onClick={() => onFilterChange({ type, value })}
       value={`${type}:${value}`}
     >
       <Flex align="center" justify="space-between" width="100%">
@@ -70,40 +73,40 @@ export const ControlFilterMenu = ({
   return (
     <MenuRoot>
       <MenuTrigger asChild>
-        <Button variant="outline">{getFilterLabel()}</Button>
+        <Button
+          variant="outline"
+          onClick={(e) => {
+            e.currentTarget.focus(); // 버튼에 포커스 설정
+          }}
+        >
+          {getFilterLabel()}
+        </Button>
       </MenuTrigger>
-      <MenuContent minW="12rem">
-        {/* Assignee Status */}
-        <MenuItemGroup title={t("filters.hasJiraAssignee.label")}>
-          {FILTER_OPTIONS.hasJiraAssignee.map((status) =>
-            renderMenuItem(
-              "hasJiraAssignee",
-              status,
-              t(`filters.hasJiraAssignee.values.${status}`)
-            )
-          )}
-        </MenuItemGroup>
-
-        {/* Severity */}
-        <MenuItemGroup title={t("filters.severity.label")}>
-          {FILTER_OPTIONS.severity.map((level) =>
-            renderMenuItem(
-              "severity",
-              level,
-              t(`filters.severity.values.${level.toLowerCase()}`)
-            )
-          )}
-        </MenuItemGroup>
-
-        {/* Compliance Status */}
-        <MenuItemGroup title={t("filters.complianceStatus.label")}>
-          {FILTER_OPTIONS.complianceStatus.map((status) =>
-            renderMenuItem(
-              "complianceStatus",
-              status,
-              t(`filters.complianceStatus.values.${status.toLowerCase()}`)
-            )
-          )}
+      <MenuContent minW="12rem" zIndex="1500">
+        {Object.entries(filterOptions).map(([type, options], index) => (
+          <React.Fragment key={type}>
+            {index > 0 && <MenuSeparator />}
+            <MenuItemGroup key={type} title={filterLabel[type]?.label || type}>
+              {options.map((option) =>
+                renderMenuItem(
+                  type,
+                  option,
+                  filterLabel[type]?.values?.[option.toLowerCase()]
+                )
+              )}
+            </MenuItemGroup>
+          </React.Fragment>
+        ))}
+        <MenuSeparator />
+        <MenuItemGroup>
+          <MenuItem
+            onClick={onResetFilters}
+            value="reset"
+            color="fg.error"
+            _hover={{ bg: "bg.error", color: "fg.error" }}
+          >
+            필터 초기화
+          </MenuItem>
         </MenuItemGroup>
       </MenuContent>
     </MenuRoot>

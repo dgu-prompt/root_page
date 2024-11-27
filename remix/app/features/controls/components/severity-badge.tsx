@@ -1,26 +1,23 @@
 import { Badge } from "@chakra-ui/react";
-import { useTranslation } from "react-i18next";
 
-import type { Severity } from "../types/controls-types";
+import { Severity } from "../types/typesV2";
 
 type SeverityConfig = {
   color: string;
   label: string;
 };
 
-function getDefaultSeverityConfig(
-  t: (key: string) => string
-): Record<Severity, SeverityConfig> {
+function getDefaultSeverityConfig(): Record<Severity, SeverityConfig> {
   return {
-    LOW: { color: "yellow", label: t("controls.fields.severity.values.low") },
-    MEDIUM: {
+    low: { color: "yellow", label: "낮음" },
+    medium: {
       color: "orange",
-      label: t("controls.fields.severity.values.medium"),
+      label: "보통",
     },
-    HIGH: { color: "red", label: t("controls.fields.severity.values.high") },
-    CRITICAL: {
+    high: { color: "red", label: "높음" },
+    critical: {
       color: "purple",
-      label: t("controls.fields.severity.values.critical"),
+      label: "매우 높음",
     },
   };
 }
@@ -32,9 +29,8 @@ type SeverityBadgeProps = {
 
 export default function SeverityBadge(props: SeverityBadgeProps) {
   const { severity, customConfig } = props;
-  const { t } = useTranslation();
 
-  const defaultConfig = getDefaultSeverityConfig(t);
+  const defaultConfig = getDefaultSeverityConfig();
   const SeverityConfig = { ...defaultConfig, ...customConfig };
   const { color, label } = SeverityConfig[severity];
 

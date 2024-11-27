@@ -13,7 +13,6 @@ export default function StepTwo({
 
   return (
     <Flex direction={{ base: "column", md: "row" }} gap="16">
-      {/* Left Side - Rule Editing Form */}
       <Box flex="1">
         <Stack gap="8">
           <Card.Root size={{ base: "sm", md: "md", lg: "lg" }}>
@@ -21,10 +20,10 @@ export default function StepTwo({
               <Card.Title>{t("ruleForm.jiraTitle")}</Card.Title>
             </Card.Header>
             <Card.Body>
-              <ConfigAlertJira
+              {/* <ConfigAlertJira
                 jiraRuleData={jiraRuleData}
                 setJiraRuleData={setJiraRuleData}
-              />
+              /> */}
             </Card.Body>
           </Card.Root>
           {/* 

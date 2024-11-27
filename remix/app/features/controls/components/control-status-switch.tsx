@@ -6,7 +6,7 @@ import { ToggleControlStatusFunction } from "../types/controls-types";
 
 type ControlStatusSwitchProps = {
   controlId: string;
-  controlStatus: "ENABLED" | "DISABLED";
+  controlStatus: "enabled" | "disabled";
 };
 
 export default function ControlStatusSwitch(props: ControlStatusSwitchProps) {
@@ -22,7 +22,7 @@ export default function ControlStatusSwitch(props: ControlStatusSwitchProps) {
     if (loading) return; // Prevent redundant toggles
     setLoading(true);
 
-    const nextStatus = currentStatus === "ENABLED" ? "DISABLED" : "ENABLED";
+    const nextStatus = currentStatus === "enabled" ? "disabled" : "enabled";
     const previousStatus = currentStatus;
     setCurrentStatus(nextStatus); // Optimistic update
 
@@ -39,6 +39,6 @@ export default function ControlStatusSwitch(props: ControlStatusSwitchProps) {
   };
 
   return (
-    <Switch checked={currentStatus === "ENABLED"} onChange={toggleStatus} />
+    <Switch checked={currentStatus === "enabled"} onChange={toggleStatus} />
   );
 }

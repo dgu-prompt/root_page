@@ -6,32 +6,32 @@ import {
   SelectValueText,
 } from "@/components/ui/select";
 import { createListCollection } from "@chakra-ui/react";
-import { useTranslation } from "react-i18next";
+import { useRegion } from "@/contexts/RegionContext";
+import { ValueChangeDetails } from "node_modules/@chakra-ui/react/dist/types/components/select/namespace";
 
-const RegionSelect = ({
-  selectedRegion = "ap-northeast-2",
-  onRegionChange,
-}: {
-  selectedRegion: string;
-  onRegionChange: (region: string) => void;
-}) => {
-  const { t } = useTranslation();
+export default function RegionSelect() {
+  const { region, setRegion } = useRegion();
 
-  // 다국어 지원이 가능한 리전 목록 생성
   const regions = createListCollection({
     items: [
-      { label: t("awsRegions.us-east-1"), value: "us-east-1" },
-      { label: t("awsRegions.us-west-2"), value: "us-west-2" },
-      { label: t("awsRegions.eu-central-1"), value: "eu-central-1" },
-      { label: t("awsRegions.ap-northeast-2"), value: "ap-northeast-2" },
+      { label: "미국 동부(버지니아 북부)", value: "us-east-1" },
+      { label: "미국 서부(오레곤)", value: "us-west-2" },
+      { label: "유럽(프랑크푸르트)", value: "eu-central-1" },
+      { label: "아시아 태평양(서울)", value: "ap-northeast-2" },
     ],
   });
+
+  function handleRegionChange(details: ValueChangeDetails) {
+    const [currentRegion] = details.value;
+    setRegion(currentRegion);
+    console.log("Region changed to", currentRegion);
+  }
 
   return (
     <SelectRoot
       collection={regions}
-      defaultValue={[selectedRegion]}
-      onValueChange={(e) => onRegionChange(e.value as unknown as string)}
+      defaultValue={[region]}
+      onValueChange={handleRegionChange}
     >
       <SelectTrigger>
         <SelectValueText />
@@ -45,6 +45,4 @@ const RegionSelect = ({
       </SelectContent>
     </SelectRoot>
   );
-};
-
-export default RegionSelect;
+}

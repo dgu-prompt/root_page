@@ -12,7 +12,6 @@ import {
 } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 
 import { validateCredentials } from "@/services/auth.server";
 import { commitSession, getSession } from "@/services/sessions";
@@ -64,7 +63,6 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Login() {
-  const { t } = useTranslation();
   const { error } = useLoaderData<typeof loader>();
   const [isClient, setIsClient] = useState(false);
 
@@ -78,26 +76,28 @@ export default function Login() {
     <Card.Root size="lg" variant="elevated" width="sm">
       <Card.Header>
         <Text color="fg" fontWeight="medium" textStyle="sm">
-          {t("appName")}
+          SecurityCircle
         </Text>
-        <Card.Title>{t("loginTitle")}</Card.Title>
-        <Card.Description>{t("loginDescription")}</Card.Description>
+        <Card.Title>로그인</Card.Title>
+        <Card.Description>
+          계정에 접근하기 위해 인증 정보를 입력하세요.
+        </Card.Description>
       </Card.Header>
       <Form method="post">
         <Card.Body>
           <Stack gap="4">
             <Fieldset.Root invalid={!!error}>
               <Fieldset.Content>
-                <Field invalid={!!error} label={t("usernameLabel")}>
+                <Field invalid={!!error} label="사용자 이름">
                   <Input
                     name="username"
-                    placeholder={t("usernamePlaceholder")}
+                    placeholder="사용자 이름을 입력하세요"
                   />
                 </Field>
-                <Field invalid={!!error} label={t("passwordLabel")}>
+                <Field invalid={!!error} label="암호">
                   <PasswordInput
                     name="password"
-                    placeholder={t("passwordPlaceholder")}
+                    placeholder="암호를 입력하세요"
                   />
                 </Field>
               </Fieldset.Content>
@@ -107,7 +107,7 @@ export default function Login() {
         </Card.Body>
         <Card.Footer>
           <Button flex="1" type="submit">
-            {t("loginButton")}
+            로그인
           </Button>
         </Card.Footer>
       </Form>

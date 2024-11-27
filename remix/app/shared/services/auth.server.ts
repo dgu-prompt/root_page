@@ -24,6 +24,6 @@ export async function validateCredentials(
     }
 
     const data = await response.json();
-    return data.userId;
+    return data.username;
   }
 }

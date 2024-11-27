@@ -5,7 +5,7 @@ import type { RegionData } from "./types";
 import { RegionalControlAssignee } from "@features/controls/services/control-aggregates.service";
 import { JiraRuleData } from "@features/rule-edit/JiraRuleData";
 
-interface AssigneeDetails {
+export interface AssigneeDetails {
   assigneeId: string;
   assigneeName: string;
   hasRuleFile: boolean;

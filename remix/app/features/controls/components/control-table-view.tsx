@@ -1,38 +1,21 @@
 import { Box, Table } from "@chakra-ui/react";
-import { useTranslation } from "react-i18next";
 
 import type { ControlAggregate } from "../types/controls-types";
 
 import ComplianceStatusIndicator from "./compliance-status-indicator";
 import ControlStatusSwitch from "./control-status-switch";
-import JiraAssigneeNameIndicator from "./jira-assignee-name-indicator";
 import SeverityBadge from "./severity-badge";
 
 // ControlTableHeader
 function ControlTableHeader() {
-  const { t } = useTranslation();
-
   return (
     <>
       <Table.ColumnHeader></Table.ColumnHeader>
-      <Table.ColumnHeader>
-        {t("controls.fields.controlId.label")}
-      </Table.ColumnHeader>
-      <Table.ColumnHeader>
-        {t("controls.fields.title.label")}
-      </Table.ColumnHeader>
-      <Table.ColumnHeader>
-        {t("controls.fields.severity.label")}
-      </Table.ColumnHeader>
-      <Table.ColumnHeader>
-        {t("controls.fields.complianceStatus.label")}
-      </Table.ColumnHeader>
-      <Table.ColumnHeader>
-        {t("controls.fields.failedChecks.label")}
-      </Table.ColumnHeader>
-      <Table.ColumnHeader>
-        {t("controls.fields.jiraAssigneeName.label")}
-      </Table.ColumnHeader>
+      <Table.ColumnHeader>ID</Table.ColumnHeader>
+      <Table.ColumnHeader>제목</Table.ColumnHeader>
+      <Table.ColumnHeader>심각도</Table.ColumnHeader>
+      <Table.ColumnHeader>규정 준수 상태</Table.ColumnHeader>
+      <Table.ColumnHeader>실패한 검사</Table.ColumnHeader>
     </>
   );
 }
@@ -44,7 +27,6 @@ type ControlTableBodyProps = {
 
 function ControlTableBody(props: ControlTableBodyProps) {
   const { controls } = props;
-  const { t } = useTranslation();
 
   return (
     <>
@@ -69,11 +51,6 @@ function ControlTableBody(props: ControlTableBodyProps) {
               failed: control.failedChecks,
               total: control.totalChecks,
             })}
-          </Table.Cell>
-          <Table.Cell maxWidth="xs">
-            <JiraAssigneeNameIndicator
-              jiraAssigneeName={control.jiraAssigneeName}
-            />
           </Table.Cell>
         </Table.Row>
       ))}

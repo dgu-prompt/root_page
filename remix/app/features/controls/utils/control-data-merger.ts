@@ -32,8 +32,8 @@ export const createSecurityControlDetailWithDefaults = (
       // 기본값 포함 병합
       return {
         ...definition,
-        controlStatus: status?.controlStatus ?? "DISABLED",
-        complianceStatus: status?.complianceStatus ?? "UNKNOWN",
+        controlStatus: status?.controlStatus ?? "disabled",
+        complianceStatus: status?.complianceStatus ?? "unknown",
         failedChecks: status?.failedChecks ?? 0,
         totalChecks: status?.totalChecks ?? 0,
         jiraAssigneeId: assignee?.jiraAssigneeId ?? null,

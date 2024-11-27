@@ -1,7 +1,7 @@
 import type { RegionalControlComplianceResult } from "../types/controls-types";
 import { createSecurityControlDetailWithDefaults } from "../utils/control-data-merger";
 
-import { controlMetadata } from "./control-metadata";
+import { mockControlMetadata } from "./mockControlMetadata";
 import { mockRegionalControlAssignee } from "./mock-regional-control-assignee";
 
 export const mockRegionalControlComplianceResult: RegionalControlComplianceResult =
@@ -9,22 +9,22 @@ export const mockRegionalControlComplianceResult: RegionalControlComplianceResul
     "ap-northeast-2": [
       {
         controlId: "ACM.1",
-        controlStatus: "ENABLED",
-        complianceStatus: "PASSED",
+        controlStatus: "enabled",
+        complianceStatus: "passed",
         failedChecks: 0,
         totalChecks: 10,
       },
       {
         controlId: "APIGateway.1",
-        controlStatus: "ENABLED",
-        complianceStatus: "FAILED",
+        controlStatus: "enabled",
+        complianceStatus: "failed",
         failedChecks: 5,
         totalChecks: 5,
       },
       {
         controlId: "APIGateway.2",
-        controlStatus: "DISABLED",
-        complianceStatus: "DISABLED",
+        controlStatus: "disabled",
+        complianceStatus: "disabled",
         failedChecks: 0,
         totalChecks: 0,
       },
@@ -32,15 +32,15 @@ export const mockRegionalControlComplianceResult: RegionalControlComplianceResul
     "us-east-1": [
       {
         controlId: "ACM.1",
-        controlStatus: "ENABLED",
-        complianceStatus: "PASSED",
+        controlStatus: "enabled",
+        complianceStatus: "passed",
         failedChecks: 0,
         totalChecks: 10,
       },
       {
         controlId: "APIGateway.1",
-        controlStatus: "ENABLED",
-        complianceStatus: "FAILED",
+        controlStatus: "enabled",
+        complianceStatus: "failed",
         failedChecks: 5,
         totalChecks: 5,
       },
@@ -49,7 +49,7 @@ export const mockRegionalControlComplianceResult: RegionalControlComplianceResul
 
 export const mockSecurityControlJiraAssigneeDetailByRegion =
   createSecurityControlDetailWithDefaults(
-    controlMetadata,
+    mockControlMetadata,
     mockRegionalControlComplianceResult,
     mockRegionalControlAssignee
   );
