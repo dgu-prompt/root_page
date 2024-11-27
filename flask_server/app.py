@@ -8,7 +8,7 @@ from flask import redirect, Flask, send_from_directory, request, jsonify, sessio
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
-from aws_service import get_nist_filtered_controls_list, set_securityhub_control_activation, get_nist_controls_list, get_control_status_counts, get_nist_controls_list_with_compliance
+from aws_service import get_filtered_controls_list, set_securityhub_control_activation, get_control_status_counts
 from model import initialize_db, User, db
 from elasticsearch_dashboard import get_security_issues_filtered, analyze_security_issues
 from dashboard_service import get_ticket_details, get_tickets_stats
@@ -278,10 +278,9 @@ def set_control_item(control_id):
 #     except ValueError as e:
 #         return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
 
-# NIST 보안 표준 리스트 필터링 거쳐 가져오기
+# metadata + status + compliance -> 제어 항목 페이지
 @app.route('/control', methods=['GET'])
-@app.route('/notificationRule', methods=['GET'])
-def get_filtered_control_item_list():
+def get_control_full():
     try:
         # 쿼리 파라미터 가져오기
         page = int(request.args.get('page', 1))
@@ -293,7 +292,40 @@ def get_filtered_control_item_list():
         search_keyword = request.args.get('searchKeyword', '')
 
         # AWS 서비스 호출
-        controls, total_count = get_nist_filtered_controls_list(
+        controls, total_count = get_controls_with_compliance_results(
+            page=page,
+            page_size=page_size,
+            status_filter=status_filter,
+            severity_filter=severity_filter,
+            sort_field=sort_field,
+            sort_order=sort_order,
+            search_keyword=search_keyword
+        )
+
+        # 응답 데이터 생성
+        response = {
+            "controls": controls,
+            "totalCount": total_count
+        }
+        return jsonify(controls)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
+
+# metadata + status -> 규칙 편집 페이지
+@app.route('/notificationRule', methods=['GET'])
+def get_control_with_status():
+    try:
+        # 쿼리 파라미터 가져오기
+        page = int(request.args.get('page', 1))
+        page_size = int(request.args.get('pageSize', 20))
+        status_filter = request.args.get('filter[status]')
+        severity_filter = request.args.get('filter[severity]')
+        sort_field = request.args.get('sort[field]', 'ControlId')
+        sort_order = request.args.get('sort[order]', 'asc')
+        search_keyword = request.args.get('searchKeyword', '')
+
+        # AWS 서비스 호출
+        controls, total_count = get_filtered_controls_list(
             page=page,
             page_size=page_size,
             status_filter=status_filter,
