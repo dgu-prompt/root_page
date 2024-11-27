@@ -135,10 +135,6 @@ def get_filtered_controls_list(page, page_size, status_filter, severity_filter, 
     start_index = (page - 1) * page_size
     end_index = start_index + page_size
     paginated_controls = controls[start_index:end_index]
-    
-    for control in controls:
-        print(f"Debug - Control ID: {control.get('ControlId')}, Remediation: {control.get('Remediation')}")
-
 
     # 반환할 데이터 필터링
     filtered_controls = [
@@ -146,7 +142,7 @@ def get_filtered_controls_list(page, page_size, status_filter, severity_filter, 
             "ControlId": control.get("ControlId"),
             "Title": control.get("Title"),
             "Description": control.get("Description"),
-            "RemediationUrl": control.get("Remediation", {}).get("Url") or "https://docs.aws.amazon.com/securityhub/", # RemediationUrl이 제공되지 않는 경우라면 기본 URL 제공
+            "RemediationUrl": control.get("RemediationUrl"),
             "Severity": control.get("SeverityRating"),
             "ControlStatus": control.get("ControlStatus")
         }
@@ -187,7 +183,8 @@ def get_controls_with_compliance_results(page, page_size, status_filter, severit
         control_id = control.get('ControlId')
         findings_response = client.get_findings(
             Filters={
-                'ProductFields': [{'Key': 'ControlId', 'Value': control_id, 'Comparison': 'EQUALS'}]
+                "ComplianceSecurityControlId": [{"Value": control_id, "Comparison": "EQUALS"}],
+                "RecordState": [{"Value": "ACTIVE", "Comparison": "EQUALS"}],
             }
         )
         findings = findings_response.get('Findings', [])
@@ -201,7 +198,8 @@ def get_controls_with_compliance_results(page, page_size, status_filter, severit
         control['ComplianceStatus'] = 'FAILED' if failed_checks > 0 else 'PASSED'
 
         # 디버깅
-        print(f"Debug - Control ID: {control_id}, Total Checks: {total_checks}, Failed Checks: {failed_checks}")
+        #print(f"Debug - Control Full Object: {control}")
+        #print(f"Debug - Control ID: {control_id}, Total Checks: {total_checks}, Failed Checks: {failed_checks}")
 
     # 필터 적용
     if status_filter:
@@ -227,12 +225,12 @@ def get_controls_with_compliance_results(page, page_size, status_filter, severit
             "ControlId": control.get("ControlId"),
             "Title": control.get("Title"),
             "Description": control.get("Description"),
-            "RemediationUrl": control.get("Remediation", {}).get("Url") or "https://docs.aws.amazon.com/securityhub/", # RemediationUrl이 제공되지 않는 경우라면 기본 URL 제공
+            "RemediationUrl": control.get("RemediationUrl"),
             "Severity": control.get("SeverityRating"),
             "ControlStatus": control.get("ControlStatus"),
             "ComplianceStatus": control.get("ComplianceStatus"),
-            "failedChecks": control.get("FailedFindingsCount", 0),
-            "totalChecks": control.get("TotalFindingsCount", 0)
+            "failedChecks": control.get("failedChecks", 0),  
+            "totalChecks": control.get("totalChecks", 0), 
         }
         for control in paginated_controls
     ]
