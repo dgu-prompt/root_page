@@ -1,5 +1,3 @@
-"use client";
-
 import { Center } from "@chakra-ui/react";
 import { Outlet } from "@remix-run/react";
 import { useEffect, useState } from "react";
