@@ -14,7 +14,10 @@ import {
   ComplianceStatus,
   Severity,
 } from "@features/controls/types/controls-types";
-import { fetchAllControlFull } from "@features/controls/services/fetchAllControlFull";
+import {
+  ControlFilters,
+  fetchAllControlFull,
+} from "@features/controls/services/fetchAllControlFull";
 
 interface FilterState {
   searchQuery?: string;
@@ -43,7 +46,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
     const { controls, totalCounts } = response;
 
-    return json({
+    return Response.json({
       controls,
       totalCounts,
       searchQuery,
@@ -76,10 +79,11 @@ export const ControlsPage = () => {
   const [totalCount, setTotalCount] = useState(initialTotalCount);
   const [isGridView, setIsGridView] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  const [filterState, setFilterState] = useState<FilterState>({
+  const [filterState, setFilterState] = useState<ControlFilters>({
     searchQuery: searchQuery || "",
     severity: null,
-    // complianceStatus: null,
+    controlStatus: null,
+    complianceStatus: null,
   });
 
   const navigation = useNavigation();
@@ -98,6 +102,10 @@ export const ControlsPage = () => {
     formData.append("region", newRegion);
     submit(formData);
   };
+
+  useEffect(() => {
+    console.log("Page: ", page);
+  });
 
   // 필터 변경 핸들러
   const handleFilterChange = ({
@@ -128,20 +136,17 @@ export const ControlsPage = () => {
     const fetchData = async () => {
       // setIsLoading(true);
       try {
-        const response = await fetchControlAggregate({
-          region: "ap-northeast-2",
+        const response = await fetchAllControlFull({
+          region: region,
           filters: filterState,
-          page: 1,
+          page: page,
           pageSize: 15,
         });
 
-        if (response.ok) {
-          const { controls, totalCount } = response;
+        if (response!) {
+          const { controls, totalCounts } = response;
           setControls(controls);
-          setTotalCount(totalCount);
-        } else {
-          const { errorMessage } = response;
-          console.error("Failed to fetch controls:", errorMessage);
+          setTotalCount(totalCounts);
         }
       } catch (error) {
         console.error("Unexpected error occurred:", error);
@@ -150,7 +155,7 @@ export const ControlsPage = () => {
     };
 
     fetchData();
-  }, [filterState]); // filterState가 변경될 때마다 호출
+  }, [filterState, page, region]); // filterState가 변경될 때마다 호출
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newQuery = event.target.value;

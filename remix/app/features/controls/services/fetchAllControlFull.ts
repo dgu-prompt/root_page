@@ -1,7 +1,7 @@
 import { ControlFull, Severity } from "@features/controls/types/typesV2";
 import { mockControlFull } from "../data/mockControlFull";
 
-interface ControlFilters {
+export interface ControlFilters {
   searchQuery?: string;
   severity?: Severity | null;
   controlStatus?: "enabled" | "disabled" | null;

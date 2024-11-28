@@ -47,10 +47,7 @@ function ControlTableBody(props: ControlTableBodyProps) {
             <ComplianceStatusIndicator status={control.complianceStatus} />
           </Table.Cell>
           <Table.Cell maxWidth="xs">
-            {t("controls.fields.failedChecks.value", {
-              failed: control.failedChecks,
-              total: control.totalChecks,
-            })}
+            {control.failedChecks} / {control.totalChecks}
           </Table.Cell>
         </Table.Row>
       ))}

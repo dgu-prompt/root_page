@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import { useToggleControlStatus } from "../contexts/toggle-control-status-context";
 import { ToggleControlStatusFunction } from "../types/controls-types";
+import { toaster } from "@/components/ui/toaster";
 
 type ControlStatusSwitchProps = {
   controlId: string;
@@ -35,6 +36,10 @@ export default function ControlStatusSwitch(props: ControlStatusSwitchProps) {
       setCurrentStatus(previousStatus);
     } finally {
       setLoading(false);
+      toaster.create({
+        description: `제어 항목 ${controlId}이/가 ${nextStatus}되었습니다.`,
+        type: "info",
+      });
     }
   };
 

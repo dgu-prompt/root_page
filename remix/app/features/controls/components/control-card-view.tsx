@@ -19,11 +19,11 @@ const ControlCardHeader = (props: ControlCardHeaderProps) => {
     <SimpleGrid columnGap="6" gridTemplateColumns="1fr auto" rowGap="2">
       <Card.Title>
         {control.controlId}
-        {control.controlStatus === "disabled" && (
+        {/* {control.controlStatus === "disabled" && (
           <Text as="span" color="fg.muted" fontSize="sm" ms="1">
             (비활성화됨)
           </Text>
-        )}
+        )} */}
       </Card.Title>
       <ControlStatusSwitch
         controlId={control.controlId}

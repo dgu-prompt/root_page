@@ -51,6 +51,7 @@ import { ControlFilterMenu } from "@features/controls/components/control-filter-
 import { RuleEditContext, useGetRuleEdit } from "./contexts/RuleEditContext";
 import React from "react";
 import { useRules } from "@features/rules/contexts/mockRuleContext";
+import { toaster } from "@/components/ui/toaster";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const ruleId = params.ruleId!;
@@ -342,10 +343,10 @@ function AddControlDialog({ children }: { children: React.ReactNode }) {
         <DialogFooter>
           <Text me="4">{addedControlIds.length}개 제어 선택됨</Text>
           <DialogActionTrigger asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline">취소</Button>
           </DialogActionTrigger>
           <DialogActionTrigger asChild>
-            <Button onClick={handleSave}>Save</Button>
+            <Button onClick={handleSave}>저장</Button>
           </DialogActionTrigger>
         </DialogFooter>
         <DialogCloseTrigger />
@@ -632,7 +633,12 @@ function StepsSidebar() {
   const handleSubmit = () => {
     console.log("Final ruleData:", ruleData);
     editRule(ruleData);
+
     navigate("/rules");
+    toaster.create({
+      description: `규칙 ${ruleData.name}이/가 업데이트되었습니다.`,
+      type: "info",
+    });
   };
 
   return (
