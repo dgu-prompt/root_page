@@ -20,7 +20,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, useNavigate } from "@remix-run/react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import YamlPreviewStep from "@features/rule-edit/YamlPreviewStep/YamlPreviewStep";
@@ -50,19 +50,27 @@ import Pagination from "@/components/pagination";
 import { ControlFilterMenu } from "@features/controls/components/control-filter-menu";
 import { RuleEditContext, useGetRuleEdit } from "./contexts/RuleEditContext";
 import React from "react";
+import { useRules } from "@features/rules/contexts/mockRuleContext";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const ruleId = params.ruleId!;
-  const ruleData = await fetchRuleData(ruleId);
+  // const ruleData = await fetchRuleData(ruleId);
 
-  return Response.json({ ruleData });
+  // return Response.json({ ruleData });
+  return Response.json({ ruleId });
 }
 
 export default function RuleEdit() {
-  const { ruleData: initialRuleData } = useLoaderData<typeof loader>();
+  // const { ruleData: initialRuleData } = useLoaderData<typeof loader>();
+  const { ruleId } = useLoaderData<typeof loader>();
   const isClient = useClientStatus();
 
+  const allRuleData = useRules();
+  const initialRuleData: Rule = allRuleData.rules.find(
+    (rule) => rule.id === ruleId
+  )!;
   const [ruleData, setRuleData] = useState<Rule>(initialRuleData);
+  // const [ruleData, setRuleData] = useState<Rule>(initialRuleData);
   const [currentStep, setCurrentStep] = useState(0);
 
   // const handleNext = () => setCurrentStep((prev) => Math.min(prev + 1, 1));
@@ -70,6 +78,9 @@ export default function RuleEdit() {
   // const handleSubmit = () => {
   //   console.log("Final ruleData:", ruleData);
   // };
+  useEffect(() => {
+    console.log("all rule data:", allRuleData);
+  }, [allRuleData]);
 
   // For debugging
   useEffect(() => {
@@ -601,6 +612,8 @@ function JiraConfigSection() {
 
 function StepsSidebar() {
   const { ruleData, currentStep, setCurrentStep } = useGetRuleEdit();
+  const editRule = useRules().editRule;
+  const navigate = useNavigate();
 
   const handlePrev = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 0));
@@ -612,6 +625,8 @@ function StepsSidebar() {
 
   const handleSubmit = () => {
     console.log("Final ruleData:", ruleData);
+    editRule(ruleData);
+    navigate("/rules");
   };
 
   return (
@@ -656,7 +671,7 @@ function StepsSidebar() {
             >
               이전
             </Button>
-            {currentStep < 2 ? (
+            {currentStep < 1 ? (
               <Button onClick={handleNext}>다음</Button>
             ) : (
               <Button onClick={handleSubmit}>제출</Button>

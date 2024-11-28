@@ -1,22 +1,25 @@
-import { useRules } from "@features/rules/contexts/mockRuleContext";
-import { Rule } from "./types";
+import React, { createContext, useContext, useState } from "react";
+import { Rule } from "@features/RuleEdit/services/types";
 
-export default async function fetchRuleData(ruleId: string) {
-  return mockFetchRuleData(ruleId);
+interface Rules {
+  rules: Rule[];
+  addRule: () => string;
+  editRule: (updatedRule: Rule) => void;
 }
 
-async function mockFetchRuleData(ruleId: string): Promise<Rule> {
-  await new Promise((r) => setTimeout(r, 300));
-  return mockRuleData.find((r) => r.id === ruleId)!;
+// Context 생성
+export const RuleContext = createContext<Rules | null>(null);
+
+// 커스텀 훅으로 Context 사용
+export function useRules() {
+  const rules = useContext(RuleContext);
+  if (!rules) {
+    throw new Error("useRules must be used within a Provider");
+  }
+  return rules;
 }
 
-async function mockFetchRuleData1128(ruleId: string): Promise<Rule> {
-  const { ruleData } = useRules();
-  await new Promise((r) => setTimeout(r, 300));
-  return mockRuleData.find((r) => r.id === ruleId)!;
-}
-
-const mockRuleData: Rule[] = [
+export const mockRuleData: Rule[] = [
   {
     id: "rule-1",
     name: "Rule 1",
@@ -89,3 +92,26 @@ const mockRuleData: Rule[] = [
     assignee: "daeyong.jeong.18@gmail.com",
   },
 ];
+
+// TODO 아래 코드 타입오류때문에 root.tsx에 정의해놓음 나중에 삭제해야함
+
+// // Provider 컴포넌트 생성
+// export const RuleProvider: React.FC = ({ children }) => {
+//   // 초기값으로 mockRuleData 사용
+//   const [rules, setRules] = useState<Rule[]>(mockRuleData);
+
+//   // 규칙 추가 함수
+//   const addRule = (newRule: Rule) => {
+//     const newRuleWithId = {
+//       ...newRule,
+//       id: `rule-${rules.length + 1}`, // 새로운 고유 ID 생성
+//     };
+//     setRules((prevRules) => [...prevRules, newRuleWithId]);
+//   };
+
+//   return (
+//     <RuleContext.Provider value={{ rules, addRule }}>
+//       {children}
+//     </RuleContext.Provider>
+//   );
+// };

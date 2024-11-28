@@ -158,15 +158,7 @@ export default function Index() {
         </Card.Body>
       </Card.Root>
 
-      <Grid
-        gap="3"
-        templateColumns={{
-          base: "repeat(1, 1fr)",
-          md: "repeat(2, 1fr)",
-          lg: "repeat(4, 1fr)",
-        }}
-        mt="3"
-      >
+      <SimpleGrid columns={{ base: 1, lg: 2, xl: 4 }} gap="3" mt="3">
         {/* <DashboardCard
           title="미해결 티켓"
           description="현재 시스템에 남아 있는 미해결 티켓의 수를 보여줍니다."
@@ -255,7 +247,7 @@ export default function Index() {
           </StatRoot>
         </DashboardCard> */}
 
-        <GridItem colSpan={2}>
+        <GridItem colSpan={{ xl: 2 }}>
           <DashboardCard
             title="상태별 티켓"
             description="티켓 상태에 따른 개수를 나타냅니다."
@@ -264,7 +256,7 @@ export default function Index() {
           </DashboardCard>
         </GridItem>
 
-        <GridItem colSpan={2}>
+        <GridItem colSpan={{ xl: 2 }}>
           <DashboardCard
             title="우선순위별 미해결 티켓"
             description="우선순위에 따른 미해결 티켓 수를 나타냅니다."
@@ -273,7 +265,7 @@ export default function Index() {
           </DashboardCard>
         </GridItem>
 
-        <GridItem colSpan={2}>
+        <GridItem colSpan={{ xl: 2 }}>
           <DashboardCard
             title="담당자별 미해결 티켓"
             description="미해결 티켓을 담당자별로 분류하여 표시합니다."
@@ -330,7 +322,7 @@ export default function Index() {
           </DashboardCard>
         </GridItem>
 
-        <GridItem colSpan={2}>
+        <GridItem colSpan={{ xl: 2 }}>
           <DashboardCard
             title="우선순위 작업"
             description="즉각 처리가 필요한 매우 중요/높음 티켓 또는 마감일이 임박한 티켓을 표시합니다."
@@ -363,7 +355,7 @@ export default function Index() {
             </Stack>
           </DashboardCard>
         </GridItem>
-      </Grid>
+      </SimpleGrid>
     </Container>
   );
 }

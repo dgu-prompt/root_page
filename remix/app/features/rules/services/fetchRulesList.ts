@@ -1,15 +1,26 @@
-import { Rule } from "./types";
+import { useRules } from "../contexts/mockRuleContext";
+import { Rule as RuleListItem } from "./types";
+import { Rule } from "@features/RuleEdit/services/types";
 
 export default async function fetchRulesList(region: string) {
   return mockFetchRulesList(region);
 }
 
-async function mockFetchRulesList(region: string): Promise<Rule[]> {
+async function mockFetchRulesList(region: string): Promise<RuleListItem[]> {
   await new Promise((r) => setTimeout(r, 1000));
   return mockRulesList[region];
 }
 
-const mockRulesList: Record<string, Rule[]> = {
+export const convertRulesToListItems = (rules: Rule[]): RuleListItem[] => {
+  return rules.map((rule) => ({
+    id: rule.id,
+    name: rule.name,
+    filename: rule.filename,
+    type: rule.alertType,
+  }));
+};
+
+const mockRulesList: Record<string, RuleListItem[]> = {
   "us-east-1": [
     {
       id: "rule-1",

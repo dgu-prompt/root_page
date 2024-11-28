@@ -16,6 +16,12 @@ import { getSession } from "./shared/services/sessions";
 
 import styles from "./shared/styles/shared.css?url";
 import { RegionProvider } from "@/contexts/RegionContext";
+import { useState } from "react";
+import {
+  mockRuleData,
+  RuleContext,
+} from "@features/rules/contexts/mockRuleContext";
+import { JiraRule, Rule } from "@features/RuleEdit/services/types";
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 
@@ -67,11 +73,56 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const [rules, setRules] = useState<Rule[]>(mockRuleData);
+
+  const addRule = (): string => {
+    const newId = `rule-${rules.length + 1}`; // 새로운 고유 ID 생성
+    const newRule: JiraRule = {
+      id: newId,
+      name: "newRule",
+      filename: `${newId}.yaml`,
+      alertType: "jira",
+      alertSubject: "",
+      alertText: "",
+      region: "ap-northeast-2",
+      controlIds: [],
+      project: "",
+      assignee: "",
+      priority: "",
+      yamlPreview: "",
+    };
+
+    setRules((prevRules) => [...prevRules, newRule]);
+
+    return newId; // 생성된 ID 반환
+  };
+
+  const editRule = (updatedRule: Rule) => {
+    setRules((prevRules) =>
+      prevRules.map((rule) =>
+        rule.id === updatedRule.id ? { ...rule, ...updatedRule } : rule
+      )
+    );
+  };
+
   return (
     <Provider>
       <RegionProvider>
-        <Outlet />
+        <RuleContext.Provider value={{ rules, addRule, editRule }}>
+          <Outlet />
+        </RuleContext.Provider>
       </RegionProvider>
     </Provider>
   );
 }
+
+// 원본
+// export default function App() {
+//   return (
+//     <Provider>
+//       <RegionProvider>
+//         <Outlet />
+//       </RegionProvider>
+//     </Provider>
+//   );
+// }

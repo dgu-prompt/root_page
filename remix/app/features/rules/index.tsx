@@ -11,14 +11,16 @@ import {
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
-import { Link, useLoaderData } from "@remix-run/react";
-import { useEffect, useState } from "react";
+import { Link, useLoaderData, useNavigate } from "@remix-run/react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useRegion } from "@/contexts/RegionContext";
 
 import RegionSelectList from "@features/rules/components/RegionSelectList";
 import { fetchAvailableRegions } from "@features/rules/services/fetchAvailableRegions";
-import fetchRulesList from "@features/rules/services/fetchRulesList";
+import fetchRulesList, {
+  convertRulesToListItems,
+} from "@features/rules/services/fetchRulesList";
 import { useClientStatus } from "@/hooks/useClientStatus";
 import { Rule } from "./services/types";
 import {
@@ -31,6 +33,7 @@ import { Button } from "@/components/ui/button";
 import { Ellipsis, Plus, SquarePen, Trash } from "lucide-react";
 import RuleTypeBadge from "./components/RuleTypeBadge";
 import { getRegionName } from "@/services/getRegionName";
+import { useRules } from "./contexts/mockRuleContext";
 
 export async function loader() {
   const availableRegions = await fetchAvailableRegions();
@@ -83,28 +86,36 @@ function RegionSelectSidebar({ availableRegions }: SidebarProps) {
 function RulesList() {
   const { region } = useRegion();
 
-  const [rules, setRules] = useState<Rule[]>([]);
+  // const [rules, setRules] = useState<Rule[]>([]);
+  const rulesWithAllData = useRules();
+  const rulesWithAllDataRegional = useMemo(() => {
+    return rulesWithAllData.rules.filter((rule) => rule.region === region);
+  }, [rulesWithAllData.rules, region]); // 의존성 추가
+
+  const rules = useMemo(() => {
+    return convertRulesToListItems(rulesWithAllDataRegional);
+  }, [rulesWithAllDataRegional]); // 의존성 추가
   const [, setLoading] = useState(true);
   const [, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    async function loadRules() {
-      try {
-        setLoading(true);
-        const rules = await fetchRulesList(region);
-        setRules(rules);
-      } catch (err) {
-        setError(err as Error);
-        console.error("Failed to load rules", err);
-      } finally {
-        setLoading(false);
-      }
-    }
+  // useEffect(() => {
+  //   async function loadRules() {
+  //     try {
+  //       setLoading(true);
+  //       const rules = await fetchRulesList(region);
+  //       setRules(rules);
+  //     } catch (err) {
+  //       setError(err as Error);
+  //       console.error("Failed to load rules", err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
 
-    if (region) {
-      loadRules();
-    }
-  }, [rules, region]);
+  //   if (region) {
+  //     loadRules();
+  //   }
+  // }, [rules, region]);
 
   const regionName = getRegionName(region);
 
@@ -131,7 +142,8 @@ function RulesList() {
             </MenuTrigger>
             <MenuContent>
               <MenuItem asChild value="naruto">
-                <Link to="/rules/new">새 Jira 규칙</Link>
+                {/* <Link to="/rules/new">새 Jira 규칙</Link> */}
+                <AddJiraRuleButton />
               </MenuItem>
               <MenuItem asChild value="one-piece">
                 <a
@@ -203,5 +215,26 @@ function RulesList() {
         ))}
       </Card.Body>
     </Card.Root>
+  );
+}
+
+function AddJiraRuleButton() {
+  const navigate = useNavigate();
+  const rules = useRules();
+
+  const handleAddRule = () => {
+    const newRuleId = rules?.addRule();
+    console.log("newRuleId", newRuleId);
+    if (!newRuleId) {
+      console.error("Failed to create a new rule.");
+      return;
+    }
+    navigate(`/rules/${newRuleId}/edit`); // 반환된 ID를 기반으로 페이지 이동
+  };
+
+  return (
+    <Box onClick={handleAddRule}>
+      <Text>새 Jira 규칙</Text>
+    </Box>
   );
 }
