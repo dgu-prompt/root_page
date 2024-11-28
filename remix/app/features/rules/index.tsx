@@ -141,7 +141,7 @@ function RulesList() {
               </Button>
             </MenuTrigger>
             <MenuContent>
-              <MenuItem asChild value="naruto">
+              <MenuItem value="naruto">
                 {/* <Link to="/rules/new">새 Jira 규칙</Link> */}
                 <AddJiraRuleButton />
               </MenuItem>

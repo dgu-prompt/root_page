@@ -570,14 +570,20 @@ function JiraConfigSection() {
         </Card.Description>
       </Card.Header>
       <Card.Body gap="6">
-        <Field label="알림 제목" required>
+        <Field
+          label="알림 제목"
+          helperText="빈 칸으로 둔 경우, 기본값이 사용됩니다."
+        >
           <Input
             value={ruleData.alertSubject}
             onChange={handleInputChange("alertSubject")}
             placeholder="알림 제목을 입력하세요"
           />
         </Field>
-        <Field label="알림 내용" required>
+        <Field
+          label="알림 내용"
+          helperText="빈 칸으로 둔 경우, 기본값이 사용됩니다."
+        >
           <Input
             value={ruleData.alertText}
             onChange={handleInputChange("alertText")}
@@ -588,23 +594,23 @@ function JiraConfigSection() {
           <Input
             value={(ruleData as JiraRule).project}
             onChange={handleInputChange("project")}
-            placeholder="프로젝트를 선택하세요"
+            placeholder="프로젝트를 입력하세요"
           />
         </Field>
         <Field label="담당자" required>
           <Input
             value={(ruleData as JiraRule).assignee}
             onChange={handleInputChange("assignee")}
-            placeholder="담당자를 선택하세요"
+            placeholder="담당자를 입력하세요"
           />
         </Field>
-        <Field label="우선 순위">
+        {/* <Field label="우선 순위">
           <Input
             value={(ruleData as JiraRule).priority}
             onChange={handleInputChange("priority")}
             placeholder="우선 순위를 선택하세요"
           />
-        </Field>
+        </Field> */}
       </Card.Body>
     </Card.Root>
   );
@@ -660,7 +666,7 @@ function StepsSidebar() {
       <Card.Footer mt="4">
         <Flex justify="space-between" width="full">
           <Button asChild variant="surface">
-            <Link to="#">취소</Link>
+            <Link to="/rules">취소</Link>
           </Button>
 
           <Group>

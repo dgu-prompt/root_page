@@ -34,11 +34,21 @@ const filterLabel = {
       low: "낮음",
     },
   },
-  assigneeStatus: {
-    label: "담당자 상태",
+  controlStatus: {
+    label: "제어 항목 상태",
     values: {
-      assigned: "할당됨",
-      unassigned: "미할당",
+      enabled: "활성화됨",
+      disabled: "비활성화됨",
+    },
+  },
+  complianceStatus: {
+    label: "규정 준수 상태",
+    values: {
+      passed: "통과",
+      failed: "실패",
+      no_data: "데이터 없음",
+      unknown: "알 수 없음",
+      disabled: "비활성화됨",
     },
   },
 };
