@@ -17,7 +17,7 @@ function getDefaultSeverityConfig(): Record<Severity, SeverityConfig> {
     high: { color: "red", label: "높음" },
     critical: {
       color: "purple",
-      label: "매우 높음",
+      label: "매우 중요",
     },
   };
 }
