@@ -124,7 +124,7 @@ def get_filtered_controls_list(page, page_size, status_filter, severity_filter, 
     if severity_filter:
         controls = [c for c in controls if c.get('SeverityRating') == severity_filter]
     if search_keyword:
-        controls = [c for c in controls if search_keyword.lower() in c.get('Title', '').lower()]
+        controls = [c for c in controls if search_keyword.lower() in c.get('ControlId', '').lower()]
        
     # 정렬 적용
     reverse_order = (sort_order == 'desc')
@@ -139,12 +139,12 @@ def get_filtered_controls_list(page, page_size, status_filter, severity_filter, 
     # 반환할 데이터 필터링
     filtered_controls = [
         {
-            "ControlId": control.get("ControlId"),
-            "Title": control.get("Title"),
-            "Description": control.get("Description"),
-            "RemediationUrl": control.get("RemediationUrl"),
-            "Severity": control.get("SeverityRating"),
-            "ControlStatus": control.get("ControlStatus")
+            "controlId": control.get("ControlId"),
+            "title": control.get("Title"),
+            "description": control.get("Description"),
+            "remediationUrl": control.get("RemediationUrl"),
+            "severity": control.get("SeverityRating"),
+            "controlStatus": control.get("ControlStatus")
         }
         for control in paginated_controls
     ]
@@ -207,7 +207,7 @@ def get_controls_with_compliance_results(page, page_size, status_filter, severit
     if severity_filter:
         controls = [c for c in controls if c.get('SeverityRating') == severity_filter]
     if search_keyword:
-        controls = [c for c in controls if search_keyword.lower() in c.get('Title', '').lower()]
+        controls = [c for c in controls if search_keyword.lower() in c.get('ControlId', '').lower()]
        
     # 정렬 적용
     reverse_order = (sort_order == 'desc')
@@ -222,13 +222,13 @@ def get_controls_with_compliance_results(page, page_size, status_filter, severit
     # 반환할 데이터 필터링
     filtered_controls = [
         {
-            "ControlId": control.get("ControlId"),
-            "Title": control.get("Title"),
-            "Description": control.get("Description"),
-            "RemediationUrl": control.get("RemediationUrl"),
-            "Severity": control.get("SeverityRating"),
-            "ControlStatus": control.get("ControlStatus"),
-            "ComplianceStatus": control.get("ComplianceStatus"),
+            "controlId": control.get("ControlId"),
+            "title": control.get("Title"),
+            "description": control.get("Description"),
+            "remediationUrl": control.get("RemediationUrl"),
+            "severity": control.get("SeverityRating"),
+            "controlStatus": control.get("ControlStatus"),
+            "complianceStatus": control.get("ComplianceStatus"),
             "failedChecks": control.get("failedChecks", 0),  
             "totalChecks": control.get("totalChecks", 0), 
         }
