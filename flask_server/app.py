@@ -1,5 +1,6 @@
 import os
 import yaml
+import shutil
 import csv
 from collections import OrderedDict
 from flask_cors import CORS
@@ -155,6 +156,45 @@ def get_alerts(alert_type, aws_region):
     
     return jsonify(response_data)
 
+# Default YAML 파일 경로
+DEFAULT_PATHS = {
+    "jira": "flask_server/default/jira_default.yaml",
+    "slack": "flask_server/default/slack_default.yaml"
+}
+# default yaml 파일 복제 api
+@app.route('/clone_default_yaml', methods=['POST'])
+def clone_default_yaml():
+    try:
+        # 요청 데이터 파싱
+        data = request.get_json()
+        alert_type = data.get("alertType")
+        region = data.get("region")
+
+        # alertType 및 region 값 검증
+        if alert_type not in DEFAULT_PATHS:
+            return jsonify({"status": "FAILED", "error": "Invalid alertType"}), 400
+        if not region:
+            return jsonify({"status": "FAILED", "error": "Region is required"}), 400
+
+        # 원본 파일 경로
+        source_file = DEFAULT_PATHS[alert_type]
+
+        # 원본 파일 존재 여부 확인
+        if not os.path.exists(source_file):
+            return jsonify({"status": "FAILED", "error": "Default file not found"}), 404
+
+        # 대상 경로 생성 및 파일 복제
+        destination_dir = f"flask_server/{alert_type}/{region}"
+        os.makedirs(destination_dir, exist_ok=True)
+        destination_file = os.path.join(destination_dir, os.path.basename(source_file))
+        shutil.copyfile(source_file, destination_file)
+
+        # 응답 전송
+        return jsonify({"status": "OK"}), 200
+
+    except Exception as e:
+        # 에러 처리
+        return jsonify({"status": "FAILED", "error": str(e)}), 500
 
 
 '''
@@ -405,6 +445,8 @@ def get_dashboard_findings():
 #         return jsonify({"error": str(e)}), 404
 #     except Exception as e:
 #         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+# 일단은 독립적인 API로 구성하여 해당 controlId의 담당자 출력하는 함수 구성. 향후 제어항목 불러오는 API와 결합해야함
 
 # BASE_PATH를 app.py의 위치에 기반하여 설정
 BASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
