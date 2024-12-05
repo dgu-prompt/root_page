@@ -35,28 +35,6 @@ app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static')
 target_dir = os.path.join(os.path.dirname(__file__), 'static_yaml')
 ASSIGNEE_FILE_PATH = os.path.join(os.path.dirname(__file__), 'data', 'assignee.csv')
 
-# 담당자 정보 읽기
-def get_assignee_data():
-    assignee_data = []
-    with open(ASSIGNEE_FILE_PATH, mode='r', encoding='utf-8') as file:
-        csv_reader = csv.DictReader(file, delimiter='\t')
-        for row in csv_reader:
-            assignee_data.append({
-                "assigneeId": row['assigneeId'],
-                "assigneeName": row['assigneeName']
-            })
-    return assignee_data
-
-# 규칙 파일 여부 확인
-def check_rule_files(alert_type, aws_region, assignee_name):
-    directory = os.path.join(os.path.dirname(__file__), alert_type, aws_region)
-    if not os.path.exists(directory):
-        return False
-    yaml_files = [file for file in os.listdir(directory) if file.endswith('.yaml')]
-    # assignee_name 기반 YAML 파일 이름 탐색
-    rule_file_exists = any(assignee_name in yaml_file for yaml_file in yaml_files)
-    return rule_file_exists
-
 # MySQL 연결 설정 (환경 변수를 사용하여 설정)
 db_user = os.getenv("DB_USERNAME")
 db_password = os.getenv("DB_PASSWORD")
@@ -74,6 +52,34 @@ db.init_app(app)  # SQLAlchemy 객체 초기화
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+# 회원가입 엔드포인트
+@app.route('/register', methods=['POST'])
+def register():
+    json_data = request.get_json()
+
+    if not json_data or 'username' not in json_data or 'password' not in json_data:
+        return jsonify({"error": "Username and password required"}), 400
+
+    username = json_data['username']
+    password = json_data['password']
+
+    # 사용자 중복 체크
+    if User.query.filter_by(user_id=username).first():
+        return jsonify({"error": "User already exists"}), 400
+
+    # 비밀번호 해싱 (bcrypt)
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+    # 사용자 저장
+    new_user = User(user_id=username, password=hashed_password.decode('utf-8'))  # DB에 저장하기 위해 decode
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({"message": "User registered successfully!"}), 201
+
+
 
 # 로그인 엔드포인트
 @app.route('/login', methods=['POST'])
@@ -124,6 +130,32 @@ def logout():
 @login_required
 def protected():
     return jsonify({"message": f"Hello, {current_user.user_id}!"})
+
+
+
+# 담당자 정보 읽기
+def get_assignee_data():
+    assignee_data = []
+    with open(ASSIGNEE_FILE_PATH, mode='r', encoding='utf-8') as file:
+        csv_reader = csv.DictReader(file, delimiter='\t')
+        for row in csv_reader:
+            assignee_data.append({
+                "assigneeId": row['assigneeId'],
+                "assigneeName": row['assigneeName']
+            })
+    return assignee_data
+
+# 규칙 파일 여부 확인
+def check_rule_files(alert_type, aws_region, assignee_name):
+    directory = os.path.join(os.path.dirname(__file__), alert_type, aws_region)
+    if not os.path.exists(directory):
+        return False
+    yaml_files = [file for file in os.listdir(directory) if file.endswith('.yaml')]
+    # assignee_name 기반 YAML 파일 이름 탐색
+    rule_file_exists = any(assignee_name in yaml_file for yaml_file in yaml_files)
+    return rule_file_exists
+
+
 
 # 정적 폴더 초기화 함수
 def clear_static_folder():
