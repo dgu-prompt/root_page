@@ -80,7 +80,34 @@ def register():
     return jsonify({"message": "User registered successfully!"}), 201
 
 
+# 로그인 엔드포인트
+@app.route('/login', methods=['POST'])
+def login():
+    json_data = request.get_json()
 
+    if not json_data or 'username' not in json_data or 'password' not in json_data:
+        return jsonify({"error": "Username and password required"}), 400
+
+    username = json_data['username']
+    password = json_data['password']
+
+    # 사용자 조회
+    user = User.query.filter_by(user_id=username).first()
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    # 비밀번호 검증 (bcrypt)
+    if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+        return jsonify({"error": "Invalid password"}), 401
+
+    # 로그인 처리
+    login_user(user)
+
+    return jsonify({"message": "Login successful!", "username": user.user_id}), 200
+
+
+'''
 # 로그인 엔드포인트
 @app.route('/login', methods=['POST'])
 def login():
@@ -117,7 +144,7 @@ def login():
     #     return jsonify({"message": "Login successful!", "username": user.user_id}), 200
     # else:
     #     return jsonify({"error": "Invalid credentials"}), 401
-
+'''
 # 로그아웃 엔드포인트
 @app.route('/logout', methods=['POST'])
 @login_required
