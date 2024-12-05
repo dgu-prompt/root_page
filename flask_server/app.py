@@ -15,6 +15,7 @@ from elasticsearch_dashboard import get_security_issues_filtered, analyze_securi
 from dashboard_service import get_ticket_details, get_tickets_stats
 from dotenv import load_dotenv
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+import bcrypt
 
 
 load_dotenv()  # .env 파일에서 환경 변수 로드
