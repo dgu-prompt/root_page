@@ -78,5 +78,43 @@ export async function fetchAllControlWithStatus({
   controls: ControlWithStatus[];
   totalCounts: number;
 }> {
-  return mockFetchAllControlWithStatus({ region, filters, page, pageSize });
+  const queryParams = new URLSearchParams();
+
+  // 필터 추가
+  if (filters?.searchQuery)
+    queryParams.append("searchKeyword", filters.searchQuery);
+  if (filters?.severity)
+    queryParams.append("filter[severity]", filters.severity);
+  if (filters?.controlStatus)
+    queryParams.append("filter[status]", filters.controlStatus);
+  if (page) queryParams.append("page", String(page));
+  if (pageSize) queryParams.append("pageSize", String(pageSize));
+
+  const apiUrl = "http://localhost:5001";
+  const requestUrl = `${apiUrl}/notificationRule?${queryParams.toString()}`;
+
+  try {
+    const response = await fetch(requestUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      throw new Error(errorResponse.error || "Failed to fetch controls.");
+    }
+
+    const data = await response.json();
+    console.log("fetchAllControlWithStatus service:", data);
+
+    return {
+      controls: data || [],
+      totalCounts: data.length || 0,
+    };
+  } catch (error) {
+    console.error("Error fetching controls with status:", error);
+    throw error;
+  }
 }

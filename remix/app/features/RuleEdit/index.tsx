@@ -21,7 +21,7 @@ import {
 } from "@chakra-ui/react";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData, useNavigate } from "@remix-run/react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import YamlPreviewStep from "@features/rule-edit/YamlPreviewStep/YamlPreviewStep";
 
@@ -37,7 +37,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useClientStatus } from "@/hooks/useClientStatus";
-import fetchRuleData from "./services/fetchRuleData";
 import { JiraRule, Rule } from "./services/types";
 import { Field } from "@/components/ui/field";
 import { ControlWithStatus } from "@features/controls/types/typesV2";
@@ -49,7 +48,6 @@ import { InputGroup } from "@/components/ui/input-group";
 import Pagination from "@/components/pagination";
 import { ControlFilterMenu } from "@features/controls/components/control-filter-menu";
 import { RuleEditContext, useGetRuleEdit } from "./contexts/RuleEditContext";
-import React from "react";
 import { useRules } from "@features/rules/contexts/mockRuleContext";
 import { toaster } from "@/components/ui/toaster";
 
@@ -196,6 +194,7 @@ function ControlConfigSection() {
         const controlWithStatusData = await fetchControlWithStatus(
           ruleData.controlIds
         );
+        console.log(controlWithStatusData); // For debugging
         setControlWithStatusData(controlWithStatusData);
       } catch (err) {
         console.error("Failed to load control data", err);
@@ -241,7 +240,7 @@ function ControlConfigSection() {
                   justify="space-between"
                 >
                   <HStack>
-                    {control.controlStatus === "enabled" ? (
+                    {control.controlStatus.toLowerCase() === "enabled" ? (
                       <Text fontWeight="medium">{control.controlId}</Text>
                     ) : (
                       <Text fontWeight="medium" color="fg.muted">
@@ -387,6 +386,7 @@ function ControlSelectBody({
           page: page,
           pageSize: pageSize,
         });
+        console.log("fetchAllControlWithStatus: ", controls); // For debugging
         setControls(controls);
         setTotalCount(totalCounts);
       } catch (err) {
@@ -512,7 +512,7 @@ function ControlSelectBody({
                       justify="space-between"
                     >
                       <HStack>
-                        {control.controlStatus === "enabled" ? (
+                        {control.controlStatus.toLowerCase() === "enabled" ? (
                           <Text fontWeight="medium">{control.controlId}</Text>
                         ) : (
                           <Text fontWeight="medium" color="fg.muted">

@@ -32,7 +32,11 @@ export default function SeverityBadge(props: SeverityBadgeProps) {
 
   const defaultConfig = getDefaultSeverityConfig();
   const SeverityConfig = { ...defaultConfig, ...customConfig };
-  const { color, label } = SeverityConfig[severity];
+  const normalizedSeverity = severity.toLowerCase() as Severity;
+  const config = SeverityConfig[normalizedSeverity] || {
+    color: "gray",
+    label: "알 수 없음",
+  };
 
-  return <Badge colorPalette={color}>{label}</Badge>;
+  return <Badge colorPalette={config.color}>{config.label}</Badge>;
 }
