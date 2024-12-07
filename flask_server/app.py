@@ -1,5 +1,6 @@
 import os
 import yaml
+import jwt
 import shutil
 import csv
 from collections import OrderedDict
@@ -16,7 +17,7 @@ from dashboard_service import get_ticket_details, get_tickets_stats
 from dotenv import load_dotenv
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 import bcrypt
-
+from datetime import datetime, timedelta
 
 load_dotenv()  # .env 파일에서 환경 변수 로드
 
@@ -53,6 +54,26 @@ db.init_app(app)  # SQLAlchemy 객체 초기화
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# JWT 토큰 생성 함수
+def create_jwt_token(user_id):
+    payload = {
+        "user_id": user_id,
+        "exp": datetime.utcnow() + timedelta(hours=2),  # 토큰 만료 시간: 2시간
+        "iat": datetime.utcnow()  # 토큰 발급 시간
+    }
+    token = jwt.encode(payload, app.secret_key, algorithm="HS256")
+    return token
+
+
+# JWT 토큰 검증 함수
+def verify_jwt_token(token):
+    try:
+        payload = jwt.decode(token, app.secret_key, algorithms=["HS256"])
+        return payload  # 토큰 유효 시 payload 반환
+    except jwt.ExpiredSignatureError:
+        return None  # 토큰 만료
+    except jwt.InvalidTokenError:
+        return None  # 유효하지 않은 토큰
 
 # 회원가입 엔드포인트
 @app.route('/register', methods=['POST'])
@@ -79,7 +100,34 @@ def register():
 
     return jsonify({"message": "User registered successfully!"}), 201
 
+# 로그인 엔드포인트
+@app.route('/login', methods=['POST'])
+def login():
+    json_data = request.get_json()
 
+    if not json_data or 'username' not in json_data or 'password' not in json_data:
+        return jsonify({"error": "Username and password required"}), 400
+
+    username = json_data['username']
+    password = json_data['password']
+
+    # 사용자 조회
+    user = User.query.filter_by(user_id=username).first()
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    # 비밀번호 검증 (bcrypt)
+    if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+        return jsonify({"error": "Invalid password"}), 401
+
+    # JWT 토큰 생성
+    token = create_jwt_token(user_id=user.user_id)
+
+    return jsonify({"message": "Login successful!", "token": token}), 200
+
+# jwt 적용 전 ver
+'''
 # 로그인 엔드포인트
 @app.route('/login', methods=['POST'])
 def login():
@@ -105,45 +153,6 @@ def login():
     login_user(user)
 
     return jsonify({"message": "Login successful!", "username": user.user_id}), 200
-
-
-'''
-# 로그인 엔드포인트
-@app.route('/login', methods=['POST'])
-def login():
-    json_data = request.get_json()
-
-    # 필수 데이터 유효성 검사
-    if not json_data:
-        return jsonify({"error": "No JSON data provided"}), 400
-    if 'username' not in json_data or 'password' not in json_data:
-        return jsonify({"error": "Username and password required"}), 400
-        
-    username = json_data['username']
-    password = json_data['password']
-    
-    # `username`을 `user_id`로 매칭해서 사용자 찾기
-    user = User.query.filter_by(user_id=username).first()
-    
-    if not user:
-            return jsonify({"error": "User not found"}), 404  # 사용자 없음
-        
-    # 비밀번호 체크
-    if user.password != password:
-        return jsonify({"error": "Invalid password"}), 401  # 비밀번호 불일치
-
-    # 로그인 처리
-    login_user(user)  # flask-login을 사용하여 로그인
-
-    # 로그인 성공 시 username과 메시지 반환
-    return jsonify({"message": "Login successful!", "username": user.user_id}), 200
-
-
-    # if user and user.check_password(password):  # 해싱된 비밀번호 비교
-    #     login_user(user)  # flask-login을 사용하여 로그인
-    #     return jsonify({"message": "Login successful!", "username": user.user_id}), 200
-    # else:
-    #     return jsonify({"error": "Invalid credentials"}), 401
 '''
 # 로그아웃 엔드포인트
 @app.route('/logout', methods=['POST'])
@@ -153,10 +162,20 @@ def logout():
     return jsonify({"message": "Logged out successfully!"}), 200
 
 # 로그인 필요로 하는 예제 라우트
-@app.route('/protected')
-@login_required
+@app.route('/protected', methods=['GET'])
 def protected():
-    return jsonify({"message": f"Hello, {current_user.user_id}!"})
+    auth_header = request.headers.get('Authorization')
+
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return jsonify({"error": "Token required"}), 401
+
+    token = auth_header.split(" ")[1]  # Bearer 뒤의 토큰 추출
+    payload = verify_jwt_token(token)
+
+    if not payload:
+        return jsonify({"error": "Invalid or expired token"}), 401
+
+    return jsonify({"message": f"Hello, {payload['user_id']}! Welcome to the protected route."})
 
 
 
