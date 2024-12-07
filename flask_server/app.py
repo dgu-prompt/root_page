@@ -221,7 +221,7 @@ BASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'flask_serv
 
 @app.route('/count_yaml', methods=['GET'])
 def count_yaml():
-    regions_data = []  # 결과를 저장할 리스트
+    regions_data = {}  # 리전 데이터를 저장할 딕셔너리
 
     try:
         # alertType 디렉토리 탐색
@@ -236,11 +236,14 @@ def count_yaml():
                 if not os.path.isdir(region_path):  # 디렉토리인지 확인
                     continue
 
+                # 리전에 대한 데이터 초기화
+                if region not in regions_data:
+                    regions_data[region] = {"region": region, "count": 0, "yamlName": []}
+
                 try:
                     # region 내부의 YAML 파일 목록
                     yaml_files = [f for f in os.listdir(region_path) if f.endswith('.yaml')]
                     yaml_count = len(yaml_files)  # YAML 파일 개수
-                    yaml_names = []
 
                     # YAML 파일에서 name 값 추출
                     for yaml_file in yaml_files:
@@ -249,24 +252,25 @@ def count_yaml():
                             with open(yaml_path, 'r', encoding='utf-8') as file:
                                 yaml_content = yaml.safe_load(file)
                                 name = yaml_content.get('name', 'Unknown Rule Name')
-                                yaml_names.append(f"{name} + {alert_type}")
+                                # YAML 이름과 alertType을 합쳐서 저장
+                                regions_data[region]["yamlName"].append(f"{name} + {alert_type}")
                         except FileNotFoundError:
                             print(f"Error: File not found - {yaml_path}")
                         except yaml.YAMLError:
                             print(f"Error: Invalid YAML format - {yaml_path}")
 
-                    # 리전 데이터를 결과에 추가
-                    regions_data.append({
-                        "region": region,
-                        "count": yaml_count,
-                        "yamlName": yaml_names
-                    })
+                    # 해당 리전의 YAML 파일 총 개수 업데이트
+                    regions_data[region]["count"] += yaml_count
 
                 except Exception as e:
                     print(f"Error processing region: {region}. Exception: {e}")
 
     except Exception as e:
         return jsonify({"error": f"Failed to process base path {BASE_PATH}. Exception: {e}"}), 500
+
+    # JSON 응답 반환
+    return jsonify(list(regions_data.values()))
+
 
 # Default YAML 파일 경로
 DEFAULT_PATHS = {
