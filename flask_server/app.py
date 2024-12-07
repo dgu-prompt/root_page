@@ -222,23 +222,30 @@ BASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'flask_serv
 @app.route('/count_yaml', methods=['GET'])
 def count_yaml():
     regions_data = {}  # 리전 데이터를 저장할 딕셔너리
+    alert_types = ["jira", "slack"]  # 고정된 alert_type 값
+    all_regions = set()  # 모든 리전 이름을 저장할 집합
 
     try:
-        # alertType 디렉토리 탐색
-        for alert_type in os.listdir(BASE_PATH):
+        # 모든 alertType에서 유니크한 region 추출
+        for alert_type in alert_types:
             alert_type_path = os.path.join(BASE_PATH, alert_type)
-            if not os.path.isdir(alert_type_path):  # 디렉토리인지 확인
+            if not os.path.isdir(alert_type_path):  # 디렉토리 확인
+                print(f"Warning: {alert_type_path} 디렉토리가 없습니다.")
                 continue
 
-            # region 디렉토리 탐색
-            for region in os.listdir(alert_type_path):
-                region_path = os.path.join(alert_type_path, region)
-                if not os.path.isdir(region_path):  # 디렉토리인지 확인
-                    continue
+            # 해당 alert_type 디렉토리에서 리전 이름 추출
+            regions = [region for region in os.listdir(alert_type_path) if os.path.isdir(os.path.join(alert_type_path, region))]
+            all_regions.update(regions)  # 모든 리전 집합에 추가
 
-                # 리전에 대한 데이터 초기화
-                if region not in regions_data:
-                    regions_data[region] = {"region": region, "count": 0, "yamlName": []}
+        # 추출된 모든 리전에 대해 데이터를 처리
+        for region in sorted(all_regions):  # 정렬된 리전 순회
+            regions_data[region] = {"region": region, "count": 0, "yamlName": []}
+
+            # 각 리전에 대해 alertType별 데이터 추가
+            for alert_type in alert_types:
+                region_path = os.path.join(BASE_PATH, alert_type, region)
+                if not os.path.isdir(region_path):  # 경로가 없으면 건너뜀
+                    continue
 
                 try:
                     # region 내부의 YAML 파일 목록
@@ -263,7 +270,7 @@ def count_yaml():
                     regions_data[region]["count"] += yaml_count
 
                 except Exception as e:
-                    print(f"Error processing region: {region}. Exception: {e}")
+                    print(f"Error processing region: {region}, alertType: {alert_type}. Exception: {e}")
 
     except Exception as e:
         return jsonify({"error": f"Failed to process base path {BASE_PATH}. Exception: {e}"}), 500
