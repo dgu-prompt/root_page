@@ -58,7 +58,7 @@ def load_user(user_id):
 def create_jwt_token(user_id):
     payload = {
         "user_id": user_id,
-        "exp": datetime.utcnow() + timedelta(hours=2),  # 토큰 만료 시간: 2시간
+        "exp": datetime.utcnow() + timedelta(days=7),  # 토큰 만료 시간: 7일
         "iat": datetime.utcnow()  # 토큰 발급 시간
     }
     token = jwt.encode(payload, app.secret_key, algorithm="HS256")
@@ -124,7 +124,7 @@ def login():
     # JWT 토큰 생성
     token = create_jwt_token(user_id=user.user_id)
 
-    return jsonify({"message": "Login successful!", "token": token}), 200
+    return jsonify({"message": "Login successful!", "username": user.user_id,"token": token}), 200
 
 # jwt 적용 전 ver
 '''
