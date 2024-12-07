@@ -70,21 +70,21 @@ def insert_securityhub_findings_data():
     print("SecurityHub findings data inserted successfully!")
 
 # Dummy user 생성 함수
-def create_dummy_user():
-    # 이미 'testuser6'이 존재하지 않으면 생성
-    if not User.query.filter_by(user_id='testuser7').first():
-        dummy_user = User(user_id='testuser7', password='1234')  # 비밀번호는 평문으로 저장
-        db.session.add(dummy_user)
-        db.session.commit()
-        print("Dummy user 'testuser6' added to the database.")
+# def create_dummy_user():
+#     # 이미 'testuser6'이 존재하지 않으면 생성
+#     if not User.query.filter_by(user_id='testuser7').first():
+#         dummy_user = User(user_id='testuser7', password='1234')  # 비밀번호는 평문으로 저장
+#         db.session.add(dummy_user)
+#         db.session.commit()
+#         print("Dummy user 'testuser6' added to the database.")
 
 # 모델과 초기 데이터를 생성하는 함수
 def initialize_db():
     db.create_all()
     print("User and SecurityHubFinding tables created.")
     
-    # Dummy user 생성
-    create_dummy_user()
+    # Dummy user 생성 -> register API로 username, password 생성
+    # create_dummy_user()
 
     # 초기 데이터 삽입
     if not SecurityHubFinding.query.first():
