@@ -217,23 +217,56 @@ def serve_react():
     print("Serving React index.html")
     return send_from_directory('../react_client', 'index.html')
 
+BASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'flask_server')
 
-# API 엔드포인트
-@app.route('/alerts/<alert_type>/regions/<aws_region>', methods=['GET'])
-def get_alerts(alert_type, aws_region):
-    assignee_data = get_assignee_data()
-    response_data = []
+@app.route('/count_yaml', methods=['GET'])
+def count_yaml():
+    regions_data = []  # 결과를 저장할 리스트
 
-    for assignee in assignee_data:
-        has_rule_file = check_rule_files(alert_type, aws_region, assignee['assigneeName'])
-        response_data.append({
-            "assigneeId": assignee['assigneeId'],
-            "assigneeName": assignee['assigneeName'],
-            "hasRuleFile": has_rule_file,
-            "awsRegion": aws_region
-        })
-    
-    return jsonify(response_data)
+    try:
+        # alertType 디렉토리 탐색
+        for alert_type in os.listdir(BASE_PATH):
+            alert_type_path = os.path.join(BASE_PATH, alert_type)
+            if not os.path.isdir(alert_type_path):  # 디렉토리인지 확인
+                continue
+
+            # region 디렉토리 탐색
+            for region in os.listdir(alert_type_path):
+                region_path = os.path.join(alert_type_path, region)
+                if not os.path.isdir(region_path):  # 디렉토리인지 확인
+                    continue
+
+                try:
+                    # region 내부의 YAML 파일 목록
+                    yaml_files = [f for f in os.listdir(region_path) if f.endswith('.yaml')]
+                    yaml_count = len(yaml_files)  # YAML 파일 개수
+                    yaml_names = []
+
+                    # YAML 파일에서 name 값 추출
+                    for yaml_file in yaml_files:
+                        yaml_path = os.path.join(region_path, yaml_file)
+                        try:
+                            with open(yaml_path, 'r', encoding='utf-8') as file:
+                                yaml_content = yaml.safe_load(file)
+                                name = yaml_content.get('name', 'Unknown Rule Name')
+                                yaml_names.append(f"{name} + {alert_type}")
+                        except FileNotFoundError:
+                            print(f"Error: File not found - {yaml_path}")
+                        except yaml.YAMLError:
+                            print(f"Error: Invalid YAML format - {yaml_path}")
+
+                    # 리전 데이터를 결과에 추가
+                    regions_data.append({
+                        "region": region,
+                        "count": yaml_count,
+                        "yamlName": yaml_names
+                    })
+
+                except Exception as e:
+                    print(f"Error processing region: {region}. Exception: {e}")
+
+    except Exception as e:
+        return jsonify({"error": f"Failed to process base path {BASE_PATH}. Exception: {e}"}), 500
 
 # Default YAML 파일 경로
 DEFAULT_PATHS = {
