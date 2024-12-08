@@ -287,9 +287,10 @@ def count_yaml():
 
 # Default YAML 파일 경로
 DEFAULT_PATHS = {
-    "jira": "flask_server/default/jira_default.yaml",
-    "slack": "flask_server/default/slack_default.yaml"
+    "jira": os.path.join(BASE_DIR, "default", "jira_default.yaml"),
+    "slack": os.path.join(BASE_DIR, "default", "slack_default.yaml"),
 }
+
 # default yaml 파일 복제 api
 @app.route('/clone_default_yaml', methods=['POST'])
 def clone_default_yaml():
