@@ -252,15 +252,21 @@ def count_yaml():
                     yaml_files = [f for f in os.listdir(region_path) if f.endswith('.yaml')]
                     yaml_count = len(yaml_files)  # YAML 파일 개수
 
-                    # YAML 파일에서 name 값 추출
+                    # YAML 파일에서 name 값 및 description 값 추출
                     for yaml_file in yaml_files:
                         yaml_path = os.path.join(region_path, yaml_file)
                         try:
                             with open(yaml_path, 'r', encoding='utf-8') as file:
                                 yaml_content = yaml.safe_load(file)
                                 name = yaml_content.get('name', 'Unknown Rule Name')
-                                # YAML 이름과 alertType을 합쳐서 저장
-                                regions_data[region]["yamlName"].append(f"{name} + {alert_type}")
+                                description = yaml_content.get('description', 'No description available')
+                                # YAML 데이터를 JSON 형식으로 저장
+                                regions_data[region]["yamlName"].append({
+                                    "filename": yaml_file,
+                                    "name": name,
+                                    "alertType": alert_type,
+                                    "description": description
+                                })
                         except FileNotFoundError:
                             print(f"Error: File not found - {yaml_path}")
                         except yaml.YAMLError:
