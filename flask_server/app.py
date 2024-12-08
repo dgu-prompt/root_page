@@ -217,7 +217,7 @@ def serve_react():
     print("Serving React index.html")
     return send_from_directory('../react_client', 'index.html')
 
-BASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'flask_server')
+BASE_PATH = os.path.dirname(__file__)
 
 @app.route('/count_yaml', methods=['GET'])
 def count_yaml():
