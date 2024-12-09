@@ -13,7 +13,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from aws_service import get_controls_by_ids_from_aws, get_controls_with_compliance_results, get_controls_with_compliance_results2, get_filtered_controls_list, set_securityhub_control_activation, get_control_status_counts
 from model import initialize_db, User, db
 from elasticsearch_dashboard import get_security_issues_filtered, analyze_security_issues
-from dashboard_service import get_ticket_details, get_tickets_stats
+from dashboard_service import get_all_jira_users_logic, get_jira_user_logic, get_ticket_details, get_tickets_stats
 from dotenv import load_dotenv
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 import bcrypt
@@ -656,6 +656,37 @@ def get_controls_by_ids_route():
         return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
     except Exception as e:
         return jsonify({"error": "서버 오류가 발생했습니다.", "details": str(e)}), 500
+
+@app.route('/jira/user', methods=['GET'])
+def get_jira_user():
+    """
+    특정 이메일로 Jira 사용자 정보 반환
+    Request: /jira/user?email=<email>
+    Response: {email, name, avatar}
+    """
+    email = request.args.get('email')
+    if not email:
+        return jsonify({"error": "Email parameter is required"}), 400
+
+    try:
+        user = get_jira_user_logic(email)
+        return jsonify(user)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+
+
+@app.route('/jira/users', methods=['GET'])
+def get_all_jira_users():
+    """
+    모든 Jira 사용자 정보 반환
+    Request: /jira/users
+    Response: [{email, name, avatar}, ...]
+    """
+    try:
+        return get_all_jira_users_logic()
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 # Dashboard에서 Jira 티켓 현황 통계 조회
 @app.route('/dashboard', methods=['GET'])
