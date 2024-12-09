@@ -19,6 +19,8 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 import bcrypt
 from datetime import datetime, timedelta
 from functools import wraps
+import uuid  # UUID 생성용 라이브러리
+
 
 load_dotenv()  # .env 파일에서 환경 변수 로드
 
@@ -365,10 +367,10 @@ DEFAULT_PATHS = {
     "slack": os.path.join(BASE_PATH, "default", "slack_default.yaml"),
 }
 
-# default yaml 파일 복제 api
-@app.route('/clone_default_yaml', methods=['POST'])
-#@jwt_required  # 인증 데코레이터 적용
-def clone_default_yaml():
+# default yaml 파일 복제 -> 복사 후 생성 api
+@app.route('/add_rule_yaml', methods=['POST'])
+# @jwt_required  # 인증 데코레이터 적용
+def add_rule_yaml():
     try:
         # 요청 데이터 파싱
         data = request.get_json()
@@ -388,19 +390,24 @@ def clone_default_yaml():
         if not os.path.exists(source_file):
             return jsonify({"status": "FAILED", "error": "Default file not found"}), 404
 
-        # 대상 경로 생성 및 파일 복제
+        # 대상 경로 생성
         destination_dir = f"flask_server/{alert_type}/{region}"
         os.makedirs(destination_dir, exist_ok=True)
-        destination_file = os.path.join(destination_dir, os.path.basename(source_file))
+
+        # 고유 파일명 생성
+        unique_id = str(uuid.uuid4())  # UUID 생성
+        unique_filename = f"{unique_id}.yaml"
+        destination_file = os.path.join(destination_dir, unique_filename)
+
+        # 파일 복제
         shutil.copyfile(source_file, destination_file)
 
-        # 응답 전송
-        return jsonify({"status": "OK"}), 200
+        # 성공 응답: 파일명 반환
+        return jsonify({"status": "OK", "fileName": unique_filename}), 200
 
     except Exception as e:
         # 에러 처리
         return jsonify({"status": "FAILED", "error": str(e)}), 500
-
 '''
 @app.route('/test', methods=['POST'])
 def save_yaml():

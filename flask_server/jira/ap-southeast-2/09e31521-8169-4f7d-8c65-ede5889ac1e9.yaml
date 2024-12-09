@@ -1,0 +1,102 @@
+name: "newRule's Name. You should edit."
+discription: "newRule's Discription. You should edit."
+type: any
+index: latest_securityhub_findings
+timestamp_field: aws.securityhub_findings.updated_at
+
+filter:
+  - term:
+      aws.securityhub_findings.product.name.keyword: "Security Hub"
+  - range:
+      aws.securityhub_findings.updated_at:
+        gte: "now-24h"
+        lte: "now"
+        time_zone: "+09:00"
+  - terms:
+      aws.securityhub_findings.generator.id.keyword: []
+
+aggregation:
+  minutes: 1
+aggregation_key: aws.securityhub_findings.generator.id.keyword
+
+realert:
+  minutes: 0
+
+alert:
+  - jira
+jira_server: "https://donggukicip.atlassian.net/"
+jira_project: "Default Jira Project. You should edit"
+jira_issuetype: "Task"
+jira_bump_tickets: true
+jira_watchers:
+ - mandar2n09@gmail.com
+jira_account_file: "/opt/elastalert/rules/account_file.json"
+jira_priority: 0
+jira_assignee: ""
+jira_max_age: 1
+
+alert_subject: "Default Alert Subject. You should edit."
+alert_subject_args:
+  - aws.securityhub_findings.title
+  - aws.securityhub_findings.severity.label
+
+jira_description:  |-
+  {0} newindextest {1}
+  You should edit.
+  # {0}: 동적으로 설정 가능한 테스트 규칙 이름. 
+  #      예: TEST1126v27 (보안 경고의 제목 또는 규칙 이름)
+  #      이 값은 `aws.securityhub_findings.title`에서 가져옵니다.
+  # {1}: 문제가 발생한 보안 컨트롤 ID 리스트. 
+  #      예: KMS.2+EC2.13+EC2.19
+  #      이 값은 `aws.securityhub_findings.generator.id`에서 추출된 데이터입니다.
+  #      여러 ID가 있을 경우, "+" 기호로 연결된 문자열로 표현됩니다.
+  #
+  # 설명:
+  # - 이 필드는 JIRA 티켓의 본문(description)에 작성될 내용입니다.
+  # - "{숫자}" 형식의 변수는 동적으로 데이터 소스(예: Elasticsearch)에서 값을 가져와 대체됩니다.
+  #
+  # 규칙 예시:
+  #   - {0}은 aws.securityhub_findings.title에서 값을 동적으로 채움. 
+  #     경고 제목 또는 테스트 규칙 이름으로 사용됩니다.
+  #   - {1}은 aws.securityhub_findings.generator.id에서 문제를 발생시킨 보안 컨트롤 ID를 가져와 
+  #     리스트 형식으로 표시됩니다. 이 리스트는 경고 대상의 상세 정보를 제공합니다.
+  #
+  # 예시 결과:
+  # - TEST1126v27 newindextest KMS.2+EC2.13+EC2.19
+  #   → TEST1126v27: 경고 제목 (title)
+  #   → KMS.2+EC2.13+EC2.19: 보안 컨트롤 ID 리스트 (generator.id)
+
+alert_text: |-
+  Alert triggered! *({9} Matches!)*  
+  {8} at {1}
+  You should edit.
+  # 이 필드는 알림 본문으로 사용되며, 알림 메시지에서 동적으로 값을 채움.
+  # 알림 메시지 템플릿
+  # 아래는 각 변수에 대한 설명입니다:
+  # {0}: aws.securityhub_findings.aws_account_id (AWS 계정 ID)
+  # {1}: aws.securityhub_findings.updated_at (경고 발생 또는 업데이트된 시간)
+  # {2}: aws.securityhub_findings.description (경고에 대한 상세 설명)
+  # {3}: aws.securityhub_findings.severity.label (경고의 심각도 수준)
+  # {4}: aws.securityhub_findings.compliance.status (컴플라이언스 상태)
+  # {5}: aws.securityhub_findings.remediation.recommendation.text (해결 권장사항 텍스트)
+  # {6}: aws.securityhub_findings.remediation.recommendation.url (해결 권장사항 URL)
+  # {7}: aws.securityhub_findings.title (경고 제목)
+  # {8}: aws.securityhub_findings.generator.id (경고를 생성한 보안 컨트롤 ID)
+  # {9}: num_hits (필터 조건과 일치한 이벤트의 총 개수)
+
+alert_text_args:
+  - aws.securityhub_findings.aws_account_id
+  - aws.securityhub_findings.updated_at
+  - aws.securityhub_findings.description
+  - aws.securityhub_findings.severity.label
+  - aws.securityhub_findings.compliance.status
+  - aws.securityhub_findings.remediation.recommendation.text
+  - aws.securityhub_findings.remediation.recommendation.url
+  - aws.securityhub_findings.title
+  - aws.securityhub_findings.generator.id
+  - num_hits
+alert_text_type: alert_text_only
+
+summary_table_fields:
+  - aws.securityhub_findings.generator.id
+  - aws.securityhub_findings.updated_at
