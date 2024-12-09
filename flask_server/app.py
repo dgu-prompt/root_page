@@ -284,7 +284,7 @@ def count_yaml():
     # JSON 응답 반환
     return jsonify(list(regions_data.values()))
 
-@app.route('/edit_yaml', methods=['POST'])
+@app.route('/read_yaml', methods=['POST'])
 def edit_yaml():
     try:
         # 요청 데이터 파싱
