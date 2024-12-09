@@ -461,7 +461,7 @@ def preview_yaml():
         temp_yaml_path = os.path.join(BASE_PATH, temp_file_name)
 
         with open(temp_yaml_path, 'w', encoding='utf-8') as temp_file:
-            yaml.dump(yaml_content, temp_file, default_flow_style=False, allow_unicode=True)
+            yaml.dump(yaml_content, temp_file, default_flow_style=False, allow_unicode=True, sort_keys=False)
 
         # 수정된 YAML 파일 내용을 문자열로 읽기
         with open(temp_yaml_path, 'r', encoding='utf-8') as temp_file:
