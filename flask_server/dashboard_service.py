@@ -12,10 +12,50 @@ load_dotenv()
 JIRA_API_URL = os.getenv("JIRA_API_URL")
 JIRA_API_URL_2 = os.getenv("JIRA_API_URL_2")
 API_TOKEN = os.getenv("JIRA_API_TOKEN")
+
+# CSV 파일 경로
+CSV_PATH = "data/assignee2.csv"
+
 HEADERS = {
     "Authorization": os.getenv("JIRA_AUTH_HEADER"),
     "Content-Type": "application/json"
 }
+
+# CSV 파일에서 사용자 데이터를 로드
+def load_jira_users():
+    try:
+        df = pd.read_csv(CSV_PATH, encoding="euc-kr")
+        return df
+    except Exception as e:
+        raise RuntimeError(f"Error loading CSV file: {str(e)}")
+
+# 특정 이메일로 Jira 사용자 정보 반환 로직
+def get_jira_user_logic(email: str):
+    
+    df = load_jira_users()
+
+    # 입력된 이메일로 사용자 검색
+    user_data = df[df["assigneeEmail"] == email]
+
+    if user_data.empty:
+        raise ValueError("User not found")
+
+    # 사용자 정보 반환
+    user = user_data.iloc[0]
+    return {
+        "email": user["assigneeEmail"],
+        "name": user["assigneeName"],
+        "avatar": user["avatarUrl"]
+    }
+
+# 모든 Jira 사용자 정보 반환 로직
+def get_all_jira_users_logic():
+    
+    df = load_jira_users()
+
+    # 사용자 목록을 배열로 변환
+    users = df[["assigneeEmail", "assigneeName", "avatarUrl"]].to_dict(orient="records")
+    return users
 
 # data/assignee2.csv 파일을 읽어서 이름과 이메일 매핑
 def load_assignee_email_mapping(csv_path="data/assignee2.csv"):
