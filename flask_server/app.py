@@ -18,6 +18,7 @@ from dotenv import load_dotenv
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 import bcrypt
 from datetime import datetime, timedelta
+from functools import wraps
 
 load_dotenv()  # .env 파일에서 환경 변수 로드
 
@@ -74,6 +75,31 @@ def verify_jwt_token(token):
         return None  # 토큰 만료
     except jwt.InvalidTokenError:
         return None  # 유효하지 않은 토큰
+
+# JWT 인증 데코레이터
+def jwt_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Authorization 헤더에서 토큰 확인
+        auth_header = request.headers.get('Authorization')
+
+        if not auth_header or not auth_header.startswith('Bearer '):
+            # JWT 토큰이 없을 때
+            return jsonify({"status": "FAILED", "error": "Authentication required. Please log in."}), 401
+
+        token = auth_header.split(" ")[1]  # Bearer 뒤의 토큰 추출
+
+        # JWT 토큰 유효성 검증 (예시: verify_jwt_token 함수 사용)
+        payload = verify_jwt_token(token)
+        if not payload:
+            # JWT 토큰이 유효하지 않을 때
+            return jsonify({"status": "FAILED", "error": "Invalid or expired token. Please log in again."}), 401
+
+        # 유효한 토큰일 경우 사용자 정보 추가
+        request.user_id = payload['user_id']
+        return f(*args, **kwargs)
+
+    return decorated_function
 
 # 회원가입 엔드포인트
 @app.route('/register', methods=['POST'])
@@ -178,7 +204,6 @@ def protected():
     return jsonify({"message": f"Hello, {payload['user_id']}! Welcome to the protected route."})
 
 
-
 # 담당자 정보 읽기
 def get_assignee_data():
     assignee_data = []
@@ -200,7 +225,6 @@ def check_rule_files(alert_type, aws_region, assignee_name):
     # assignee_name 기반 YAML 파일 이름 탐색
     rule_file_exists = any(assignee_name in yaml_file for yaml_file in yaml_files)
     return rule_file_exists
-
 
 
 # 정적 폴더 초기화 함수
@@ -343,6 +367,7 @@ DEFAULT_PATHS = {
 
 # default yaml 파일 복제 api
 @app.route('/clone_default_yaml', methods=['POST'])
+#@jwt_required  # 인증 데코레이터 적용
 def clone_default_yaml():
     try:
         # 요청 데이터 파싱
@@ -375,7 +400,6 @@ def clone_default_yaml():
     except Exception as e:
         # 에러 처리
         return jsonify({"status": "FAILED", "error": str(e)}), 500
-
 
 '''
 @app.route('/test', methods=['POST'])
@@ -591,6 +615,7 @@ def dashboard_ticket_details(ticket_id):
 
 # sec hub, ES 통계 불러오는 API. 향후 JIRA 대시보드 API와 합쳐야 함
 @app.route('/dashboard/findings', methods=['GET'])
+# @jwt_required  # 인증 데코레이터 적용
 def get_dashboard_findings():
     try:
         # 1. SecurityHub 규정 준수 요약 데이터 가져오기
