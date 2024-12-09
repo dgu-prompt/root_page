@@ -1,5 +1,5 @@
 name: "newRule's Name. You should edit."
-discription: "newRule's Discription. You should edit."
+description: "newRule's Description. You should edit."
 type: any
 index: latest_securityhub_findings
 timestamp_field: aws.securityhub_findings.updated_at
