@@ -391,7 +391,7 @@ def add_rule_yaml():
             return jsonify({"status": "FAILED", "error": "Default file not found"}), 404
 
         # 대상 경로 생성
-        destination_dir = f"flask_server/{alert_type}/{region}"
+        destination_dir = f"{alert_type}/{region}"
         os.makedirs(destination_dir, exist_ok=True)
 
         # 고유 파일명 생성
@@ -403,7 +403,7 @@ def add_rule_yaml():
         shutil.copyfile(source_file, destination_file)
 
         # 성공 응답: 파일명 반환
-        return jsonify({"status": "OK", "fileName": unique_filename}), 200
+        return jsonify({"status": "OK", "id": unique_id}), 200
 
     except Exception as e:
         # 에러 처리
