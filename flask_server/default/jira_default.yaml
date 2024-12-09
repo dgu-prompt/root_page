@@ -1,4 +1,5 @@
 name: "newRule's Name. You should edit."
+discription: "newRule's Discription. You should edit."
 type: any
 index: latest_securityhub_findings
 timestamp_field: aws.securityhub_findings.updated_at
@@ -30,6 +31,7 @@ jira_bump_tickets: true
 jira_watchers:
  - mandar2n09@gmail.com
 jira_account_file: "/opt/elastalert/rules/account_file.json"
+jira_priority: 0
 jira_assignee: ""
 jira_max_age: 1
 
