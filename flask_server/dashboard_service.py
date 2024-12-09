@@ -1,6 +1,7 @@
 import requests
 import os
 import re
+import pandas as pd
 from dotenv import load_dotenv
 from flask import jsonify
 
@@ -16,8 +17,17 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
+# data/assignee2.csv 파일을 읽어서 이름과 이메일 매핑
+def load_assignee_email_mapping(csv_path="data/assignee2.csv"):
+    df = pd.read_csv(csv_path, encoding="euc-kr")
+    assignee_email_mapping = dict(zip(df["assigneeName"], df["assigneeEmail"]))
+    return assignee_email_mapping
+
 # 모든 티켓을 가져오는 함수
 def get_tickets_stats():
+    # assignee 이름과 이메일 매핑 로드
+    assignee_email_mapping = load_assignee_email_mapping()
+
     jql_query = "project = VT"  # JQL 쿼리로 모든 티켓 가져오기
     params = {
         "jql": jql_query,
@@ -71,6 +81,7 @@ def get_tickets_stats():
         # 담당자별 통계
         assignee = issue["fields"].get("assignee")
         assignee_name = assignee["displayName"] if assignee else "Unassigned"
+        assignee_email = assignee_email_mapping.get(assignee_name, "No Email")  # 이메일 매칭
         assignee_count[assignee_name] = assignee_count.get(assignee_name, 0) + 1
 
         # 상태별, priority별 문제 해결 비율 계산
@@ -111,10 +122,10 @@ def get_tickets_stats():
         "priority_distribution": priority_distribution,  # priority를 기준으로 수정
         "assignee_count": assignee_count,
         "status_priority_resolution": status_priority_resolution,  # priority를 기준으로 수정
-        "assignee_resolution_rate": assignee_resolution_rate
+        "assignee_resolution_rate": assignee_resolution_rate,
+        "assignee_emails": assignee_email_mapping  # 이메일 정보 포함
     }
-
-
+    
 # 특정 티켓 세부 내용 추적 함수
 def get_ticket_details(ticket_id):
     try:
