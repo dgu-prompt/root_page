@@ -284,11 +284,61 @@ def count_yaml():
     # JSON 응답 반환
     return jsonify(list(regions_data.values()))
 
+@app.route('/read_yaml', methods=['POST'])
+def edit_yaml():
+    try:
+        # 요청 데이터 파싱
+        data = request.json
+        alert_type = data.get("alertType")
+        region = data.get("region")
+        yaml_name = data.get("fileName")
+        
+        # 필수 데이터 검증
+        if not alert_type or not region or not yaml_name:
+            return jsonify({"error": "Missing required fields: 'alertType', 'region', 'yamlName'"}), 400
+
+        # YAML 파일 경로 설정
+        yaml_path = os.path.join(BASE_PATH, alert_type, region, yaml_name)
+
+        if not os.path.exists(yaml_path):
+            return jsonify({"error": f"YAML file not found: {yaml_path}"}), 404
+
+        # YAML 파일 읽기
+        with open(yaml_path, 'r', encoding='utf-8') as file:
+            yaml_content = yaml.safe_load(file)
+
+        # BaseRule 및 JiraRule 필드 구성
+        rule = {
+            "filename": yaml_name,
+            "name": yaml_content.get("name", "Unknown Rule Name"),
+            "description": yaml_content.get("description", "No description available"),
+            "alertType": alert_type,
+            "region": region,
+            "controlIds": yaml_content.get("controlIds", []),
+            "alertSubject": yaml_content.get("alertSubject"),
+            "alertText": yaml_content.get("alertText", ""),
+            "yamlPreview": yaml.dump(yaml_content, default_flow_style=False)
+        }
+
+        # JiraRule 추가 필드
+        if alert_type == "jira":
+            rule.update({
+                "project": yaml_content.get("jira_project", "Unknown Project"),
+                "assignee": yaml_content.get("jira_assignee", "Unassigned"),
+                "priority": yaml_content.get("jira_priority")
+            })
+
+        # JSON 응답 반환
+        return jsonify({"yamlContents": rule})
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
 
 # Default YAML 파일 경로
 DEFAULT_PATHS = {
-    "jira": os.path.join(BASE_DIR, "default", "jira_default.yaml"),
-    "slack": os.path.join(BASE_DIR, "default", "slack_default.yaml"),
+    "jira": os.path.join(BASE_PATH, "default", "jira_default.yaml"),
+    "slack": os.path.join(BASE_PATH, "default", "slack_default.yaml"),
 }
 
 # default yaml 파일 복제 api
@@ -620,13 +670,13 @@ def get_dashboard_findings():
 
 # 일단은 독립적인 API로 구성하여 해당 controlId의 담당자 출력하는 함수 구성. 향후 제어항목 불러오는 API와 결합해야함
 
-# BASE_PATH를 app.py의 위치에 기반하여 설정
-BASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+# ASSIGNEE_FILE_PATH를 app.py의 위치에 기반하여 설정
+ASSIGNEE_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
 @app.route('/rules/<awsRegion>/assignees', methods=['GET'])
 def get_assignees(awsRegion):
     # CSV 파일 경로
-    csv_file_path = os.path.join(BASE_PATH, f"{awsRegion}.csv")
+    csv_file_path = os.path.join(ASSIGNEE_FILE_PATH, f"{awsRegion}.csv")
 
     # 디버깅용 로그
     print(f"Looking for CSV file at: {csv_file_path}")

@@ -32,7 +32,7 @@ es = Elasticsearch(
 # @app.route('/notificationRule', methods=['GET'])
 def get_control_item_list():
     try:
-        controls = get_nist_controls_list()
+        controls = get_controls_list()
         return jsonify(controls)
     except ValueError as e:
         return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
