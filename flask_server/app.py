@@ -287,8 +287,8 @@ def count_yaml():
 
 # Default YAML 파일 경로
 DEFAULT_PATHS = {
-    "jira": os.path.join(BASE_DIR, "default", "jira_default.yaml"),
-    "slack": os.path.join(BASE_DIR, "default", "slack_default.yaml"),
+    "jira": os.path.join(BASE_PATH, "default", "jira_default.yaml"),
+    "slack": os.path.join(BASE_PATH, "default", "slack_default.yaml"),
 }
 
 # default yaml 파일 복제 api
@@ -578,13 +578,13 @@ def get_dashboard_findings():
 
 # 일단은 독립적인 API로 구성하여 해당 controlId의 담당자 출력하는 함수 구성. 향후 제어항목 불러오는 API와 결합해야함
 
-# BASE_PATH를 app.py의 위치에 기반하여 설정
-BASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+# ASSIGNEE_FILE_PATH를 app.py의 위치에 기반하여 설정
+ASSIGNEE_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
 @app.route('/rules/<awsRegion>/assignees', methods=['GET'])
 def get_assignees(awsRegion):
     # CSV 파일 경로
-    csv_file_path = os.path.join(BASE_PATH, f"{awsRegion}.csv")
+    csv_file_path = os.path.join(ASSIGNEE_FILE_PATH, f"{awsRegion}.csv")
 
     # 디버깅용 로그
     print(f"Looking for CSV file at: {csv_file_path}")
