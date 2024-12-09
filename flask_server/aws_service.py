@@ -320,7 +320,52 @@ def get_controls_with_compliance_results2(
 
     return filtered_controls, total_count
     
-    
+# 특정 controlId 리스트에 대한 데이터 반환하는 함수
+def get_controls_by_ids_from_aws(control_ids):
+    standards_subscription_arn = get_standards_subscription_arn()
+    if not standards_subscription_arn:
+        raise ValueError("NIST 표준이 활성화되어 있지 않거나 ARN을 찾을 수 없습니다.")
+
+    client = get_securityhub_client()
+    controls = []  # 특정 제어 항목 저장
+    next_token = None  # 초기값 None
+
+    while True:
+        if next_token:  # 다음 페이지가 있는 경우
+            response = client.describe_standards_controls(
+                StandardsSubscriptionArn=standards_subscription_arn,
+                NextToken=next_token
+            )
+        else:  # 첫 번째 호출인 경우
+            response = client.describe_standards_controls(
+                StandardsSubscriptionArn=standards_subscription_arn
+            )
+
+        # 요청한 controlId만 필터링
+        controls.extend(
+            control for control in response.get('Controls', [])
+            if control.get('ControlId') in control_ids
+        )
+
+        next_token = response.get('NextToken')  # 다음 페이지 토큰 갱신
+        if not next_token:  # 더 이상 페이지가 없으면 종료
+            break
+
+    # 반환할 데이터 필터링
+    filtered_controls = [
+        {
+            "controlId": control.get("ControlId"),
+            "title": control.get("Title"),
+            "description": control.get("Description"),
+            "remediationUrl": control.get("RemediationUrl"),
+            "severity": control.get("SeverityRating"),
+            "controlStatus": control.get("ControlStatus")
+        }
+        for control in controls
+    ]
+    return filtered_controls
+
+
 
 # NIST 보안 표준 리스트 가져오는 함수
 # 그간 정의된 함수에는 PASSED, FAILED 상태(compliance)를 나타내는 함수가 없었기에 새롭게 정의.

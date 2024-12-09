@@ -10,7 +10,7 @@ from flask import redirect, Flask, send_from_directory, request, jsonify, sessio
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
-from aws_service import get_controls_with_compliance_results, get_controls_with_compliance_results2, get_filtered_controls_list, set_securityhub_control_activation, get_control_status_counts
+from aws_service import get_controls_by_ids_from_aws, get_controls_with_compliance_results, get_controls_with_compliance_results2, get_filtered_controls_list, set_securityhub_control_activation, get_control_status_counts
 from model import initialize_db, User, db
 from elasticsearch_dashboard import get_security_issues_filtered, analyze_security_issues
 from dashboard_service import get_ticket_details, get_tickets_stats
@@ -605,6 +605,26 @@ def get_control_with_status():
         return jsonify(controls)
     except ValueError as e:
         return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
+
+@app.route('/control/details', methods=['GET'])
+def get_controls_by_ids_route():
+    try:
+        # 요청 본문에서 controlIds 가져오기
+        request_data = request.get_json()
+        control_ids = request_data.get('controlIds', [])
+
+        if not control_ids:
+            raise ValueError("controlIds 배열이 비어 있습니다.")
+
+        # AWS 서비스 호출
+        controls = get_controls_by_ids_from_aws(control_ids)
+
+        # 응답 데이터 생성
+        return jsonify({"controls": controls}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
+    except Exception as e:
+        return jsonify({"error": "서버 오류가 발생했습니다.", "details": str(e)}), 500
 
 # Dashboard에서 Jira 티켓 현황 통계 조회
 @app.route('/dashboard', methods=['GET'])
