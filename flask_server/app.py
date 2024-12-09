@@ -452,6 +452,9 @@ def preview_yaml():
             yaml_content["filter"][-1]["terms"]["aws.securityhub_findings.generator.id.keyword"] = [
                 f"security-control/{control_id}" for control_id in control_ids
             ]
+            
+        # 순서 유지
+        yaml_content = OrderedDict(yaml_content)
 
         # 임시 YAML 파일 생성
         temp_file_name = f"temp_{file_name}"
@@ -465,13 +468,51 @@ def preview_yaml():
             yaml_preview = temp_file.read()
 
         # 응답 데이터 구성
-        response_data = data
-        response_data["yamlPreview"] = yaml_preview
+        response_data = {"yamlPreview": yaml_preview}
 
         return jsonify(response_data)
 
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+    
+    
+@app.route('/final_submit_yaml', methods=['POST'])
+def final_submit_yaml():
+    try:
+        # 요청 데이터 파싱
+        data = request.get_json()
+        file_id = data.get("id")
+
+        # 필수 데이터 검증
+        if not file_id:
+            return jsonify({"error": "Missing required field: 'id'"}), 400
+
+        # 파일 이름 생성
+        temp_file_name = f"temp_{file_id}.yaml"
+        final_file_name = f"{file_id}.yaml"
+
+        # 경로 설정
+        temp_file_path = os.path.join(BASE_PATH, temp_file_name)
+        final_file_path = os.path.join(BASE_PATH, final_file_name)
+
+        # 임시 파일 확인
+        if not os.path.exists(temp_file_path):
+            return jsonify({"error": f"Temporary YAML file not found: {temp_file_path}"}), 404
+
+        # 임시 파일 내용을 최종 파일로 저장
+        with open(temp_file_path, 'r', encoding='utf-8') as temp_file:
+            temp_content = temp_file.read()
+
+        with open(final_file_path, 'w', encoding='utf-8') as final_file:
+            final_file.write(temp_content)
+
+        # 임시 파일 삭제
+        os.remove(temp_file_path)
+
+        return jsonify({"status": "OK"}), 200
+
+    except Exception as e:
+        return jsonify({"status": "FAILED", "error": str(e)}), 500
 
 
 '''
