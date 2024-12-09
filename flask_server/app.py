@@ -284,6 +284,56 @@ def count_yaml():
     # JSON 응답 반환
     return jsonify(list(regions_data.values()))
 
+@app.route('/edit_yaml', methods=['POST'])
+def edit_yaml():
+    try:
+        # 요청 데이터 파싱
+        data = request.json
+        alert_type = data.get("alertType")
+        region = data.get("region")
+        yaml_name = data.get("fileName")
+        
+        # 필수 데이터 검증
+        if not alert_type or not region or not yaml_name:
+            return jsonify({"error": "Missing required fields: 'alertType', 'region', 'yamlName'"}), 400
+
+        # YAML 파일 경로 설정
+        yaml_path = os.path.join(BASE_PATH, alert_type, region, yaml_name)
+
+        if not os.path.exists(yaml_path):
+            return jsonify({"error": f"YAML file not found: {yaml_path}"}), 404
+
+        # YAML 파일 읽기
+        with open(yaml_path, 'r', encoding='utf-8') as file:
+            yaml_content = yaml.safe_load(file)
+
+        # BaseRule 및 JiraRule 필드 구성
+        rule = {
+            "filename": yaml_name,
+            "name": yaml_content.get("name", "Unknown Rule Name"),
+            "description": yaml_content.get("description", "No description available"),
+            "alertType": alert_type,
+            "region": region,
+            "controlIds": yaml_content.get("controlIds", []),
+            "alertSubject": yaml_content.get("alertSubject"),
+            "alertText": yaml_content.get("alertText", ""),
+            "yamlPreview": yaml.dump(yaml_content, default_flow_style=False)
+        }
+
+        # JiraRule 추가 필드
+        if alert_type == "jira":
+            rule.update({
+                "project": yaml_content.get("jira_project", "Unknown Project"),
+                "assignee": yaml_content.get("jira_assignee", "Unassigned"),
+                "priority": yaml_content.get("jira_priority")
+            })
+
+        # JSON 응답 반환
+        return jsonify({"yamlContents": rule})
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
 
 # Default YAML 파일 경로
 DEFAULT_PATHS = {
