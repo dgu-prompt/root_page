@@ -454,11 +454,11 @@ def preview_yaml():
             ]
             
         # 순서 유지
-        yaml_content = OrderedDict(yaml_content)
+        yaml_content = dict(yaml_content)
 
         # 임시 YAML 파일 생성
         temp_file_name = f"temp_{file_name}"
-        temp_yaml_path = os.path.join(BASE_PATH, temp_file_name)
+        temp_yaml_path = os.path.join(BASE_PATH, alert_type, region, temp_file_name)
 
         with open(temp_yaml_path, 'w', encoding='utf-8') as temp_file:
             yaml.dump(yaml_content, temp_file, default_flow_style=False, allow_unicode=True, sort_keys=False)
@@ -481,6 +481,8 @@ def final_submit_yaml():
     try:
         # 요청 데이터 파싱
         data = request.get_json()
+        alert_type = data.get("alertType")
+        region = data.get("region")
         file_id = data.get("id")
 
         # 필수 데이터 검증
@@ -492,8 +494,8 @@ def final_submit_yaml():
         final_file_name = f"{file_id}.yaml"
 
         # 경로 설정
-        temp_file_path = os.path.join(BASE_PATH, temp_file_name)
-        final_file_path = os.path.join(BASE_PATH, final_file_name)
+        temp_file_path = os.path.join(BASE_PATH, alert_type, region, temp_file_name)
+        final_file_path = os.path.join(BASE_PATH, alert_type, region, final_file_name)
 
         # 임시 파일 확인
         if not os.path.exists(temp_file_path):
