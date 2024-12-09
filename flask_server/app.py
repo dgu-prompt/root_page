@@ -438,7 +438,7 @@ def preview_yaml():
         with open(yaml_path, 'r', encoding='utf-8') as file:
             yaml_content = yaml.safe_load(file)
 
-        # YAML 내용 수정
+         # YAML 내용 수정
         yaml_content["name"] = data.get("name", yaml_content.get("name"))
         yaml_content["description"] = data.get("description", yaml_content.get("description"))
         yaml_content["alert_subject"] = data.get("alertSubject", yaml_content.get("alert_subject"))
@@ -452,6 +452,17 @@ def preview_yaml():
             yaml_content["filter"][-1]["terms"]["aws.securityhub_findings.generator.id.keyword"] = [
                 f"security-control/{control_id}" for control_id in control_ids
             ]
+
+        # 특정 필드에 멀티라인 문자열 강제 적용
+        if "jira_description" in yaml_content:
+            yaml_content["jira_description"] = yaml.scalarstring.LiteralScalarString(
+                yaml_content["jira_description"]
+            )
+
+        if "alert_text" in yaml_content:
+            yaml_content["alert_text"] = yaml.scalarstring.LiteralScalarString(
+                yaml_content["alert_text"]
+            )
             
         # 순서 유지
         yaml_content = dict(yaml_content)
@@ -461,7 +472,7 @@ def preview_yaml():
         temp_yaml_path = os.path.join(BASE_PATH, alert_type, region, temp_file_name)
 
         with open(temp_yaml_path, 'w', encoding='utf-8') as temp_file:
-            yaml.dump(yaml_content, temp_file, default_flow_style=False, allow_unicode=True, sort_keys=False)
+            yaml.dump(yaml_content, temp_file, default_flow_style=False, allow_unicode=True)
 
         # 수정된 YAML 파일 내용을 문자열로 읽기
         with open(temp_yaml_path, 'r', encoding='utf-8') as temp_file:
