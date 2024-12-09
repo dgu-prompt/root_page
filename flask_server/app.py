@@ -338,7 +338,7 @@ def read_yaml():
 
          # BaseRule 및 JiraRule 필드 구성
         response_data = {
-            "filename": file_name,
+            "id": file_id,
             "name": yaml_content.get("name", "Unknown Rule Name"),
             "description": yaml_content.get("description", "No description available"),
             "alertType": alert_type,
