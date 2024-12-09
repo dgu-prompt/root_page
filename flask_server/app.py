@@ -10,7 +10,7 @@ from flask import redirect, Flask, send_from_directory, request, jsonify, sessio
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
-from aws_service import get_controls_with_compliance_results, get_filtered_controls_list, set_securityhub_control_activation, get_control_status_counts
+from aws_service import get_controls_with_compliance_results, get_controls_with_compliance_results2, get_filtered_controls_list, set_securityhub_control_activation, get_control_status_counts
 from model import initialize_db, User, db
 from elasticsearch_dashboard import get_security_issues_filtered, analyze_security_issues
 from dashboard_service import get_ticket_details, get_tickets_stats
@@ -480,6 +480,48 @@ def get_control_full():
         return jsonify(controls)
     except ValueError as e:
         return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
+
+
+@app.route('/controlss', methods=['GET'])
+def get_control_full2():
+    try:
+        # 쿼리 파라미터 가져오기
+        page = int(request.args.get('page', 1))
+        page_size = int(request.args.get('pageSize', 15))
+        status_filter = request.args.get('filter[status]')
+        severity_filter = request.args.get('filter[severity]')
+        sort_field = request.args.get('sort[field]', 'ControlId')
+        sort_order = request.args.get('sort[order]', 'asc')
+        search_keyword = request.args.get('searchKeyword', '')
+
+        print("page:", page)
+        print("page_size:", page_size)
+        print("status_filter:", status_filter)
+        print("severity_filter:", severity_filter)
+        print("sort_field:", sort_field)
+        print("sort_order:", sort_order)
+        print("search_keyword:", search_keyword)
+
+        # AWS 서비스 호출
+        controls, total_count = get_controls_with_compliance_results2(
+            page=page,
+            page_size=page_size,
+            status_filter=status_filter,
+            severity_filter=severity_filter,
+            sort_field=sort_field,
+            sort_order=sort_order,
+            search_keyword=search_keyword
+        )
+
+        # 응답 데이터 생성
+        response = {
+            "controls": controls,
+            "totalCount": total_count
+        }
+        return jsonify(response)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
+    
 
 # metadata + status -> 규칙 편집 페이지
 @app.route('/notificationRule', methods=['GET'])

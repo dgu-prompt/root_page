@@ -236,7 +236,92 @@ def get_controls_with_compliance_results(page, page_size, status_filter, severit
     ]
     return filtered_controls, total_count
     
+
+def get_controls_with_compliance_results2(
+    page, page_size, status_filter, severity_filter, sort_field, sort_order, search_keyword
+):
+    # 표준 ARN 가져오기
+    standards_subscription_arn = get_standards_subscription_arn()
+    if not standards_subscription_arn:
+        raise ValueError("NIST 표준이 활성화되어 있지 않거나 ARN을 찾을 수 없습니다.")
+
+    client = get_securityhub_client()
+    controls = []
+    next_token = None
+
+    # 초기 메타데이터 수집 (페이징 처리)
+    while True:
+        if next_token:  # 다음 페이지가 있는 경우
+            response = client.describe_standards_controls(
+                StandardsSubscriptionArn=standards_subscription_arn,
+                NextToken=next_token  # `NextToken` 포함
+            )
+        else:  # 첫 번째 호출인 경우
+            response = client.describe_standards_controls(
+                StandardsSubscriptionArn=standards_subscription_arn
+            )
+        controls.extend(response.get("Controls", []))
+        next_token = response.get("NextToken")
+        if not next_token:
+            break
+
+    # 1. 필터링
+    if status_filter:
+        controls = [c for c in controls if c.get("ControlStatus") == status_filter]
+    if severity_filter:
+        controls = [c for c in controls if c.get("SeverityRating") == severity_filter]
+    if search_keyword:
+        controls = [c for c in controls if search_keyword.lower() in c.get("ControlId", "").lower()]
+
+    # 2. 정렬
+    reverse_order = sort_order == "desc"
+    controls = sorted(controls, key=lambda x: x.get(sort_field, ""), reverse=reverse_order)
+
+    # 3. 페이지네이션
+    total_count = len(controls)
+    start_index = (page - 1) * page_size
+    end_index = start_index + page_size
+    paginated_controls = controls[start_index:end_index]
+
+    # 4. `get_findings`로 상세 데이터 추가
+    for control in paginated_controls:
+        control_id = control.get("ControlId")
+        findings_response = client.get_findings(
+            Filters={
+                "ComplianceSecurityControlId": [{"Value": control_id, "Comparison": "EQUALS"}],
+                "RecordState": [{"Value": "ACTIVE", "Comparison": "EQUALS"}],
+            }
+        )
+        findings = findings_response.get("Findings", [])
+        total_checks = len(findings)
+        failed_checks = sum(
+            1 for finding in findings if finding.get("Compliance", {}).get("Status") == "FAILED"
+        )
+
+        control["failedChecks"] = failed_checks
+        control["totalChecks"] = total_checks
+        control["ComplianceStatus"] = "FAILED" if failed_checks > 0 else "PASSED"
+
+    # 5. 최종 반환 데이터 구성
+    filtered_controls = [
+        {
+            "controlId": control.get("ControlId"),
+            "title": control.get("Title"),
+            "description": control.get("Description"),
+            "remediationUrl": control.get("RemediationUrl"),
+            "severity": control.get("SeverityRating"),
+            "controlStatus": control.get("ControlStatus"),
+            "complianceStatus": control.get("ComplianceStatus"),
+            "failedChecks": control.get("failedChecks", 0),
+            "totalChecks": control.get("totalChecks", 0),
+        }
+        for control in paginated_controls
+    ]
+
+    return filtered_controls, total_count
     
+    
+
 # NIST 보안 표준 리스트 가져오는 함수
 # 그간 정의된 함수에는 PASSED, FAILED 상태(compliance)를 나타내는 함수가 없었기에 새롭게 정의.
 # 필요하다면 기존 함수와 통합 가능# NIST 보안 표준 제어 항목 목록 가져오기# NIST 보안 표준 제어 항목 목록 가져오기
