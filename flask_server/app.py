@@ -311,7 +311,7 @@ def count_yaml():
     return jsonify(list(regions_data.values()))
 
 @app.route('/read_yaml', methods=['POST'])
-def edit_yaml():
+def read_yaml():
     try:
         # 요청 데이터 파싱
         data = request.json
@@ -343,7 +343,7 @@ def edit_yaml():
             "controlIds": yaml_content.get("controlIds", []),
             "alertSubject": yaml_content.get("alertSubject"),
             "alertText": yaml_content.get("alertText", ""),
-            "yamlPreview": yaml.dump(yaml_content, default_flow_style=False)
+            "yamlPreview": ""
         }
 
         # JiraRule 추가 필드
