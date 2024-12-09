@@ -406,7 +406,7 @@ def add_rule_yaml():
         shutil.copyfile(source_file, destination_file)
 
         # 성공 응답: 파일명 반환
-        return jsonify({"status": "OK", "id": unique_id}), 200
+        return jsonify(unique_id), 200
 
     except Exception as e:
         # 에러 처리
