@@ -317,14 +317,17 @@ def read_yaml():
         data = request.json
         alert_type = data.get("alertType")
         region = data.get("region")
-        yaml_name = data.get("fileName")
+        file_id = data.get("id")
         
         # 필수 데이터 검증
-        if not alert_type or not region or not yaml_name:
-            return jsonify({"error": "Missing required fields: 'alertType', 'region', 'yamlName'"}), 400
+        if not alert_type or not region or not file_id:
+            return jsonify({"error": "Missing required fields: 'alertType', 'region', 'id'"}), 400
+        
+        # 파일 이름 생성
+        file_name = f"{file_id}.yaml"
 
         # YAML 파일 경로 설정
-        yaml_path = os.path.join(BASE_PATH, alert_type, region, yaml_name)
+        yaml_path = os.path.join(BASE_PATH, alert_type, region, file_name)
 
         if not os.path.exists(yaml_path):
             return jsonify({"error": f"YAML file not found: {yaml_path}"}), 404
@@ -333,9 +336,9 @@ def read_yaml():
         with open(yaml_path, 'r', encoding='utf-8') as file:
             yaml_content = yaml.safe_load(file)
 
-        # BaseRule 및 JiraRule 필드 구성
-        rule = {
-            "filename": yaml_name,
+         # BaseRule 및 JiraRule 필드 구성
+        response_data = {
+            "filename": file_name,
             "name": yaml_content.get("name", "Unknown Rule Name"),
             "description": yaml_content.get("description", "No description available"),
             "alertType": alert_type,
@@ -343,19 +346,19 @@ def read_yaml():
             "controlIds": yaml_content.get("controlIds", []),
             "alertSubject": yaml_content.get("alertSubject"),
             "alertText": yaml_content.get("alertText", ""),
-            "yamlPreview": ""
+            "yamlPreview": "",
         }
 
         # JiraRule 추가 필드
         if alert_type == "jira":
-            rule.update({
+            response_data.update({
                 "project": yaml_content.get("jira_project", "Unknown Project"),
                 "assignee": yaml_content.get("jira_assignee", "Unassigned"),
                 "priority": yaml_content.get("jira_priority")
             })
 
         # JSON 응답 반환
-        return jsonify({"yamlContents": rule})
+        return jsonify(response_data)
 
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
@@ -408,6 +411,69 @@ def add_rule_yaml():
     except Exception as e:
         # 에러 처리
         return jsonify({"status": "FAILED", "error": str(e)}), 500
+
+@app.route('/preview_yaml', methods=['POST'])
+def preview_yaml():
+    try:
+        # 요청 데이터 파싱
+        data = request.json.get("yamlContents", {})
+        alert_type = data.get("alertType")
+        region = data.get("region")
+        file_id = data.get("id")
+
+        # 필수 데이터 검증
+        if not alert_type or not region or not file_id:
+            return jsonify({"error": "Missing required fields: 'alertType', 'region', 'id'"}), 400
+
+        # 파일 이름 생성
+        file_name = f"{file_id}.yaml"
+        
+        # 기존 YAML 파일 경로
+        yaml_path = os.path.join(BASE_PATH, alert_type, region, file_name)
+
+        if not os.path.exists(yaml_path):
+            return jsonify({"error": f"YAML file not found: {yaml_path}"}), 404
+
+        # 기존 YAML 파일 읽기
+        with open(yaml_path, 'r', encoding='utf-8') as file:
+            yaml_content = yaml.safe_load(file)
+
+        # YAML 내용 수정
+        yaml_content["name"] = data.get("name", yaml_content.get("name"))
+        yaml_content["description"] = data.get("description", yaml_content.get("description"))
+        yaml_content["alert_subject"] = data.get("alertSubject", yaml_content.get("alert_subject"))
+        yaml_content["jira_project"] = data.get("project", yaml_content.get("jira_project"))
+        yaml_content["jira_assignee"] = data.get("assignee", yaml_content.get("jira_assignee"))
+        yaml_content["jira_priority"] = data.get("priority", yaml_content.get("jira_priority"))
+
+        # filter 수정
+        control_ids = data.get("controlIds", [])
+        if control_ids:
+            yaml_content["filter"][-1]["terms"]["aws.securityhub_findings.generator.id.keyword"] = [
+                f"security-control/{control_id}" for control_id in control_ids
+            ]
+
+        # 임시 YAML 파일 생성
+        temp_file_name = f"temp_{file_name}"
+        temp_yaml_path = os.path.join(BASE_PATH, temp_file_name)
+
+        with open(temp_yaml_path, 'w', encoding='utf-8') as temp_file:
+            yaml.dump(yaml_content, temp_file, default_flow_style=False, allow_unicode=True)
+
+        # 수정된 YAML 파일 내용을 문자열로 읽기
+        with open(temp_yaml_path, 'r', encoding='utf-8') as temp_file:
+            yaml_preview = temp_file.read()
+
+        # 응답 데이터 구성
+        response_data = data
+        response_data["yamlPreview"] = yaml_preview
+
+        return jsonify(response_data)
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+
 '''
 @app.route('/test', methods=['POST'])
 def save_yaml():
