@@ -740,7 +740,7 @@ def get_control_with_status():
             "controls": controls,
             "totalCount": total_count
         }
-        return jsonify(controls)
+        return jsonify(response)
     except ValueError as e:
         return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
 
