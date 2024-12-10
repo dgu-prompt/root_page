@@ -314,32 +314,47 @@ def count_yaml():
     return jsonify(list(regions_data.values()))
 
 @app.route('/read_yaml', methods=['POST'])
-def read_yaml():
+def edit_yaml():
     try:
         # 요청 데이터 파싱
         data = request.json
-        alert_type = data.get("alertType")
-        region = data.get("region")
         file_id = data.get("id")
-        
+
         # 필수 데이터 검증
-        if not alert_type or not region or not file_id:
-            return jsonify({"error": "Missing required fields: 'alertType', 'region', 'id'"}), 400
-        
+        if not file_id:
+            return jsonify({"error": "Missing required field: 'id'"}), 400
+
         # 파일 이름 생성
         file_name = f"{file_id}.yaml"
 
-        # YAML 파일 경로 설정
-        yaml_path = os.path.join(BASE_PATH, alert_type, region, file_name)
+        # jira와 slack 디렉토리에서 파일 검색
+        directories_to_search = [os.path.join(BASE_PATH, "jira"), os.path.join(BASE_PATH, "slack")]
+        yaml_path = None
+        alert_type = None
 
-        if not os.path.exists(yaml_path):
-            return jsonify({"error": f"YAML file not found: {yaml_path}"}), 404
+        for directory in directories_to_search:
+            yaml_path = find_yaml_file(directory, file_name)
+            if yaml_path:
+                alert_type = os.path.basename(directory)  # 상위 폴더명(jira/slack)을 alertType으로 설정
+                break
+
+        if not yaml_path:
+            return jsonify({"error": f"YAML file with id '{file_id}' not found."}), 404
 
         # YAML 파일 읽기
         with open(yaml_path, 'r', encoding='utf-8') as file:
             yaml_content = yaml.safe_load(file)
 
-         # BaseRule 및 JiraRule 필드 구성
+        # filter에서 region 값 추출
+        filters = yaml_content.get("filter", [])
+        region = "Unknown Region"
+        for filter_item in filters:
+            term = filter_item.get("term", {})
+            if "aws.securityhub.findings.region.keyword" in term:
+                region = term["aws.securityhub.findings.region.keyword"].split(" ")[0]  # #default 제거
+                break
+
+        # 응답 데이터 구성
         response_data = {
             "id": file_id,
             "name": yaml_content.get("name", "Unknown Rule Name"),
@@ -349,7 +364,7 @@ def read_yaml():
             "controlIds": yaml_content.get("controlIds", []),
             "alertSubject": yaml_content.get("alertSubject"),
             "alertText": yaml_content.get("alertText", ""),
-            "yamlPreview": "",
+            "yamlPreview": yaml.dump(yaml_content, default_flow_style=False, allow_unicode=True),
         }
 
         # JiraRule 추가 필드
@@ -357,7 +372,7 @@ def read_yaml():
             response_data.update({
                 "project": yaml_content.get("jira_project", "Unknown Project"),
                 "assignee": yaml_content.get("jira_assignee", "Unassigned"),
-                "priority": yaml_content.get("jira_priority")
+                "priority": yaml_content.get("jira_priority"),
             })
 
         # JSON 응답 반환
@@ -365,6 +380,16 @@ def read_yaml():
 
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+
+def find_yaml_file(base_path, file_name):
+    """
+    디렉토리를 순회하며 주어진 파일 이름과 일치하는 파일 경로를 반환합니다.
+    """
+    for root, _, files in os.walk(base_path):
+        if file_name in files:
+            return os.path.join(root, file_name)
+    return None
 
 
 # Default YAML 파일 경로
