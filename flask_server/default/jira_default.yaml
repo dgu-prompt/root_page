@@ -7,7 +7,7 @@ timestamp_field: aws.securityhub_findings.updated_at
 filter:
   - term:
       aws.securityhub_findings.product.name.keyword: "Security Hub"
-      aws.securityhub_findings.product.name.keyword: "ap-northeast-2" #default
+      aws.securityhub_findings.region.keyword: "ap-northeast-2" #default
   - range:
       aws.securityhub_findings.updated_at:
         gte: "now-24h"
