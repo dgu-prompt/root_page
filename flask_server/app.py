@@ -422,7 +422,7 @@ def add_rule_yaml():
             return jsonify({"status": "FAILED", "error": "Default file not found"}), 404
 
         # 대상 경로 생성
-        destination_dir = f"{alert_type}/{region}"
+        destination_dir = f"{alert_type}"
         os.makedirs(destination_dir, exist_ok=True)
 
         # 고유 파일명 생성
