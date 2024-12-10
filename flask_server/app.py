@@ -281,7 +281,7 @@ def count_yaml():
                 for filter_item in filters:
                     term = filter_item.get("term", {})
                     if "aws.securityhub.findings.region.keyword" in term:
-                        region = term["aws.securityhub.findings.region.keyword"].split(" ")[0]  # #default 제거
+                        region = term.get("aws.securityhub.findings.region.keyword")
                         break
 
                 # 리전 데이터 갱신
@@ -422,7 +422,7 @@ def add_rule_yaml():
             return jsonify({"status": "FAILED", "error": "Default file not found"}), 404
 
         # 대상 경로 생성
-        destination_dir = f"{alert_type}/{region}"
+        destination_dir = f"{alert_type}"
         os.makedirs(destination_dir, exist_ok=True)
 
         # 고유 파일명 생성
