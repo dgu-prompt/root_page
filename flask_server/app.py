@@ -281,7 +281,7 @@ def count_yaml():
                 for filter_item in filters:
                     term = filter_item.get("term", {})
                     if "aws.securityhub.findings.region.keyword" in term:
-                        region = term.get("aws.securityhub.findings.region.keyword")
+                        region = term["aws.securityhub.findings.region.keyword"].split(" ")[0]  # #default 제거
                         break
 
                 # 리전 데이터 갱신
