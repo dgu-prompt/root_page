@@ -280,8 +280,9 @@ def count_yaml():
 
                 for filter_item in filters:
                     term = filter_item.get("term", {})
-                    if "aws.securityhub.findings.region.keyword" in term:
-                        region = term["aws.securityhub.findings.region.keyword"].split(" ")[0]  # #default 제거
+                    region_value = term.get('aws.securityhub_findings.region.keyword')
+                    if region_value:
+                        region = region_value  # 첫 번째로 발견된 유효한 리전 값 사용
                         break
 
                 # 리전 데이터 갱신
