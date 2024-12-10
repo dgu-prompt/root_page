@@ -249,64 +249,66 @@ BASE_PATH = os.path.dirname(__file__)
 @app.route('/count_yaml', methods=['GET'])
 def count_yaml():
     regions_data = {}  # 리전 데이터를 저장할 딕셔너리
-    alert_types = ["jira", "slack"]  # 고정된 alert_type 값
-    all_regions = set()  # 모든 리전 이름을 저장할 집합
+    alert_types = ["jira", "slack"]  # 참조할 alertType 값
+    all_yaml_files = []  # 모든 YAML 파일 경로 저장
 
     try:
-        # 모든 alertType에서 유니크한 region 추출
+        # 모든 alertType 디렉토리에서 YAML 파일 수집
         for alert_type in alert_types:
             alert_type_path = os.path.join(BASE_PATH, alert_type)
             if not os.path.isdir(alert_type_path):  # 디렉토리 확인
                 print(f"Warning: {alert_type_path} 디렉토리가 없습니다.")
                 continue
 
-            # 해당 alert_type 디렉토리에서 리전 이름 추출
-            regions = [region for region in os.listdir(alert_type_path) if os.path.isdir(os.path.join(alert_type_path, region))]
-            all_regions.update(regions)  # 모든 리전 집합에 추가
+            # alertType 디렉토리 내 YAML 파일 검색
+            yaml_files = [os.path.join(alert_type_path, f) for f in os.listdir(alert_type_path) if f.endswith('.yaml')]
+            all_yaml_files.extend(yaml_files)
 
-        # 추출된 모든 리전에 대해 데이터를 처리
-        for region in sorted(all_regions):  # 정렬된 리전 순회
-            regions_data[region] = {"region": region, "count": 0, "yamlName": []}
+        if not all_yaml_files:
+            return jsonify({"error": "No YAML files found in specified directories."}), 404
 
-            # 각 리전에 대해 alertType별 데이터 추가
-            for alert_type in alert_types:
-                region_path = os.path.join(BASE_PATH, alert_type, region)
-                if not os.path.isdir(region_path):  # 경로가 없으면 건너뜀
-                    continue
+        # 모든 YAML 파일 처리
+        for yaml_path in all_yaml_files:
+            try:
+                # YAML 파일 읽기
+                with open(yaml_path, 'r', encoding='utf-8') as file:
+                    yaml_content = yaml.safe_load(file)
 
-                try:
-                    # region 내부의 YAML 파일 목록
-                    yaml_files = [f for f in os.listdir(region_path) if f.endswith('.yaml')]
-                    yaml_count = len(yaml_files)  # YAML 파일 개수
+                # filter에서 region 값 추출
+                filters = yaml_content.get("filter", [])
+                region = "Unknown Region"  # 기본값
 
-                    # YAML 파일에서 name 값 및 description 값 추출
-                    for yaml_file in yaml_files:
-                        yaml_path = os.path.join(region_path, yaml_file)
-                        try:
-                            with open(yaml_path, 'r', encoding='utf-8') as file:
-                                yaml_content = yaml.safe_load(file)
-                                name = yaml_content.get('name', 'Unknown Rule Name')
-                                description = yaml_content.get('description', 'No description available')
-                                # YAML 데이터를 JSON 형식으로 저장
-                                regions_data[region]["yamlName"].append({
-                                    "filename": yaml_file,
-                                    "name": name,
-                                    "alertType": alert_type,
-                                    "description": description
-                                })
-                        except FileNotFoundError:
-                            print(f"Error: File not found - {yaml_path}")
-                        except yaml.YAMLError:
-                            print(f"Error: Invalid YAML format - {yaml_path}")
+                for filter_item in filters:
+                    term = filter_item.get("term", {})
+                    if "aws.securityhub.findings.region.keyword" in term:
+                        region = term["aws.securityhub.findings.region.keyword"].split(" ")[0]  # #default 제거
+                        break
 
-                    # 해당 리전의 YAML 파일 총 개수 업데이트
-                    regions_data[region]["count"] += yaml_count
+                # 리전 데이터 갱신
+                if region not in regions_data:
+                    regions_data[region] = {"region": region, "count": 0, "yamlName": []}
 
-                except Exception as e:
-                    print(f"Error processing region: {region}, alertType: {alert_type}. Exception: {e}")
+                # 리전 데이터 업데이트
+                name = yaml_content.get('name', 'Unknown Rule Name')
+                description = yaml_content.get('description', 'No description available')
+                filename = os.path.basename(yaml_path)
+                alert_type = os.path.basename(os.path.dirname(yaml_path))
+
+                regions_data[region]["yamlName"].append({
+                    "filename": filename,
+                    "name": name,
+                    "alertType": alert_type,
+                    "description": description
+                })
+                regions_data[region]["count"] += 1
+
+            except FileNotFoundError:
+                print(f"Error: File not found - {yaml_path}")
+            except yaml.YAMLError:
+                print(f"Error: Invalid YAML format - {yaml_path}")
 
     except Exception as e:
-        return jsonify({"error": f"Failed to process base path {BASE_PATH}. Exception: {e}"}), 500
+        return jsonify({"error": f"Failed to process YAML files. Exception: {e}"}), 500
 
     # JSON 응답 반환
     return jsonify(list(regions_data.values()))
