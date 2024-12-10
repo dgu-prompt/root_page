@@ -349,11 +349,12 @@ def edit_yaml():
 
         # filter에서 region 값 추출
         filters = yaml_content.get("filter", [])
-        region = "Unknown Region"
+        region = ""
         for filter_item in filters:
             term = filter_item.get("term", {})
-            if "aws.securityhub.findings.region.keyword" in term:
-                region = term["aws.securityhub.findings.region.keyword"].split(" ")[0]  # #default 제거
+            region_value = term.get('aws.securityhub_findings.region.keyword')
+            if region_value:
+                region = region_value  # 첫 번째로 발견된 유효한 리전 값 사용
                 break
 
         # 응답 데이터 구성
@@ -364,7 +365,7 @@ def edit_yaml():
             "alertType": alert_type,
             "region": region,
             "controlIds": yaml_content.get("controlIds", []),
-            "alertSubject": yaml_content.get("alertSubject"),
+            "alertSubject": yaml_content.get("alertSubject", ""),
             "alertText": yaml_content.get("alertText", ""),
             "yamlPreview": yaml.dump(yaml_content, default_flow_style=False, allow_unicode=True),
         }
@@ -445,7 +446,7 @@ def add_rule_yaml():
 def preview_yaml():
     try:
         # 요청 데이터 파싱
-        data = request.json.get("yamlContents", {})
+        data = request.json
         alert_type = data.get("alertType")
         region = data.get("region")
         file_id = data.get("id")
@@ -488,23 +489,23 @@ def preview_yaml():
                 f"security-control/{control_id}" for control_id in control_ids
             ]
 
-        # 특정 필드에 멀티라인 문자열 강제 적용
-        if "jira_description" in yaml_content:
-            yaml_content["jira_description"] = yaml.scalarstring.LiteralScalarString(
-                yaml_content["jira_description"]
-            )
+        # # 특정 필드에 멀티라인 문자열 강제 적용
+        # if "jira_description" in yaml_content:
+        #     yaml_content["jira_description"] = yaml.scalarstring.LiteralScalarString(
+        #         yaml_content["jira_description"]
+        #     )
 
-        if "alert_text" in yaml_content:
-            yaml_content["alert_text"] = yaml.scalarstring.LiteralScalarString(
-                yaml_content["alert_text"]
-            )
+        # if "alert_text" in yaml_content:
+        #     yaml_content["alert_text"] = yaml.scalarstring.LiteralScalarString(
+        #         yaml_content["alert_text"]
+        #     )
             
         # 순서 유지
         yaml_content = dict(yaml_content)
 
         # 임시 YAML 파일 생성
         temp_file_name = f"temp_{file_name}"
-        temp_yaml_path = os.path.join(BASE_PATH, alert_type, region, temp_file_name)
+        temp_yaml_path = os.path.join(BASE_PATH, alert_type, temp_file_name)
 
         with open(temp_yaml_path, 'w', encoding='utf-8') as temp_file:
             yaml.dump(yaml_content, temp_file, default_flow_style=False, allow_unicode=True)
@@ -525,10 +526,8 @@ def preview_yaml():
 @app.route('/final_submit_yaml', methods=['POST'])
 def final_submit_yaml():
     try:
-        # 요청 데이터 파싱
-        data = request.get_json()
+        data = request.json  # JSON 파싱
         alert_type = data.get("alertType")
-        region = data.get("region")
         file_id = data.get("id")
 
         # 필수 데이터 검증
@@ -621,7 +620,7 @@ def get_control_full():
             "controls": controls,
             "totalCount": total_count
         }
-        return jsonify(controls)
+        return jsonify(response)
     except ValueError as e:
         return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
 
