@@ -1,4 +1,5 @@
 import os
+import boto3
 import yaml
 import jwt
 import shutil
@@ -896,7 +897,39 @@ def get_assignees(awsRegion):
         return jsonify({"error": f"CSV file for region '{awsRegion}' not found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+
+@app.route("/available-regions", methods=["GET"])
+def get_available_regions():
+    available_regions = [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2",
+        "ap-south-1",
+        "ap-northeast-3",
+        "ap-northeast-2",
+        "ap-southeast-1",
+        "ap-southeast-2",
+        "ap-northeast-1",
+        "ca-central-1",
+        "cn-north-1",
+        "cn-northwest-1",
+        "eu-central-1",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-west-3",
+        "eu-north-1",
+        "sa-east-1",
+    ]
+    return jsonify(available_regions), 200
+
+
+@app.route("/default-region", methods=["GET"])
+def get_default_region():
+    default_region = os.getenv("AWS_DEFAULT_REGION")
+    return jsonify(default_region), 200
+
     
 if __name__ == '__main__':
     
