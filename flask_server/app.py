@@ -293,10 +293,11 @@ def count_yaml():
                 name = yaml_content.get('name', 'Unknown Rule Name')
                 description = yaml_content.get('description', 'No description available')
                 filename = os.path.basename(yaml_path)
+                file_id = filename.replace('.yaml', '')
                 alert_type = os.path.basename(os.path.dirname(yaml_path))
 
                 regions_data[region]["yamlName"].append({
-                    "filename": filename,
+                    "id": file_id,
                     "name": name,
                     "alertType": alert_type,
                     "description": description
