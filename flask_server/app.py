@@ -400,7 +400,6 @@ DEFAULT_PATHS = {
 
 # default yaml 파일 복제 -> 복사 후 생성 api
 @app.route('/add_rule_yaml', methods=['POST'])
-# @jwt_required  # 인증 데코레이터 적용
 def add_rule_yaml():
     try:
         # 요청 데이터 파싱
@@ -457,7 +456,7 @@ def preview_yaml():
         file_name = f"{file_id}.yaml"
         
         # 기존 YAML 파일 경로
-        yaml_path = os.path.join(BASE_PATH, alert_type, region, file_name)
+        yaml_path = os.path.join(BASE_PATH, alert_type, file_name)
 
         if not os.path.exists(yaml_path):
             return jsonify({"error": f"YAML file not found: {yaml_path}"}), 404
@@ -474,7 +473,13 @@ def preview_yaml():
         yaml_content["jira_assignee"] = data.get("assignee", yaml_content.get("jira_assignee"))
         yaml_content["jira_priority"] = data.get("priority", yaml_content.get("jira_priority"))
 
-        # filter 수정
+        # filter 수정: region 값을 업데이트
+        if "filter" in yaml_content:
+            for item in yaml_content["filter"]:
+                if "term" in item and "aws.securityhub_findings.region.keyword" in item["term"]:
+                    item["term"]["aws.securityhub_findings.region.keyword"] = region
+
+        # filter 내 controlIds 수정
         control_ids = data.get("controlIds", [])
         if control_ids:
             yaml_content["filter"][-1]["terms"]["aws.securityhub_findings.generator.id.keyword"] = [
@@ -533,8 +538,8 @@ def final_submit_yaml():
         final_file_name = f"{file_id}.yaml"
 
         # 경로 설정
-        temp_file_path = os.path.join(BASE_PATH, alert_type, region, temp_file_name)
-        final_file_path = os.path.join(BASE_PATH, alert_type, region, final_file_name)
+        temp_file_path = os.path.join(BASE_PATH, alert_type, temp_file_name)
+        final_file_path = os.path.join(BASE_PATH, alert_type, final_file_name)
 
         # 임시 파일 확인
         if not os.path.exists(temp_file_path):
