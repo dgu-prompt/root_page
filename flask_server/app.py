@@ -703,14 +703,19 @@ def get_control_with_status():
 def get_controls_by_ids_route():
     try:
         # 요청 본문에서 controlIds 가져오기
-        request_data = request.get_json()
-        control_ids = request_data.get('controlIds', [])
+        control_ids_json = request.args.get('controlIds', None)
 
-        if not control_ids:
-            raise ValueError("controlIds 배열이 비어 있습니다.")
+        if not control_ids_json:
+            raise ValueError("controlIds 파라미터가 제공되지 않았습니다.")
+
+        control_ids = json.loads(control_ids_json)
+
+        if not isinstance(control_ids, list) or not control_ids:
+            raise ValueError("controlIds는 비어 있지 않은 배열이어야 합니다.")
 
         # AWS 서비스 호출
         controls = get_controls_by_ids_from_aws(control_ids)
+        print(controls)
 
         # 응답 데이터 생성
         return jsonify({"controls": controls}), 200

@@ -1,7 +1,7 @@
 "use client";
 
 import type { ControlWithStatus } from "control";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CircleMinus, Plus } from "lucide-react";
 import {
   Box,
@@ -21,11 +21,43 @@ import AddControlDialog from "./add-control-dialog";
 
 export default function ControlConfigSection() {
   const { ruleData, setRuleData } = useRuleEdit();
+  const [controlData, setControlData] = useState<ControlWithStatus[]>([]);
 
-  // 정보 가져오기
-  const [controlWithStatusData, setControlWithStatusData] = useState<
-    ControlWithStatus[]
-  >([]);
+  useEffect(() => {
+    async function fetchData() {
+      console.log(
+        "fetching from: ",
+        `${process.env.NEXT_PUBLIC_API_HOST}/control/details`
+      );
+
+      const queryString = new URLSearchParams({
+        controlIds: JSON.stringify(ruleData.controlIds),
+      }).toString();
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_HOST}/control/details?${queryString}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          next: { revalidate: 60 }, // 캐싱과 재검증 설정
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Server Error:", errorText);
+        throw new Error(`서버 에러: ${response.status} ${response.statusText}`);
+      }
+
+      const controlData = await response.json();
+      console.log(controlData);
+      setControlData(controlData.controls);
+    }
+
+    if (!!ruleData.controlIds && ruleData.controlIds.length > 0) fetchData();
+  }, [ruleData]);
 
   return (
     <Card.Root size={{ base: "sm", md: "md", lg: "lg" }}>
@@ -47,52 +79,61 @@ export default function ControlConfigSection() {
       </Card.Header>
       <Card.Body>
         <Box>
-          <Separator />
-          {ruleData.controlIds.map((controlId) => (
-            <Box key={controlId}>{controlId}</Box>
-          ))}
-          {controlWithStatusData.map((control, index) => (
-            <React.Fragment key={control.controlId}>
-              {index !== 0 && <Separator />}
-              <Flex align="center" justify="space-between" py="4">
-                <Flex
-                  direction="column"
-                  align="baseline"
-                  gap="1"
-                  justify="space-between"
-                >
-                  <HStack>
-                    {control.controlStatus.toLowerCase() === "enabled" ? (
-                      <Text fontWeight="medium">{control.controlId}</Text>
+          {ruleData.controlIds.map((controlId) => {
+            // controlData에서 해당 controlId에 해당하는 데이터 찾기
+            const control = controlData.find(
+              (ctrl) => ctrl.controlId === controlId
+            );
+
+            return (
+              <React.Fragment key={controlId}>
+                <Separator />
+                <Flex align="center" justify="space-between" py="4">
+                  <Flex
+                    direction="column"
+                    align="baseline"
+                    gap="1"
+                    justify="space-between"
+                  >
+                    <HStack>
+                      {control?.controlStatus?.toLowerCase() === "enabled" ? (
+                        <Text fontWeight="medium">{controlId}</Text>
+                      ) : (
+                        <Text fontWeight="medium" color="fg.muted">
+                          {controlId} (비활성화됨)
+                        </Text>
+                      )}
+                      {control && <SeverityBadge severity={control.severity} />}
+                    </HStack>
+                    {control ? (
+                      <Text fontSize="sm" color="fg.muted">
+                        {control.title}
+                      </Text>
                     ) : (
-                      <Text fontWeight="medium" color="fg.muted">
-                        {control.controlId} (비활성화됨)
+                      <Text fontSize="sm" color="fg.muted">
+                        데이터를 찾을 수 없습니다.
                       </Text>
                     )}
-                    <SeverityBadge severity={control.severity} />
-                  </HStack>
-                  <Text fontSize="sm" color="fg.muted">
-                    {control.title}
-                  </Text>
+                  </Flex>
+                  <IconButton
+                    onClick={() => {
+                      setRuleData((prev) => ({
+                        ...prev,
+                        controlIds: prev.controlIds.filter(
+                          (id) => id !== controlId
+                        ),
+                      }));
+                    }}
+                    variant="ghost"
+                    size="sm"
+                    colorPalette="red"
+                  >
+                    <CircleMinus />
+                  </IconButton>
                 </Flex>
-                <IconButton
-                  onClick={() => {
-                    setRuleData((prev) => ({
-                      ...prev,
-                      controlIds: prev.controlIds.filter(
-                        (id) => id !== control.controlId
-                      ),
-                    }));
-                  }}
-                  variant="ghost"
-                  size="sm"
-                  colorPalette="red"
-                >
-                  <CircleMinus />
-                </IconButton>
-              </Flex>
-            </React.Fragment>
-          ))}
+              </React.Fragment>
+            );
+          })}
           <Separator />
           <AddControlDialog>
             <Button
