@@ -384,6 +384,51 @@ def edit_yaml():
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
+@app.route('/delete_yaml', methods=['DELETE'])
+def delete_yaml():
+    try:
+        # 요청 데이터 파싱
+        data = request.json
+        file_id = data.get("id")
+
+        # 필수 데이터 검증
+        if not file_id:
+            return jsonify({"error": "Missing required field: 'id'"}), 400
+
+        # 파일 이름 생성
+        file_name = f"{file_id}.yaml"
+
+        # jira와 slack 디렉토리에서 파일 검색
+        directories_to_search = [os.path.join(BASE_PATH, "jira"), os.path.join(BASE_PATH, "slack")]
+        yaml_path = None
+        alert_type = None
+
+        for directory in directories_to_search:
+            yaml_path = find_yaml_file(directory, file_name)
+            if yaml_path:
+                alert_type = os.path.basename(directory)  # 상위 폴더명(jira/slack)을 alertType으로 설정
+                break
+        
+        if not yaml_path:
+            return jsonify({"error": f"YAML file '{file_name}' not found."}), 404
+
+        # YAML 파일 삭제
+        os.remove(yaml_path)
+
+        # alertType 설정 (파일이 존재했던 디렉토리명)
+        alert_type = os.path.basename(os.path.dirname(yaml_path))
+
+        # 응답 데이터 구성
+        response_data = {
+            "message": f"YAML file '{file_name}' successfully deleted.",
+            "alertType": alert_type,
+            "region": data.get("region", "Unknown Region"),
+        }
+
+        return jsonify(response_data), 200
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 def find_yaml_file(base_path, file_name):
     """
