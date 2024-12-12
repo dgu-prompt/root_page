@@ -52,7 +52,6 @@ export default function ControlConfigSection() {
       }
 
       const controlData = await response.json();
-      console.log(controlData);
       setControlData(controlData.controls);
     }
 

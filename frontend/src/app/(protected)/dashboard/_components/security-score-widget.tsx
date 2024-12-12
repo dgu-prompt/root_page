@@ -1,8 +1,8 @@
 "use client";
 
 import type { SecurityScore } from "dashboard";
-import { useEffect } from "react";
-import { useRegion } from "../../_contexts/region-context";
+import { useEffect, useState } from "react";
+// import { useRegion } from "../../_contexts/region-context";
 import WidgetLg from "./widget-lg";
 import {
   StatHelpText,
@@ -12,10 +12,47 @@ import {
 } from "@/components/ui/stat";
 
 export default function SecurityScoreWidget() {
-  const { region } = useRegion();
-  const data: SecurityScore = { score: 75, passed: 198, total: 263 };
+  // const { region } = useRegion();
+  const [data, setData] = useState<SecurityScore>({
+    score: 0,
+    passed: 0,
+    total: 0,
+  });
 
-  useEffect(() => {});
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_HOST}/dashboard/findings`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          next: { revalidate: 60 }, // 캐싱과 재검증 설정
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Server Error:", errorText);
+        throw new Error(`서버 에러: ${response.status} ${response.statusText}`);
+      }
+
+      const controlData = await response.json();
+      console.log(controlData);
+      setData({
+        total: controlData.control_status_counts.enabled_count,
+        passed: controlData.control_status_counts.passed_count,
+        score: parseInt(
+          (
+            (100 * controlData.control_status_counts.passed_count) /
+            controlData.control_status_counts.enabled_count
+          ).toFixed(0)
+        ),
+      });
+    }
+    fetchData();
+  }, []);
 
   return (
     <WidgetLg
