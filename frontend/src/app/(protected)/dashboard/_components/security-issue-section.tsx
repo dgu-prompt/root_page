@@ -19,6 +19,10 @@ import { StatLabel, StatRoot, StatValueText } from "@/components/ui/stat";
 
 import SectionHeader from "./section-header";
 import WidgetLg from "./widget-lg";
+import UnresolvedTicketsByAssigneeWidget from "./unresolved-tickets-by-assignee-widget";
+import PriorityBarChart from "./unresolved-tickets-by-priority-chart";
+import UnresolvedTicketsByPriorityWidget from "./unresolved-tickets-by-priority-widget";
+import TicketStatusWidget from "./ticket-status-widget";
 
 export default function SecurityIssueSection() {
   return (
@@ -130,81 +134,18 @@ export default function SecurityIssueSection() {
         </DashboardCard> */}
 
         <GridItem colSpan={{ xl: 2 }}>
-          <WidgetLg
-            title="상태별 티켓"
-            description="티켓 상태에 따른 개수를 나타냅니다."
-          >
-            {/* <TaskPieChart /> */}
-          </WidgetLg>
+          <TicketStatusWidget />
         </GridItem>
 
         <GridItem colSpan={{ xl: 2 }}>
-          <WidgetLg
-            title="우선순위별 미해결 티켓"
-            description="우선순위에 따른 미해결 티켓 수를 나타냅니다."
-          >
-            {/* <PriorityBarChart /> */}
-          </WidgetLg>
+          <UnresolvedTicketsByPriorityWidget />
         </GridItem>
 
         <GridItem colSpan={{ xl: 2 }}>
-          <WidgetLg
-            title="담당자별 미해결 티켓"
-            description="미해결 티켓을 담당자별로 분류하여 표시합니다."
-          >
-            <DataListRoot
-              orientation="horizontal"
-              size={{ base: "md", md: "lg" }}
-            >
-              <DataListItem
-                grow
-                key="Critical"
-                label={
-                  <HStack gap="4">
-                    <Avatar name="김경필" size="sm" />
-                    <Text>김경필</Text>
-                  </HStack>
-                }
-                value={8}
-              />
-              <DataListItem
-                grow
-                key="High"
-                label={
-                  <HStack gap="4">
-                    <Avatar name="김규리" size="sm" />
-                    <Text>김규리</Text>
-                  </HStack>
-                }
-                value={7}
-              />
-              <DataListItem
-                grow
-                key="Medium"
-                label={
-                  <HStack gap="4">
-                    <Avatar name="이선경" size="sm" />
-                    <Text>이선경</Text>
-                  </HStack>
-                }
-                value={5}
-              />
-              <DataListItem
-                grow
-                key="Low"
-                label={
-                  <HStack gap="4">
-                    <Avatar name="정대용" size="sm" />
-                    <Text>정대용</Text>
-                  </HStack>
-                }
-                value={2}
-              />
-            </DataListRoot>
-          </WidgetLg>
+          <UnresolvedTicketsByAssigneeWidget />
         </GridItem>
 
-        <GridItem colSpan={{ xl: 2 }}>
+        {/* <GridItem colSpan={{ xl: 2 }}>
           <WidgetLg
             title="우선순위 작업"
             description="즉각 처리가 필요한 매우 중요/높음 티켓 또는 마감일이 임박한 티켓을 표시합니다."
@@ -236,7 +177,7 @@ export default function SecurityIssueSection() {
               </Stack>
             </Stack>
           </WidgetLg>
-        </GridItem>
+        </GridItem> */}
       </SimpleGrid>
     </>
   );

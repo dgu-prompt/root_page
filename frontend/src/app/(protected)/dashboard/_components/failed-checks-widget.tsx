@@ -1,17 +1,15 @@
 "use client";
 
-import type { ControlStatus } from "dashboard";
+import type { FailedChecks } from "dashboard";
 import { useEffect, useState } from "react";
+// import { useRegion } from "../../_contexts/region-context";
 import WidgetLg from "./widget-lg";
-// import StackedBarChart from "./stacked-bar-chart2";
-import ControlStatusChart from "./control-status-chart";
-import { FaOpencart } from "react-icons/fa";
+import { StatRoot, StatValueText, StatValueUnit } from "@/components/ui/stat";
 
-export default function ControlStatusWidget() {
-  const [data, setData] = useState<ControlStatus>({
-    passed: 0,
+export default function FailedChecksWidget() {
+  const [data, setData] = useState<FailedChecks>({
     failed: 0,
-    disabled: 0,
+    total: 0,
   });
 
   useEffect(() => {
@@ -53,9 +51,8 @@ export default function ControlStatusWidget() {
       });
 
       setData({
-        passed: passedCount,
-        failed: enabledCount - passedCount,
-        disabled: disabledCount,
+        failed: enabledCount + disabledCount - passedCount,
+        total: enabledCount + disabledCount,
       });
     }
 
@@ -64,14 +61,14 @@ export default function ControlStatusWidget() {
 
   return (
     <WidgetLg
-      title="제어 상태"
-      description="Security Hub는 지난 24시간 동안의 제어 조사 결과를 바탕으로 제어 상태를 결정합니다. 각 상태는 규정 준수 여부를 통해 제어의 성능을 요약합니다."
+      title="실패한 검사"
+      description="실패한 검사는 보안 검사의 결과로, Security Hub가 규정 준수 실패로 식별한 항목의 개수를 나타냅니다. 이는 AWS 환경에서 잠재적 취약성을 파악하는 데 사용됩니다."
     >
-      {/* <Skeleton> */}
-      {/* <StackedBarChart width={500} height={100} />
-       */}
-      <ControlStatusChart data={data} />
-      {/* </Skeleton> */}
+      <StatRoot size={{ base: "md", md: "lg" }}>
+        <StatValueText alignItems="baseline">
+          {data.failed} <StatValueUnit>/ {data.total}</StatValueUnit>
+        </StatValueText>
+      </StatRoot>
     </WidgetLg>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import type { ControlStatus } from "dashboard";
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
@@ -30,21 +31,36 @@ ChartJS.register(
   Legend
 );
 
-const complianceStatus = [
-  { label: "통과", value: 198, color: "green.solid", icon: CircleCheck },
-  { label: "실패", value: 65, color: "red.solid", icon: CircleX },
-  {
-    label: "데이터 없음",
-    value: 30,
-    color: "blue.solid",
-    icon: CircleEllipsis,
-  },
-  { label: "알 수 없음", value: 0, color: "yellow.solid", icon: CircleDashed },
-  { label: "비활성화됨", value: 149, color: "gray.solid", icon: CircleMinus },
-];
-
-export default function ControlStatusChart() {
+export default function ControlStatusChart({ data }: ControlStatus) {
   const [colors, setColors] = useState({});
+
+  const complianceStatus = [
+    {
+      label: "통과",
+      value: data.passed,
+      color: "green.solid",
+      icon: CircleCheck,
+    },
+    { label: "실패", value: data.failed, color: "red.solid", icon: CircleX },
+    // {
+    //   label: "데이터 없음",
+    //   value: 30,
+    //   color: "blue.solid",
+    //   icon: CircleEllipsis,
+    // },
+    // {
+    //   label: "알 수 없음",
+    //   value: 0,
+    //   color: "yellow.solid",
+    //   icon: CircleDashed,
+    // },
+    {
+      label: "비활성화됨",
+      value: data.disabled,
+      color: "gray.solid",
+      icon: CircleMinus,
+    },
+  ];
 
   useEffect(() => {
     // 브라우저 환경에서만 CSS 변수를 읽어옵니다.
@@ -72,32 +88,32 @@ export default function ControlStatusChart() {
   if (!colors.passed) return null;
 
   // 차트 데이터
-  const data = {
+  const chartData = {
     labels: [""], // 라벨을 숨기기 위해 공백 사용
     datasets: [
       {
         label: "Passed",
-        data: [198],
+        data: [data.passed],
         backgroundColor: colors.passed,
       },
       {
         label: "Failed",
-        data: [65],
+        data: [data.failed],
         backgroundColor: colors.failed,
       },
-      {
-        label: "No Data",
-        data: [30],
-        backgroundColor: colors.noData,
-      },
-      {
-        label: "Unknown",
-        data: [0],
-        backgroundColor: colors.unknown,
-      },
+      // {
+      //   label: "No Data",
+      //   data: [30],
+      //   backgroundColor: colors.noData,
+      // },
+      // {
+      //   label: "Unknown",
+      //   data: [0],
+      //   backgroundColor: colors.unknown,
+      // },
       {
         label: "Disabled",
-        data: [149],
+        data: [data.disabled],
         backgroundColor: colors.disabled,
       },
     ],
@@ -140,7 +156,7 @@ export default function ControlStatusChart() {
     <Box>
       <VStack gap="4">
         <Flex width="full" height="48px">
-          <Bar data={data} options={options} />
+          <Bar data={chartData} options={options} />
         </Flex>
         <HStack gap="4">
           {complianceStatus.map((status) => (

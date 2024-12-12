@@ -29,6 +29,7 @@ export default function SecurityScoreWidget() {
             "Content-Type": "application/json",
           },
           next: { revalidate: 60 }, // 캐싱과 재검증 설정
+          cache: "force-cache",
         }
       );
 
