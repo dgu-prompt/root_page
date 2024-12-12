@@ -3,6 +3,7 @@ import { Card, Input, Textarea } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
 import { useRuleEdit } from "../_contexts/rule-edit-context";
 import JiraAssigneeSelect from "./jira-assignee-select";
+import JiraPriorityRadioGroup from "./jira-priority-radiogroup";
 
 export default function JiraConfigSection() {
   const { ruleData, setRuleData } = useRuleEdit();
@@ -56,13 +57,7 @@ export default function JiraConfigSection() {
           />
         </Field>
         <JiraAssigneeSelect />
-        <Field label="우선 순위">
-          <Input
-            value={(ruleData as JiraRule).priority}
-            onChange={handleInputChange("priority")}
-            placeholder="우선 순위를 선택하세요"
-          />
-        </Field>
+        <JiraPriorityRadioGroup />
       </Card.Body>
     </Card.Root>
   );
