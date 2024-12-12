@@ -10,7 +10,6 @@ import {
   SelectLabel,
   SelectRoot,
   SelectTrigger,
-  SelectValueText,
 } from "@/components/ui/select";
 import { useRuleEdit } from "../_contexts/rule-edit-context";
 
@@ -42,7 +41,7 @@ export default function JiraAssigneeSelect() {
     return members.find(
       (member) => member.assigneeEmail === (ruleData as JiraRule).assignee
     );
-  }, [members, (ruleData as JiraRule).assignee]);
+  }, [members, ruleData]);
 
   const handleSelect = (value: string[]) => {
     const [assignee] = value;
