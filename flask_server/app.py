@@ -11,7 +11,7 @@ from flask import redirect, Flask, send_from_directory, request, jsonify, sessio
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
-from aws_service import get_controls_by_ids_from_aws, get_controls_with_compliance_results, get_controls_with_compliance_results2, get_filtered_controls_list, set_securityhub_control_activation, get_control_status_counts
+from aws_service import get_controls_by_ids_from_aws, get_controls_with_compliance_results2, get_filtered_controls_list, set_securityhub_control_activation, get_control_status_counts
 from model import initialize_db, User, db
 from elasticsearch_dashboard import get_security_issues_filtered, analyze_security_issues
 from dashboard_service import get_all_jira_users_logic, get_jira_user_logic, get_ticket_details, get_tickets_stats
@@ -500,7 +500,7 @@ def set_control_item(control_id):
 # 제어항목 페이지의 제어항목 리스트 제공 라우터
 # metadata + status + compliance -> 제어 항목 페이지
 @app.route('/control', methods=['GET'])
-def get_control_full2():
+def get_control_full():
     try:
         # 쿼리 파라미터 가져오기
         page = int(request.args.get('page', 1))

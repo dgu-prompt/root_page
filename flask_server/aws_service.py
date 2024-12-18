@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import time
 load_dotenv()  # .env 파일 로드
 
-# AWS 세션 생성 함수
+# AWS 세션 생성
 def create_session():
     return boto3.Session(
         aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
@@ -24,22 +24,21 @@ def get_config_client():
     session = create_session()
     return session.client('config')
 
-# 활성화된 NIST 보안 표준 ARN(standards_subscription_arn)을 동적으로 가져오는 함수
-def get_standards_subscription_arn(standards_name='nist-800-53'):
+# 활성화된 NIST 보안 표준 ARN(standards_subscription_arn) 동적으로 가져오기
+def get_standards_subscription_arn(standards_name = 'nist-800-53'):
     client = get_securityhub_client()
     response = client.get_enabled_standards()
-    #print("Enabled standards:", response.get('StandardsSubscriptions', []))  # ARN 목록 출력
    
     for standard in response.get('StandardsSubscriptions', []):
         if standards_name in standard.get('StandardsArn', ''):
             return standard.get('StandardsSubscriptionArn')
     return None
 
-# 개별 제어 항목의 ARN을 동적으로 가져오는 함수
+# 개별 제어 항목의 ARN 동적으로 가져오기
 def get_control_arn(control_id, standards_subscription_arn):
     client = get_securityhub_client()
     paginator = client.get_paginator('describe_standards_controls')
-    page_iterator = paginator.paginate(StandardsSubscriptionArn=standards_subscription_arn)
+    page_iterator = paginator.paginate(StandardsSubscriptionArn = standards_subscription_arn)
 
     for page in page_iterator:
         for control in page['Controls']:
@@ -47,7 +46,7 @@ def get_control_arn(control_id, standards_subscription_arn):
                 return control['StandardsControlArn']
     return None
 
-# NIST 보안 표준 개별 제어 항목 활성화 설정 함수
+# NIST 보안 표준 개별 제어 항목 활성화 설정
 def set_securityhub_control_activation(control_id, status):
     standards_subscription_arn = get_standards_subscription_arn()
     if not standards_subscription_arn:
@@ -61,7 +60,6 @@ def set_securityhub_control_activation(control_id, status):
     client = get_securityhub_client()
     
     try:
-        # `DisabledReason`은 `DISABLED`일 때만 추가
         update_params = {
             'StandardsControlArn': control_arn,
             'ControlStatus': status
@@ -79,7 +77,7 @@ def set_securityhub_control_activation(control_id, status):
     except client.exceptions.AccessDeniedException as e:
         raise PermissionError(f"권한이 거부되었습니다: {str(e)}")
 
-# NIST 보안 표준 리스트 가져오는 함수
+# NIST 보안 표준 리스트 가져오기
 def get_controls_list():
     standards_subscription_arn = get_standards_subscription_arn()
     if not standards_subscription_arn:
@@ -87,11 +85,11 @@ def get_controls_list():
     
     client = get_securityhub_client()
     response = client.describe_standards_controls(
-        StandardsSubscriptionArn=standards_subscription_arn
+        StandardsSubscriptionArn = standards_subscription_arn
     )
     return response.get('Controls', [])
 
-# NIST 보안 표준 리스트 가져와 필터링 거쳐 제공하는 함수
+# NIST 보안 표준 리스트 가져와 필터링 거쳐 제공
 # metadata + status
 def get_filtered_controls_list(page, page_size, status_filter, severity_filter, sort_field, sort_order, search_keyword):
     standards_subscription_arn = get_standards_subscription_arn()
@@ -151,93 +149,8 @@ def get_filtered_controls_list(page, page_size, status_filter, severity_filter, 
     ]
     return filtered_controls, total_count
 
-# NIST 보안 표준 리스트 가져와 필터링 거쳐 제공하는 함수
-# metadata + status + compliance 
-def get_controls_with_compliance_results(page, page_size, status_filter, severity_filter, sort_field, sort_order, search_keyword):
-    standards_subscription_arn = get_standards_subscription_arn()
-    if not standards_subscription_arn:
-        raise ValueError("NIST 표준이 활성화되어 있지 않거나 ARN을 찾을 수 없습니다.")
-
-    client = get_securityhub_client()
-    controls = []  # 모든 제어 항목 저장
-    next_token = None  # 초기값 None
-    
-    # API 호출 반복 처리 (페이징)
-    while True:
-        if next_token:  # 다음 페이지가 있는 경우
-            response = client.describe_standards_controls(
-                StandardsSubscriptionArn=standards_subscription_arn,
-                NextToken=next_token  # `NextToken` 포함
-            )
-        else:  # 첫 번째 호출인 경우
-            response = client.describe_standards_controls(
-                StandardsSubscriptionArn=standards_subscription_arn
-            )
-        
-        controls.extend(response.get('Controls', []))
-        next_token = response.get('NextToken')  # 다음 페이지 토큰 갱신
-        if not next_token:  # 더 이상 페이지가 없으면 종료
-            break
-
-    # Compliance 상태 확인 및 필터링
-    for control in controls:
-        control_id = control.get('ControlId')
-        findings_response = client.get_findings(
-            Filters={
-                "ComplianceSecurityControlId": [{"Value": control_id, "Comparison": "EQUALS"}],
-                "RecordState": [{"Value": "ACTIVE", "Comparison": "EQUALS"}],
-            }
-        )
-        findings = findings_response.get('Findings', [])
-        
-        # total, failed check 개수 세기
-        total_checks = len(findings)
-        failed_checks = sum(1 for finding in findings if finding.get('Compliance', {}).get('Status') == 'FAILED')
-
-        control['failedChecks'] = failed_checks
-        control['totalChecks'] = total_checks
-        control['ComplianceStatus'] = 'FAILED' if failed_checks > 0 else 'PASSED'
-
-        # 디버깅
-        #print(f"Debug - Control Full Object: {control}")
-        #print(f"Debug - Control ID: {control_id}, Total Checks: {total_checks}, Failed Checks: {failed_checks}")
-
-    # 필터 적용
-    if status_filter:
-        controls = [c for c in controls if c.get('ControlStatus') == status_filter]
-    if severity_filter:
-        controls = [c for c in controls if c.get('SeverityRating') == severity_filter]
-    if search_keyword:
-        controls = [c for c in controls if search_keyword.lower() in c.get('ControlId', '').lower()]
-       
-    # 정렬 적용
-    reverse_order = (sort_order == 'desc')
-    controls = sorted(controls, key=lambda x: x.get(sort_field, ''), reverse=reverse_order)
-
-    # 페이지네이션 적용
-    total_count = len(controls)
-    start_index = (page - 1) * page_size
-    end_index = start_index + page_size
-    paginated_controls = controls[start_index:end_index]
-
-    # 반환할 데이터 필터링
-    filtered_controls = [
-        {
-            "controlId": control.get("ControlId"),
-            "title": control.get("Title"),
-            "description": control.get("Description"),
-            "remediationUrl": control.get("RemediationUrl"),
-            "severity": control.get("SeverityRating"),
-            "controlStatus": control.get("ControlStatus"),
-            "complianceStatus": control.get("ComplianceStatus"),
-            "failedChecks": control.get("failedChecks", 0),  
-            "totalChecks": control.get("totalChecks", 0), 
-        }
-        for control in paginated_controls
-    ]
-    return filtered_controls, total_count
-    
-
+# NIST 보안 표준 리스트 가져와 필터링 거쳐 제공
+# metadata + status + compliance
 def get_controls_with_compliance_results2(
     page, page_size, status_filter, severity_filter, sort_field, sort_order, search_keyword
 ):
@@ -321,7 +234,7 @@ def get_controls_with_compliance_results2(
 
     return filtered_controls, total_count
     
-# 특정 controlId 리스트에 대한 데이터 반환하는 함수
+# 특정 controlId 리스트에 대한 데이터 반환
 def get_controls_by_ids_from_aws(control_ids):
     standards_subscription_arn = get_standards_subscription_arn()
     if not standards_subscription_arn:
@@ -547,6 +460,3 @@ def get_controls_onecontrol():
             "failedChecks": failed_checks,
             "complianceStatus": "FAILED" if failed_checks > 0 else "PASSED",
         }
-        
-
-# get_controls_onecontrol2()
