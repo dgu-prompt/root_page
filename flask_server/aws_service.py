@@ -3,6 +3,7 @@ import os
 import json
 from flask import Flask, jsonify
 from dotenv import load_dotenv
+import time
 load_dotenv()  # .env 파일 로드
 
 # AWS 세션 생성 함수
@@ -456,3 +457,96 @@ def get_control_status_counts():
         return {"error": f"An error occurred: {str(e)}"}
 
 #print(get_control_status_counts())
+
+def get_controls_onecontrol():
+    # standards_subscription_arn = get_standards_subscription_arn()
+    client = get_securityhub_client()
+    next_token = None
+    findings = []
+
+    # Compliance 상태 확인 및 필터링
+    start_time = time.time()  # `for` 루프 시작 시간 기록
+    print("Fetching findings for one control started...")
+
+    while True:
+        if next_token:  # 다음 페이지가 있는 경우
+            findings_response = client.get_findings(
+                Filters={
+                    "RecordState": [{"Value": "ACTIVE", "Comparison": "EQUALS"}],
+                },
+                NextToken=next_token,
+            )
+        else:  # 첫 번째 호출인 경우
+            findings_response = client.get_findings(
+                Filters={
+                    "RecordState": [{"Value": "ACTIVE", "Comparison": "EQUALS"}],
+                }
+            )
+
+        findings.extend(findings_response.get("Findings", []))
+        next_token = findings_response.get("NextToken")  # 다음 페이지 토큰 갱신
+        if not next_token:  # 더 이상 페이지가 없으면 종료
+            break
+    
+    print("Findings length",findings.__len__())
+
+
+    end_time = time.time()  # `for` 루프 종료 시간 기록
+    print(
+        f"Fetching findings completed. Time taken: {end_time - start_time:.2f} seconds"
+    )
+    
+    
+    def get_controls_onecontrol2():
+        client = get_securityhub_client()
+        next_token = None
+        findings = []  # 모든 Finding 저장
+
+        # Compliance 상태 확인 및 필터링
+        start_time = time.time()  # `for` 루프 시작 시간 기록
+        print("Fetching findings for one control started...")
+
+        while True:
+            # Security Hub API 호출
+            if next_token:
+                findings_response = client.get_findings(
+                    Filters={
+                        "RecordState": [{"Value": "ACTIVE", "Comparison": "EQUALS"}],
+                    },
+                    NextToken=next_token,
+                )
+            else:
+                findings_response = client.get_findings(
+                    Filters={
+                        "RecordState": [{"Value": "ACTIVE", "Comparison": "EQUALS"}],
+                    }
+                )
+
+            findings.extend(findings_response.get("Findings", []))  # Findings 추가
+            next_token = findings_response.get("NextToken")  # 다음 페이지 토큰 갱신
+            if not next_token:  # 더 이상 페이지가 없으면 종료
+                break
+
+        # 총 체크 개수와 실패한 체크 개수 계산
+        total_checks = len(findings)
+        failed_checks = sum(
+            1 for finding in findings
+            if finding.get('Compliance', {}).get('Status') == 'FAILED'
+        )
+
+        # 결과 출력
+        print("Findings length:", total_checks)
+        print("Failed checks:", failed_checks)
+
+        end_time = time.time()  # `for` 루프 종료 시간 기록
+        print(f"Fetching findings completed. Time taken: {end_time - start_time:.2f} seconds")
+
+        # 반환 데이터 구조 정의
+        return {
+            "totalChecks": total_checks,
+            "failedChecks": failed_checks,
+            "complianceStatus": "FAILED" if failed_checks > 0 else "PASSED",
+        }
+        
+
+# get_controls_onecontrol2()
