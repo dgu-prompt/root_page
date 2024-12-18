@@ -499,7 +499,7 @@ def set_control_item(control_id):
 
 # 제어항목 페이지의 제어항목 리스트 제공 라우터
 # metadata + status + compliance -> 제어 항목 페이지
-@app.route('/controlss', methods=['GET'])
+@app.route('/control', methods=['GET'])
 def get_control_full2():
     try:
         # 쿼리 파라미터 가져오기
@@ -635,16 +635,7 @@ def dashboard_ticket_details(ticket_id):
         return jsonify(ticket_details), 500
     return jsonify(ticket_details), 200
 
-# # SecurityHub 규정 준수 요약 가져오기 API
-# @app.route('/compliance_summary/<control_id>', methods=['GET'])
-# def get_compliance_summary(control_id):
-#     try:
-#         summary = get_security_hub_compliance_summary(control_id)
-#         return jsonify(summary), 200
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
-
-# sec hub, ES 통계 불러오는 API. 향후 JIRA 대시보드 API와 합쳐야 함
+# security hub, ES 통계 불러오기 라우터
 @app.route('/dashboard/findings', methods=['GET'])
 # @jwt_required  # 인증 데코레이터 적용
 def get_dashboard_findings():
@@ -670,19 +661,6 @@ def get_dashboard_findings():
     except Exception as e:
         # 오류 발생 시 에러 메시지 반환
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-# # NIST 보안 표준 개별 제어 항목 세부 정보 불러오는 API
-# @app.route('/control/<control_id>', methods=['GET'])
-# @login_required
-# def get_control_item(control_id):
-#     try:
-#         control_details = get_control_details(control_id)
-#         return jsonify({"control_details": control_details}), 200
-#     except ValueError as e:
-#         return jsonify({"error": str(e)}), 404
-#     except Exception as e:
-#         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-
-# 일단은 독립적인 API로 구성하여 해당 controlId의 담당자 출력하는 함수 구성. 향후 제어항목 불러오는 API와 결합해야함
 
 # ASSIGNEE_FILE_PATH를 app.py의 위치에 기반하여 설정
 ASSIGNEE_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
