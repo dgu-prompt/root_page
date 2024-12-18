@@ -40,7 +40,7 @@ pip install -r requirements.txt
 패키지 설치가 완료되면 Flask 서버를 실행할 수 있습니다.
 
 ```bash
-flask run
+gunicorn -w 4 -b 0.0.0.0:5001 app:app
 ```
 
 ## react_client 실행 방법
