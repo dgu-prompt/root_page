@@ -102,7 +102,6 @@ def check_rule_files(alert_type, aws_region, assignee_name):
     rule_file_exists = any(assignee_name in yaml_file for yaml_file in yaml_files)
     return rule_file_exists
 
-
 # 정적 폴더 초기화 함수
 def clear_static_folder():
     print("Clearing static folder...")
@@ -479,8 +478,7 @@ def final_submit_yaml():
     except Exception as e:
         return jsonify({"status": "FAILED", "error": str(e)}), 500
 
-
-# NIST 보안 표준 개별 제어 항목 활성화 상태 설정하기
+# NIST 보안 표준 개별 제어 항목 활성화 상태 설정 라우터
 @app.route('/control/<control_id>', methods=['POST'])
 def set_control_item(control_id):
     data = request.json
@@ -498,51 +496,9 @@ def set_control_item(control_id):
         return jsonify({"error": str(e)}), 403
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-        
-# # NIST 보안 표준 리스트 가져오기
-# @app.route('/control', methods=['GET'])
-# @app.route('/notificationRule', methods=['GET'])
-# def get_control_item_list():
-#     try:
-#         controls = get_nist_controls_list()
-#         return jsonify(controls)
-#     except ValueError as e:
-#         return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
 
+# 제어항목 페이지의 제어항목 리스트 제공 라우터
 # metadata + status + compliance -> 제어 항목 페이지
-@app.route('/control', methods=['GET'])
-def get_control_full():
-    try:
-        # 쿼리 파라미터 가져오기
-        page = int(request.args.get('page', 1))
-        page_size = int(request.args.get('pageSize', 20))
-        status_filter = request.args.get('filter[status]')
-        severity_filter = request.args.get('filter[severity]')
-        sort_field = request.args.get('sort[field]', 'ControlId')
-        sort_order = request.args.get('sort[order]', 'asc')
-        search_keyword = request.args.get('searchKeyword', '')
-
-        # AWS 서비스 호출
-        controls, total_count = get_controls_with_compliance_results(
-            page=page,
-            page_size=page_size,
-            status_filter=status_filter,
-            severity_filter=severity_filter,
-            sort_field=sort_field,
-            sort_order=sort_order,
-            search_keyword=search_keyword
-        )
-
-        # 응답 데이터 생성
-        response = {
-            "controls": controls,
-            "totalCount": total_count
-        }
-        return jsonify(response)
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
-
-
 @app.route('/controlss', methods=['GET'])
 def get_control_full2():
     try:
@@ -583,7 +539,7 @@ def get_control_full2():
     except ValueError as e:
         return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
     
-
+# 알림규칙 페이지의 제어항목 리스트 제공 라우터
 # metadata + status -> 규칙 편집 페이지
 @app.route('/notificationRule', methods=['GET'])
 def get_control_with_status():
@@ -617,6 +573,7 @@ def get_control_with_status():
     except ValueError as e:
         return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
 
+# 선택된 제어항목 리스트의 세부 정보 제공 라우터
 @app.route('/control/details', methods=['GET'])
 def get_controls_by_ids_route():
     try:
@@ -642,13 +599,9 @@ def get_controls_by_ids_route():
     except Exception as e:
         return jsonify({"error": "서버 오류가 발생했습니다.", "details": str(e)}), 500
 
+# 이메일로 특정 Jira 사용자 정보 반환 라우터
 @app.route('/jira/user', methods=['GET'])
 def get_jira_user():
-    """
-    특정 이메일로 Jira 사용자 정보 반환
-    Request: /jira/user?email=<email>
-    Response: {email, name, avatar}
-    """
     email = request.args.get('email')
     if not email:
         return jsonify({"error": "Email parameter is required"}), 400
@@ -659,34 +612,27 @@ def get_jira_user():
     except ValueError as e:
         return jsonify({"error": str(e)}), 404
 
-
+# 모든 Jira 사용자 정보 반환 라우터
 @app.route('/jira/users', methods=['GET'])
 def get_all_jira_users():
-    """
-    모든 Jira 사용자 정보 반환
-    Request: /jira/users
-    Response: [{email, name, avatar}, ...]
-    """
     try:
         return get_all_jira_users_logic()
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-# Dashboard에서 Jira 티켓 현황 통계 조회
+# Dashboard 페이지의 Jira 티켓 현황 통계 조회 라우터
 @app.route('/dashboard', methods=['GET'])
 def dashboard_tickets_status():
     tickets_stats = get_tickets_stats()
     return jsonify(tickets_stats)
 
-# Dashboard에서 특정 Jira 티켓 조회
+# Dashboard 파이지의 특정 Jira 티켓 조회 라우터
 @app.route('/dashboard/<ticket_id>', methods=['GET'])
 def dashboard_ticket_details(ticket_id):
     ticket_details = get_ticket_details(ticket_id)
     
     if "error" in ticket_details:
         return jsonify(ticket_details), 500
-    
     return jsonify(ticket_details), 200
 
 # # SecurityHub 규정 준수 요약 가져오기 API
