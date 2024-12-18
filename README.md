@@ -41,6 +41,7 @@ pip install -r requirements.txt
 
 ```bash
 gunicorn -w 4 -b 0.0.0.0:5001 app:app
+#백그라운드에서 실행 시
 ```
 
 ## react_client 실행 방법
