@@ -10,7 +10,7 @@ from flask import redirect, Flask, send_from_directory, request, jsonify, sessio
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
-from aws_service import get_controls_by_ids_from_aws, get_controls_with_compliance_results2, get_filtered_controls_list, set_securityhub_control_activation, get_control_status_counts
+from aws_service import get_control_status_counts2,get_controls_by_ids_from_aws, get_controls_with_compliance_results2, get_filtered_controls_list, set_securityhub_control_activation
 from model import initialize_db, User, db
 from user_service import register_user, login_user_func, logout_user_func, jwt_required
 import uuid
@@ -582,7 +582,7 @@ def dashboard_tickets_status():
     tickets_stats = get_tickets_stats()
     return jsonify(tickets_stats)
 
-# Dashboard 파이지의 특정 Jira 티켓 조회 라우터
+# Dashboard 페이지의 특정 Jira 티켓 조회 라우터
 @app.route('/dashboard/<ticket_id>', methods=['GET'])
 def dashboard_ticket_details(ticket_id):
     ticket_details = get_ticket_details(ticket_id)
@@ -597,7 +597,7 @@ def dashboard_ticket_details(ticket_id):
 def get_dashboard_findings():
     try:
         # 1. SecurityHub 규정 준수 요약 데이터 가져오기
-        control_status_counts = json.loads(get_control_status_counts())
+        control_status_counts = json.loads(get_control_status_counts2())
         
         # 2. 필터링된 보안 이슈 데이터 가져오기
         filtered_security_issues = json.loads(get_security_issues_filtered())
@@ -641,7 +641,6 @@ def get_assignees(awsRegion):
                     "assigneeId": row['assigneeId'] if row['assigneeId'] else None,
                     "assigneeName": row['assigneeName'] if row['assigneeName'] else None
         })
-
 
         if not assignees:
             return jsonify({"message": f"No assignees found in '{awsRegion}' CSV file"}), 404

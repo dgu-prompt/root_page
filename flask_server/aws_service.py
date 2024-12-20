@@ -369,7 +369,6 @@ def get_control_status_counts():
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
 
-#print(get_control_status_counts())
 
 def get_controls_onecontrol():
     # standards_subscription_arn = get_standards_subscription_arn()
@@ -408,9 +407,9 @@ def get_controls_onecontrol():
     print(
         f"Fetching findings completed. Time taken: {end_time - start_time:.2f} seconds"
     )
+       
     
-    
-    def get_controls_onecontrol2():
+def get_controls_onecontrol2():
         client = get_securityhub_client()
         next_token = None
         findings = []  # 모든 Finding 저장
@@ -460,3 +459,57 @@ def get_controls_onecontrol():
             "failedChecks": failed_checks,
             "complianceStatus": "FAILED" if failed_checks > 0 else "PASSED",
         }
+
+def get_control_status_counts2():
+    standards_subscription_arn = get_standards_subscription_arn()
+    if not standards_subscription_arn:
+        raise ValueError("NIST 표준이 활성화되어 있지 않거나 ARN을 찾을 수 없습니다.")
+
+    client = get_securityhub_client()
+    controls = []
+    next_token = None
+
+    # 초기 메타데이터 수집 (페이징 처리)
+    while True:
+        if next_token:
+            response = client.describe_standards_controls(
+                StandardsSubscriptionArn=standards_subscription_arn,
+                NextToken=next_token
+            )
+        else:
+            response = client.describe_standards_controls(
+                StandardsSubscriptionArn=standards_subscription_arn
+            )
+        controls.extend(response.get("Controls", []))
+        next_token = response.get("NextToken")
+        if not next_token:
+            break
+
+    # 각 제어 항목의 ComplianceStatus 확인
+    for control in controls:
+        control_id = control.get('ControlId')
+        findings = client.get_findings(
+            Filters={
+                'ComplianceSecurityControlId': [{'Value': control_id, 'Comparison': 'EQUALS'}],
+                'ComplianceStatus': [{'Value': 'FAILED', 'Comparison': 'EQUALS'}]  # FAILED 상태만 필터링
+            }
+        ).get('Findings', [])
+
+        # Findings가 없으면 PASSED, 있으면 FAILED
+        control['ComplianceStatus'] = 'PASSED' if not findings else 'FAILED'
+
+    # 상태별 개수 계산
+    disabled_count = sum(1 for control in controls if control.get("ControlStatus") == "DISABLED")
+    enabled_count = sum(1 for control in controls if control.get("ControlStatus") == "ENABLED")
+    passed_count = sum(1 for control in controls if control.get("ComplianceStatus") == "PASSED")
+
+    # 반환 데이터 구성
+    data = {
+        "control_status_counts": {
+            "disabled_count": disabled_count,
+            "enabled_count": enabled_count,
+            "passed_count": passed_count
+        }
+    }
+
+    return json.dumps(data, indent=4)
