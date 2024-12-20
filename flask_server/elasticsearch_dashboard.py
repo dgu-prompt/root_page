@@ -27,6 +27,7 @@ es = Elasticsearch(
     request_timeout=30
 )
 
+
 def get_control_item_list():
     try:
         controls = get_controls_list()
@@ -42,31 +43,10 @@ def get_all_security_issues(index=".ds-logs-aws.securityhub_findings-default-*")
         "_source": ["aws.securityhub_findings"],  # 가져올 필드 지정
         "query": {
             "match_all": {}  # 모든 문서 가져오기
+#      "term": {                 "aws.securityhub_findings.generator.id": "security-control/IAM.2"  # EC2.19에 해당하는 문서만 필터링             }
+
         }
     }
-    # Elasticsearch에서 데이터 검색
-    response = es.search(index=index, body=query)
-    
-    # Elasticsearch의 히트 데이터를 JSON 형식으로 반환
-    hits = response['hits']['hits']
-    
-    # JSON 형식으로 보기 좋게 들여쓰기
-    json_data = json.dumps(hits, indent=4)
-    
-    return json_data  # JSON 형식으로 반환
-
-# test : 특정 controlid에 대한 보안 이슈만 가져오는 함수
-def get_all_security_issues(index=".ds-logs-aws.securityhub_findings-default-*"):
-    query = {
-        "size": 100,  # 가져올 문서 수
-        "_source": ["aws.securityhub_findings"],  # 가져올 필드 지정
-        "query": {
-            "term": {
-                "aws.securityhub_findings.generator.id": "security-control/IAM.2"  # EC2.19에 해당하는 문서만 필터링
-            }
-        }
-    }
-
     # Elasticsearch에서 데이터 검색
     response = es.search(index=index, body=query)
     
