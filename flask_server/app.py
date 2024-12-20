@@ -1,7 +1,6 @@
 import os
 import boto3
 import yaml
-import jwt
 import shutil
 import csv
 from collections import OrderedDict
@@ -13,15 +12,12 @@ from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
 from aws_service import get_controls_by_ids_from_aws, get_controls_with_compliance_results2, get_filtered_controls_list, set_securityhub_control_activation, get_control_status_counts
 from model import initialize_db, User, db
+from user_service import register_user, login_user_func, logout_user_func, jwt_required
+import uuid
 from elasticsearch_dashboard import get_security_issues_filtered, analyze_security_issues
 from dashboard_service import get_all_jira_users_logic, get_jira_user_logic, get_ticket_details, get_tickets_stats
 from dotenv import load_dotenv
 from flask_login import LoginManager, UserMixin, login_user, login_required, current_user, logout_user
-import bcrypt
-from datetime import datetime, timedelta
-from functools import wraps
-import uuid  # UUID 생성용 라이브러리
-from user_service import register_user, login_user_func, logout_user_func, jwt_required
 
 
 load_dotenv()  # .env 파일에서 환경 변수 로드
