@@ -18,12 +18,6 @@ class User(UserMixin, db.Model):
     def get_id(self):
         return str(self.id)
 
-    # def set_password(self, password):
-    #     self.password = generate_password_hash(password)
-
-    # def check_password(self, password):
-    #     return check_password_hash(self.password, password)
-
 # SecurityHubFinding 모델 정의
 class SecurityHubFinding(db.Model):
     __tablename__ = 'securityhub_findings'
@@ -69,14 +63,6 @@ def insert_securityhub_findings_data():
     db.session.commit()
     print("SecurityHub findings data inserted successfully!")
 
-# Dummy user 생성 함수
-# def create_dummy_user():
-#     # 이미 'testuser6'이 존재하지 않으면 생성
-#     if not User.query.filter_by(user_id='testuser7').first():
-#         dummy_user = User(user_id='testuser7', password='1234')  # 비밀번호는 평문으로 저장
-#         db.session.add(dummy_user)
-#         db.session.commit()
-#         print("Dummy user 'testuser6' added to the database.")
 
 # 모델과 초기 데이터를 생성하는 함수
 def initialize_db():

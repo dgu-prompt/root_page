@@ -686,15 +686,8 @@ def get_default_region():
     return jsonify(default_region), 200
 
 
-'''   
 if __name__ == '__main__':
     
-    with app.app_context():
-        initialize_db()  # 데이터베이스 초기화 및 더미 사용자 생성
-
     print("Starting Flask server...")
     app.run(debug=True, port=5001)
-''' 
 
-with app.app_context():
-    initialize_db()  # 데이터베이스 초기화 및 더미 사용자 생성
