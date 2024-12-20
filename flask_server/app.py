@@ -18,7 +18,7 @@ from elasticsearch_dashboard import get_security_issues_filtered, analyze_securi
 from dashboard_service import get_all_jira_users_logic, get_jira_user_logic, get_ticket_details, get_tickets_stats
 from dotenv import load_dotenv
 from flask_login import LoginManager, UserMixin, login_user, login_required, current_user, logout_user
-
+from yaml_service import find_yaml_file, check_rule_files, get_assignee_data
 
 load_dotenv()  # .env 파일에서 환경 변수 로드
 
@@ -76,27 +76,6 @@ def logout():
 def protected():
     return jsonify({"message": f"Hello, {request.user_id}! Welcome to the protected route."})
 
-# 담당자 정보 읽기
-def get_assignee_data():
-    assignee_data = []
-    with open(ASSIGNEE_FILE_PATH, mode='r', encoding='utf-8') as file:
-        csv_reader = csv.DictReader(file, delimiter='\t')
-        for row in csv_reader:
-            assignee_data.append({
-                "assigneeId": row['assigneeId'],
-                "assigneeName": row['assigneeName']
-            })
-    return assignee_data
-
-# 규칙 파일 여부 확인
-def check_rule_files(alert_type, aws_region, assignee_name):
-    directory = os.path.join(os.path.dirname(__file__), alert_type, aws_region)
-    if not os.path.exists(directory):
-        return False
-    yaml_files = [file for file in os.listdir(directory) if file.endswith('.yaml')]
-    # assignee_name 기반 YAML 파일 이름 탐색
-    rule_file_exists = any(assignee_name in yaml_file for yaml_file in yaml_files)
-    return rule_file_exists
 
 # 정적 폴더 초기화 함수
 def clear_static_folder():
@@ -298,14 +277,6 @@ def delete_yaml():
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
-def find_yaml_file(base_path, file_name):
-    """
-    디렉토리를 순회하며 주어진 파일 이름과 일치하는 파일 경로를 반환합니다.
-    """
-    for root, _, files in os.walk(base_path):
-        if file_name in files:
-            return os.path.join(root, file_name)
-    return None
 
 
 # Default YAML 파일 경로
@@ -401,17 +372,6 @@ def preview_yaml():
             yaml_content["filter"][-1]["terms"]["aws.securityhub_findings.generator.id.keyword"] = [
                 f"security-control/{control_id}" for control_id in control_ids
             ]
-
-        # # 특정 필드에 멀티라인 문자열 강제 적용
-        # if "jira_description" in yaml_content:
-        #     yaml_content["jira_description"] = yaml.scalarstring.LiteralScalarString(
-        #         yaml_content["jira_description"]
-        #     )
-
-        # if "alert_text" in yaml_content:
-        #     yaml_content["alert_text"] = yaml.scalarstring.LiteralScalarString(
-        #         yaml_content["alert_text"]
-        #     )
             
         # 순서 유지
         yaml_content = dict(yaml_content)
