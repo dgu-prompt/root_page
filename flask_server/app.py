@@ -17,8 +17,8 @@ import uuid
 from elasticsearch_dashboard import get_security_issues_filtered, analyze_security_issues
 from dashboard_service import get_all_jira_users_logic, get_jira_user_logic, get_ticket_details, get_tickets_stats
 from dotenv import load_dotenv
-from flask_login import LoginManager, UserMixin, login_user, login_required, current_user, logout_user
-from yaml_service import find_yaml_file, check_rule_files, get_assignee_data
+from flask_login import LoginManager
+from yaml_service import find_yaml_file
 
 load_dotenv()  # .env 파일에서 환경 변수 로드
 

@@ -27,9 +27,6 @@ es = Elasticsearch(
     request_timeout=30
 )
 
-# 비활성화, 활성화, 통과 갯수는 securityhub에서 가져오기
-# @app.route('/control', methods=['GET'])
-# @app.route('/notificationRule', methods=['GET'])
 def get_control_item_list():
     try:
         controls = get_controls_list()
@@ -169,94 +166,6 @@ def get_security_issues_filtered(index=".ds-logs-aws.securityhub_findings-defaul
 
     return json_data
 
-# def get_security_issues_filtered(index=".ds-logs-aws.securityhub_findings-default-*"):
-#     # 일주일 동안의 감사 로그 분석 - 현재 시간에서 7일 전의 날짜 계산
-#     seven_days_ago = datetime.now() - timedelta(days=7)
-#     seven_days_ago_str = seven_days_ago.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-
-#     query = {
-#         "_source": [
-#             "aws.securityhub_findings.severity",
-#             "aws.securityhub_findings.compliance.status",
-#             "aws.securityhub_findings.id",
-#             "aws.securityhub_findings.generator.id",
-#             "aws.securityhub_findings.region",
-#             "aws.securityhub_findings.last_observed_at",
-#             "aws.securityhub_findings.workflow.state",
-#             "aws.securityhub_findings.product.fields.aws/securityhub/FindingId",
-#             "aws.securityhub_findings.resources"  # resources도 가져오도록 설정
-#         ],
-#         "query": {
-#             "bool": {
-#                 "must": [
-#                     {"match_all": {}}
-#                 ],
-#                 "filter": [
-#                     {"term": {"aws.securityhub_findings.compliance.status": "FAILED"}},  # PASSED 상태 제외, FAILED만
-#                     {"range": {
-#                         "aws.securityhub_findings.last_observed_at": {
-#                             "gte": seven_days_ago_str  # 최근 7일 내의 데이터만
-#                         }
-#                     }}
-#                 ]
-#             }
-#         }
-#     }
-
-#     # Elasticsearch의 pagination 처리
-#     all_hits = []
-#     current_page = 0
-#     page_size = 100  # 한 페이지당 문서 수
-
-#     while True:
-#         # Elasticsearch 메서드 호출 시 `size`를 중복하지 않도록 수정
-#         response = es.search(index=index, body=query, from_=current_page * page_size, size=page_size)
-#         hits = response['hits']['hits']
-
-#         if not hits:  # 더 이상 데이터가 없으면 종료
-#             break
-
-#         all_hits.extend(hits)
-#         current_page += 1
-
-#     # 중복된 검사 log를 id와 resources를 기준으로 그룹화
-#     grouped_data = defaultdict(list)
-
-#     for hit in all_hits:
-#         # 정확한 경로로 데이터 추출
-#         if 'aws' in hit['_source'] and 'securityhub_findings' in hit['_source']['aws']:
-#             finding = hit['_source']['aws']['securityhub_findings']
-#             control_id = finding['id']
-#             resource_id = finding['resources'][0]['Id'] if 'resources' in finding else None
-
-#             if resource_id:
-#                 # id와 resource_id를 키로 그룹화
-#                 grouped_data[(control_id, resource_id)].append(finding)
-
-#     # 각 그룹에서 최신의 'last_observed_at' 값을 가진 항목만 선택
-#     filtered_data = []
-#     for key, findings in grouped_data.items():
-#         # 최신 날짜 기준으로 정렬
-#         latest_finding = max(findings, key=lambda x: x['last_observed_at'])
-#         filtered_data.append({
-#             "region": latest_finding['region'],
-#             "last_observed_at": latest_finding['last_observed_at'],
-#             "severity": latest_finding['severity']['original'],
-#             "status": latest_finding['compliance']['status'],
-#             "ControlId": latest_finding['id'],
-#             "FindingsId": latest_finding.get('product', {}).get('fields', {}).get('aws/securityhub/FindingId', ''),
-#             "workflow_state": latest_finding['workflow']['state']
-#         })
-
-#     # JSON 형식으로 보기 좋게 들여쓰기
-#     json_data = json.dumps(filtered_data, indent=4)
-
-#     return json_data
-
-
-
-# 필터링된 보안 이슈 데이터 가져오기
-# filtered_result = get_security_issues_filtered()
 
 # 결과 출력 (json 형식으로 출력)
 #print(filtered_result)
