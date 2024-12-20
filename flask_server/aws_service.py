@@ -3,6 +3,7 @@ import os
 import json
 from flask import Flask, jsonify
 from dotenv import load_dotenv
+from math import ceil
 import time
 load_dotenv()  # .env 파일 로드
 
@@ -460,10 +461,6 @@ def get_controls_onecontrol2():
             "failedChecks": failed_checks,
             "complianceStatus": "FAILED" if failed_checks > 0 else "PASSED",
         }
-
-
-import json
-from math import ceil
 
 def get_control_status_counts2():
     standards_subscription_arn = get_standards_subscription_arn()

@@ -185,9 +185,3 @@ def analyze_security_issues(filtered_data):
 
     return json_data
 
-# 예시 데이터 (필터링된 데이터, 실제로는 `filtered_result` 변수를 사용)
-filtered_data = json.loads(filtered_result)
-
-# 분석 실행
-print(analyze_security_issues(filtered_data))
-
