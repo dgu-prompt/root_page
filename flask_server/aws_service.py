@@ -284,6 +284,7 @@ def get_controls_by_ids_from_aws(control_ids):
 # NIST 보안 표준 리스트 가져오는 함수
 # 그간 정의된 함수에는 PASSED, FAILED 상태(compliance)를 나타내는 함수가 없었기에 새롭게 정의.
 # 필요하다면 기존 함수와 통합 가능# NIST 보안 표준 제어 항목 목록 가져오기# NIST 보안 표준 제어 항목 목록 가져오기
+'''
 def get_nist_controls_list_with_compliance():
     # NIST 표준 구독 ARN 가져오기
     standards_subscription_arn = get_standards_subscription_arn()
@@ -368,7 +369,7 @@ def get_control_status_counts():
         return json.dumps(data, indent=4)
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
-
+'''
 
 def get_controls_onecontrol():
     # standards_subscription_arn = get_standards_subscription_arn()
@@ -460,6 +461,10 @@ def get_controls_onecontrol2():
             "complianceStatus": "FAILED" if failed_checks > 0 else "PASSED",
         }
 
+
+import json
+from math import ceil
+
 def get_control_status_counts2():
     standards_subscription_arn = get_standards_subscription_arn()
     if not standards_subscription_arn:
@@ -485,18 +490,33 @@ def get_control_status_counts2():
         if not next_token:
             break
 
-    # 각 제어 항목의 ComplianceStatus 확인
-    for control in controls:
-        control_id = control.get('ControlId')
-        findings = client.get_findings(
-            Filters={
-                'ComplianceSecurityControlId': [{'Value': control_id, 'Comparison': 'EQUALS'}],
-                'ComplianceStatus': [{'Value': 'FAILED', 'Comparison': 'EQUALS'}]  # FAILED 상태만 필터링
-            }
-        ).get('Findings', [])
+    # 모든 Control ID 수집
+    control_ids = [control.get("ControlId") for control in controls]
 
-        # Findings가 없으면 PASSED, 있으면 FAILED
-        control['ComplianceStatus'] = 'PASSED' if not findings else 'FAILED'
+    # Control ID를 20개씩 나누어 처리
+    batch_size = 20
+    failed_controls = set()
+
+    for i in range(ceil(len(control_ids) / batch_size)):
+        batch = control_ids[i * batch_size:(i + 1) * batch_size]
+        findings_response = client.get_findings(
+            Filters={
+                'ComplianceSecurityControlId': [{'Value': cid, 'Comparison': 'EQUALS'} for cid in batch],
+                'RecordState': [{'Value': 'ACTIVE', 'Comparison': 'EQUALS'}]
+            }
+        )
+        findings = findings_response.get("Findings", [])
+        # 실패한 Control ID 추출
+        failed_controls.update(
+            finding.get("ComplianceSecurityControlId")
+            for finding in findings
+            if finding.get("Compliance", {}).get("Status") == "FAILED"
+        )
+
+    # 각 Control에 대해 ComplianceStatus 설정
+    for control in controls:
+        control_id = control.get("ControlId")
+        control["ComplianceStatus"] = "FAILED" if control_id in failed_controls else "PASSED"
 
     # 상태별 개수 계산
     disabled_count = sum(1 for control in controls if control.get("ControlStatus") == "DISABLED")
