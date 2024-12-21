@@ -56,22 +56,22 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 # 회원가입 엔드포인트
-@app.route('/register', methods=['POST'])
+@app.route('/api/register', methods=['POST'])
 def register():
     return register_user(request)
 
 # 로그인 엔드포인트
-@app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     return login_user_func(request, app.secret_key)
 
 # 로그아웃 엔드포인트
-@app.route('/logout', methods=['POST'])
+@app.route('/api/logout', methods=['POST'])
 def logout():
     return logout_user_func()
 
 # 보호된 라우트 예시
-@app.route('/protected', methods=['GET'])
+@app.route('/api/protected', methods=['GET'])
 @jwt_required(app.secret_key)
 def protected():
     return jsonify({"message": f"Hello, {request.user_id}! Welcome to the protected route."})
@@ -86,14 +86,14 @@ def clear_static_folder():
             os.remove(file_path)
     print("Static folder cleared.")
 
-@app.route('/')
+@app.route('/api/')
 def serve_react():
     print("Serving React index.html")
     return send_from_directory('../react_client', 'index.html')
 
 BASE_PATH = os.path.dirname(__file__)
 
-@app.route('/count_yaml', methods=['GET'])
+@app.route('/api/count_yaml', methods=['GET'])
 def count_yaml():
     regions_data = {}  # 리전 데이터를 저장할 딕셔너리
     alert_types = ["jira", "slack"]  # 참조할 alertType 값
@@ -162,7 +162,7 @@ def count_yaml():
     # JSON 응답 반환
     return jsonify(list(regions_data.values()))
 
-@app.route('/read_yaml', methods=['POST'])
+@app.route('/api/read_yaml', methods=['POST'])
 def edit_yaml():
     try:
         # 요청 데이터 파싱
@@ -204,6 +204,7 @@ def edit_yaml():
                 region = region_value  # 첫 번째로 발견된 유효한 리전 값 사용
                 break
 
+      
         # 응답 데이터 구성
         response_data = {
             "id": file_id,
@@ -231,7 +232,7 @@ def edit_yaml():
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
-@app.route('/delete_yaml', methods=['DELETE'])
+@app.route('/api/delete_yaml', methods=['DELETE'])
 def delete_yaml():
     try:
         # 요청 데이터 파싱
@@ -286,7 +287,7 @@ DEFAULT_PATHS = {
 }
 
 # default yaml 파일 복제 -> 복사 후 생성 api
-@app.route('/add_rule_yaml', methods=['POST'])
+@app.route('/api/add_rule_yaml', methods=['POST'])
 def add_rule_yaml():
     try:
         # 요청 데이터 파싱
@@ -326,7 +327,7 @@ def add_rule_yaml():
         # 에러 처리
         return jsonify({"status": "FAILED", "error": str(e)}), 500
 
-@app.route('/preview_yaml', methods=['POST'])
+@app.route('/api/preview_yaml', methods=['POST'])
 def preview_yaml():
     try:
         # 요청 데이터 파싱
@@ -396,7 +397,7 @@ def preview_yaml():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
     
-@app.route('/final_submit_yaml', methods=['POST'])
+@app.route('/api/final_submit_yaml', methods=['POST'])
 def final_submit_yaml():
     try:
         data = request.json  # JSON 파싱
@@ -435,7 +436,7 @@ def final_submit_yaml():
         return jsonify({"status": "FAILED", "error": str(e)}), 500
 
 # NIST 보안 표준 개별 제어 항목 활성화 상태 설정 라우터
-@app.route('/control/<control_id>', methods=['POST'])
+@app.route('/api/control/<control_id>', methods=['POST'])
 def set_control_item(control_id):
     data = request.json
     status = data.get('status')  # 'ENABLED' 또는 'DISABLED'
@@ -455,7 +456,7 @@ def set_control_item(control_id):
 
 # 제어항목 페이지의 제어항목 리스트 제공 라우터
 # metadata + status + compliance -> 제어 항목 페이지
-@app.route('/control', methods=['GET'])
+@app.route('/api/control', methods=['GET'])
 def get_control_full():
     try:
         # 쿼리 파라미터 가져오기
@@ -497,7 +498,7 @@ def get_control_full():
     
 # 알림규칙 페이지의 제어항목 리스트 제공 라우터
 # metadata + status -> 규칙 편집 페이지
-@app.route('/notificationRule', methods=['GET'])
+@app.route('/api/notificationRule', methods=['GET'])
 def get_control_with_status():
     try:
         # 쿼리 파라미터 가져오기
@@ -530,7 +531,7 @@ def get_control_with_status():
         return jsonify({"error": str(e)}), 400  # 사용자에게 오류 메시지 반환
 
 # 선택된 제어항목 리스트의 세부 정보 제공 라우터
-@app.route('/control/details', methods=['GET'])
+@app.route('/api/control/details', methods=['GET'])
 def get_controls_by_ids_route():
     try:
         # 요청 본문에서 controlIds 가져오기
@@ -556,7 +557,7 @@ def get_controls_by_ids_route():
         return jsonify({"error": "서버 오류가 발생했습니다.", "details": str(e)}), 500
 
 # 이메일로 특정 Jira 사용자 정보 반환 라우터
-@app.route('/jira/user', methods=['GET'])
+@app.route('/api/jira/user', methods=['GET'])
 def get_jira_user():
     email = request.args.get('email')
     if not email:
@@ -569,7 +570,7 @@ def get_jira_user():
         return jsonify({"error": str(e)}), 404
 
 # 모든 Jira 사용자 정보 반환 라우터
-@app.route('/jira/users', methods=['GET'])
+@app.route('/api/jira/users', methods=['GET'])
 def get_all_jira_users():
     try:
         return get_all_jira_users_logic()
@@ -577,13 +578,13 @@ def get_all_jira_users():
         return jsonify({"error": str(e)}), 500
 
 # Dashboard 페이지의 Jira 티켓 현황 통계 조회 라우터
-@app.route('/dashboard', methods=['GET'])
+@app.route('/api/dashboard', methods=['GET'])
 def dashboard_tickets_status():
     tickets_stats = get_tickets_stats()
     return jsonify(tickets_stats)
 
 # Dashboard 페이지의 특정 Jira 티켓 조회 라우터
-@app.route('/dashboard/<ticket_id>', methods=['GET'])
+@app.route('/api/dashboard/<ticket_id>', methods=['GET'])
 def dashboard_ticket_details(ticket_id):
     ticket_details = get_ticket_details(ticket_id)
     
@@ -592,7 +593,7 @@ def dashboard_ticket_details(ticket_id):
     return jsonify(ticket_details), 200
 
 # security hub, ES 통계 불러오기 라우터
-@app.route('/dashboard/findings', methods=['GET'])
+@app.route('/api/dashboard/findings', methods=['GET'])
 # @jwt_required  # 인증 데코레이터 적용
 def get_dashboard_findings():
     try:
@@ -621,7 +622,7 @@ def get_dashboard_findings():
 # ASSIGNEE_FILE_PATH를 app.py의 위치에 기반하여 설정
 ASSIGNEE_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
-@app.route('/rules/<awsRegion>/assignees', methods=['GET'])
+@app.route('/api/rules/<awsRegion>/assignees', methods=['GET'])
 def get_assignees(awsRegion):
     # CSV 파일 경로
     csv_file_path = os.path.join(ASSIGNEE_FILE_PATH, f"{awsRegion}.csv")
@@ -653,7 +654,7 @@ def get_assignees(awsRegion):
         return jsonify({"error": str(e)}), 500
 
 
-@app.route("/available-regions", methods=["GET"])
+@app.route("/api/available-regions", methods=["GET"])
 def get_available_regions():
     available_regions = [
         "us-east-1",
@@ -679,7 +680,7 @@ def get_available_regions():
     return jsonify(available_regions), 200
 
 
-@app.route("/default-region", methods=["GET"])
+@app.route("/api/default-region", methods=["GET"])
 def get_default_region():
     default_region = os.getenv("AWS_DEFAULT_REGION")
     return jsonify(default_region), 200
