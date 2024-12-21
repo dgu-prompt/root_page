@@ -87,9 +87,8 @@ def clear_static_folder():
     print("Static folder cleared.")
 
 @app.route('/api/')
-def serve_react():
-    print("Serving React index.html")
-    return send_from_directory('../react_client', 'index.html')
+def health_check():
+    return jsonify({"status": "healthy"}), 200
 
 BASE_PATH = os.path.dirname(__file__)
 
