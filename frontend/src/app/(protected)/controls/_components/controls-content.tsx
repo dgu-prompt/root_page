@@ -37,7 +37,7 @@ export default async function ControlsContent({
     params.append("pageSize", String(pageSize));
 
     const response = await fetch(
-      `${process.env.API_HOST}api/control?${params}`,
+      `${process.env.API_HOST}/api/control?${params}`,
       {
         method: "GET",
         headers: {
