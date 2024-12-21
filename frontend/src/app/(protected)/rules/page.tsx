@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const data = await fetch(`${process.env.API_HOST}/count_yaml`);
+  const data = await fetch(`${process.env.API_HOST}/api/count_yaml`);
   const regionalRuleSummaries = await data.json();
 
   return (

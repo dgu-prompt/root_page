@@ -10,8 +10,8 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const [regionsData, defaultRegionData] = await Promise.all([
-    fetch(`${process.env.NEXT_PUBLIC_API_HOST}/available-regions`),
-    fetch(`${process.env.NEXT_PUBLIC_API_HOST}/default-region`),
+    fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/available-regions`),
+    fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/default-region`),
   ]);
   const regions = await regionsData.json();
   const defaultRegion = await defaultRegionData.json();

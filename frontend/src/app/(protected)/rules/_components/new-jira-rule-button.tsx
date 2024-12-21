@@ -13,7 +13,7 @@ export default function NewJiraRuleButton() {
     };
 
     const data = await fetch(
-      `${process.env.NEXT_PUBLIC_API_HOST}/add_rule_yaml`,
+      `${process.env.NEXT_PUBLIC_API_HOST}/api/add_rule_yaml`,
       {
         method: "POST",
         headers: {

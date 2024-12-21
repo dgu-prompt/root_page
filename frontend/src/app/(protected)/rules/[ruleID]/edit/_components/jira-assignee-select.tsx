@@ -20,7 +20,7 @@ export default function JiraAssigneeSelect() {
   useEffect(() => {
     async function fetchMembers() {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_HOST}/jira/users`
+        `${process.env.NEXT_PUBLIC_API_HOST}/api/jira/users`
       );
       const users = await response.json();
       setMembers(users);

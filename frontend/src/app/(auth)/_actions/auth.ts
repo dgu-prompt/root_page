@@ -11,7 +11,7 @@ export async function login(prevState: unknown, formData: FormData) {
     return { message: "Username and password are required" };
   }
 
-  const response = await fetch(`${process.env.API_HOST}/login`, {
+  const response = await fetch(`${process.env.API_HOST}/api/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

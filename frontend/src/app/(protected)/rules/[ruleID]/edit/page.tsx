@@ -15,7 +15,7 @@ export default async function Page({
 }) {
   const { ruleID } = await params;
 
-  const data = await fetch(`${process.env.API_HOST}/read_yaml`, {
+  const data = await fetch(`${process.env.API_HOST}/api/read_yaml`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

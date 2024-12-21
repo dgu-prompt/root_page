@@ -13,7 +13,7 @@ export default function YamlPreviewStep() {
   useEffect(() => {
     async function fetchData() {
       const data = await fetch(
-        `${process.env.NEXT_PUBLIC_API_HOST}/preview_yaml`,
+        `${process.env.NEXT_PUBLIC_API_HOST}/api/preview_yaml`,
         {
           method: "POST",
           headers: {

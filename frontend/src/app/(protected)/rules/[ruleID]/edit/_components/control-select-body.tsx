@@ -50,7 +50,7 @@ export default function ControlSelectBody({
       params.append("pageSize", String(pageSize));
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_HOST}/notificationRule?${params}`,
+        `${process.env.NEXT_PUBLIC_API_HOST}/api/notificationRule?${params}`,
         {
           method: "GET",
           headers: {

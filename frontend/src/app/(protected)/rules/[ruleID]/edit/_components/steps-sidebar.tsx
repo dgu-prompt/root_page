@@ -20,7 +20,7 @@ export default function StepsSidebar() {
 
   const handleSubmit = async () => {
     const data = await fetch(
-      `${process.env.NEXT_PUBLIC_API_HOST}/final_submit_yaml`,
+      `${process.env.NEXT_PUBLIC_API_HOST}/api/final_submit_yaml`,
       {
         method: "POST",
         headers: {

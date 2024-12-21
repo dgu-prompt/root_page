@@ -13,7 +13,7 @@ export default function UnresolvedTicketsByAssigneeWidget() {
   useEffect(() => {
     async function fetchMembers() {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_HOST}/jira/users`,
+        `${process.env.NEXT_PUBLIC_API_HOST}/api/jira/users`,
         {
           next: { revalidate: 60 }, // 캐싱과 재검증 설정
           cache: "force-cache",
@@ -26,7 +26,7 @@ export default function UnresolvedTicketsByAssigneeWidget() {
 
     async function fetchData() {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_HOST}/dashboard`,
+        `${process.env.NEXT_PUBLIC_API_HOST}/api/dashboard`,
         {
           method: "GET",
           headers: {

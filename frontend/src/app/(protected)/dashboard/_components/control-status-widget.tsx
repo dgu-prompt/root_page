@@ -17,7 +17,7 @@ export default function ControlStatusWidget() {
   useEffect(() => {
     async function fetchData() {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_HOST}/dashboard/findings`,
+        `${process.env.NEXT_PUBLIC_API_HOST}/api/dashboard/findings`,
         {
           method: "GET",
           headers: {

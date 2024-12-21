@@ -10,7 +10,7 @@ export default function UnresolvedTicketsByPriorityWidget() {
   useEffect(() => {
     async function fetchData() {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_HOST}/dashboard`,
+        `${process.env.NEXT_PUBLIC_API_HOST}/api/dashboard`,
         {
           method: "GET",
           headers: {

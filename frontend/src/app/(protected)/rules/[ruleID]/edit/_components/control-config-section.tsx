@@ -27,7 +27,7 @@ export default function ControlConfigSection() {
     async function fetchData() {
       console.log(
         "fetching from: ",
-        `${process.env.NEXT_PUBLIC_API_HOST}/control/details`
+        `${process.env.NEXT_PUBLIC_API_HOST}/api/control/details`
       );
 
       const queryString = new URLSearchParams({
@@ -35,7 +35,7 @@ export default function ControlConfigSection() {
       }).toString();
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_HOST}/control/details?${queryString}`,
+        `${process.env.NEXT_PUBLIC_API_HOST}/api/control/details?${queryString}`,
         {
           method: "GET",
           headers: {
