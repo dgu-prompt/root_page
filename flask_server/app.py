@@ -204,6 +204,7 @@ def edit_yaml():
                 region = region_value  # 첫 번째로 발견된 유효한 리전 값 사용
                 break
 
+      
         # 응답 데이터 구성
         response_data = {
             "id": file_id,
